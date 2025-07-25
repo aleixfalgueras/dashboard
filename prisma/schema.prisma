@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  username  String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile InstagramProfile?
+  uploads Upload[]
+
+  @@index([slug])
+}
+
+model InstagramProfile {
+  id             String   @id @default(cuid())
+  clientId       String   @unique
+  followersCount Int      @default(0)
+  followingCount Int      @default(0)
+  postsCount     Int      @default(0)
+  fullName       String?
+  bio            String?
+  profilePicUrl  String?
+  isVerified     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  client Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  posts  InstagramPost[]
+}
+
+model InstagramPost {
+  id               String   @id @default(cuid())
+  profileId        String
+  postId           String   @unique
+  type             String
+  shortCode        String
+  caption          String?
+  url              String
+  likesCount       Int
+  commentsCount    Int
+  timestamp        DateTime
+  displayUrl       String?
+  dimensionsHeight Int?
+  dimensionsWidth  Int?
+  isSponsored      Boolean  @default(false)
+  isPinned         Boolean  @default(false)
+  locationName     String?
+  locationId       String?
+  hashtags         String[]
+  mentions         String[]
+  images           String[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  profile  InstagramProfile   @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  comments InstagramComment[]
+
+  @@index([profileId])
+  @@index([timestamp])
+}
+
+model InstagramComment {
+  id              String   @id @default(cuid())
+  postId          String
+  commentId       String   @unique
+  text            String
+  ownerUsername   String
+  ownerProfilePic String?
+  timestamp       DateTime
+  likesCount      Int      @default(0)
+  repliesCount    Int      @default(0)
+  isVerified      Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  post InstagramPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+model Upload {
+  id          String   @id @default(cuid())
+  clientId    String
+  filename    String
+  rawData     Json
+  processedAt DateTime @default(now())
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([clientId])
+}
