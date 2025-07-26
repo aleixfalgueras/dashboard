@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { Upload, FileJson, Loader2 } from 'lucide-react'
+import { uploadInstagramData } from '@/app/actions/instagram-upload'
 
 export default function AdminPage() {
   const [clientName, setClientName] = useState('')
@@ -46,24 +47,18 @@ export default function AdminPage() {
       const jsonData = JSON.parse(fileContent)
 
       const formData = new FormData()
-      formData.append('file', uploadedFile)
       formData.append('clientName', clientName)
       formData.append('jsonData', JSON.stringify(jsonData))
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData
-      })
+      const result = await uploadInstagramData(formData)
 
-      if (!response.ok) {
-        throw new Error(await response.text())
+      if (!result.success) {
+        throw new Error(result.error || 'Upload failed')
       }
-
-      const result = await response.json()
 
       toast({
         title: 'Upload successful',
-        description: `Dashboard created at: /${result.slug}`
+        description: `Dashboard created at: /${result.data?.slug}`
       })
 
       // Reset form

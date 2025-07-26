@@ -1,30 +1,12 @@
 import Link from 'next/link'
-import { prisma } from '@/lib/prisma'
+import { clientService } from '@/services/client-service'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ArrowRight, Upload } from 'lucide-react'
 
-async function getClients() {
-  const clients = await prisma.client.findMany({
-    include: {
-      profile: true,
-      uploads: {
-        orderBy: {
-          processedAt: 'desc'
-        },
-        take: 1
-      }
-    },
-    orderBy: {
-      createdAt: 'desc'
-    }
-  })
-  
-  return clients
-}
 
 export default async function Home() {
-  const clients = await getClients()
+  const clients = await clientService.getAllClients()
 
   return (
     <div className="container mx-auto py-8">
@@ -70,9 +52,9 @@ export default async function Home() {
                       <p className="text-sm text-muted-foreground">
                         {client.profile.postsCount} posts analyzed
                       </p>
-                      {client.uploads[0] && (
+                      {client.lastUpload && (
                         <p className="text-xs text-muted-foreground">
-                          Last updated: {new Date(client.uploads[0].processedAt).toLocaleDateString()}
+                          Last updated: {new Date(client.lastUpload.processedAt).toLocaleDateString()}
                         </p>
                       )}
                     </>
