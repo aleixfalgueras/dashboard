@@ -48,3 +48,21 @@ export const InstagramDataSchema = z.array(InstagramPostSchema)
 
 // Type exports for use in services
 export type RawInstagramData = z.infer<typeof InstagramDataSchema>
+
+export interface InstagramMetrics {
+  totalPosts: number
+  totalLikes: number
+  totalComments: number
+  avgEngagementPerPost: number
+}
+
+export interface InstagramPostTypeDistribution {
+  type: string
+  count: number
+  percentage: number
+}
+
+export interface InstagramHashtagAnalysis {
+  tag: string
+  count: number
+}

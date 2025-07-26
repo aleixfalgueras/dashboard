@@ -40,9 +40,20 @@ export default function AdminPage() {
       default:
         return {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
-          label: 'Instagram Content'
+          label: 'Not Found'
         }
     }
+  }
+
+  const getSelectedClientDisplay = () => {
+    if (clients.length === 0) {
+      return "No clients available"
+    }
+    if (!selectedClientId) {
+      return "Select a client"
+    }
+    const selectedClient = clients.find(client => client.id === selectedClientId)
+    return selectedClient?.name || "Select a client"
   }
 
   const handleCreateClient = async () => {
@@ -103,7 +114,7 @@ export default function AdminPage() {
 
       toast({
         title: 'Upload successful',
-        description: `Dashboard created at: /${result.data?.slug}`
+        description: `${selectedDataSource} data propagated successfully`
       })
 
       // Reset form
@@ -229,22 +240,33 @@ export default function AdminPage() {
             <div className="flex gap-4">
               <div className="flex-1 space-y-2">
                 <Label htmlFor="client-select">Select Client</Label>
-                <select
-                  id="client-select"
-                  value={selectedClientId}
-                  onChange={(e) => setSelectedClientId(e.target.value)}
-                  disabled={uploading || clients.length === 0}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="" disabled>
-                    {clients.length === 0 ? "No clients available" : "Select a client"}
-                  </option>
-                  {clients.map((client) => (
-                    <option key={client.id} value={client.id}>
-                      {client.name}
-                    </option>
-                  ))}
-                </select>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between h-10"
+                      disabled={uploading || clients.length === 0}
+                    >
+                      <div className="flex items-center">
+                        {getSelectedClientDisplay()}
+                      </div>
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    className="w-full" 
+                    style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
+                  >
+                    {clients.map((client) => (
+                      <DropdownMenuItem
+                        key={client.id}
+                        onClick={() => setSelectedClientId(client.id)}
+                      >
+                        {client.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div className="flex-1 space-y-2">
@@ -317,7 +339,7 @@ export default function AdminPage() {
                 Processing...
               </>
             ) : (
-              'Upload and Create Dashboard'
+              'Upload Data'
             )}
           </Button>
           </CardContent>

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { Client, Prisma } from '@prisma/client'
+import {FullClientData} from "@/lib/types/dashboard-types";
 
 export class ClientRepository {
   async create(data: Prisma.ClientCreateInput): Promise<Client> {
@@ -18,11 +19,11 @@ export class ClientRepository {
     })
   }
 
-  async findBySlugWithFullData(slug: string) {
+  async findBySlugWithFullData(slug: string): Promise<FullClientData | null> {
     return prisma.client.findUnique({
       where: { slug },
       include: {
-        profile: {
+        instagramProfile: {
           include: {
             posts: {
               orderBy: {

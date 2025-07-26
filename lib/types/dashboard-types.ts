@@ -1,46 +1,32 @@
-import { Client, InstagramProfile, InstagramPost } from '@prisma/client'
+import {Client, InstagramPost, InstagramProfile} from '@prisma/client'
+import {InstagramHashtagAnalysis, InstagramMetrics, InstagramPostTypeDistribution} from "@/lib/types/instagram-types";
+import { AvailableDatasources } from './common/enums'
 
-// Dashboard metrics
-export interface DashboardMetrics {
-  totalPosts: number
-  totalLikes: number
-  totalComments: number
-  avgEngagementPerPost: number
-}
-
-// Post type distribution
-export interface PostTypeDistribution {
-  type: string
-  count: number
-  percentage: number
-}
-
-
-// Hashtag analysis
-export interface HashtagAnalysis {
-  tag: string
-  count: number
-}
-
-// Client with full data for dashboard
-export interface ClientDashboardData extends Client {
+export interface InstagramDashboardData {
   profile: InstagramProfile & {
+    posts: InstagramPost[]
+  }
+  metrics: InstagramMetrics
+  postTypes: InstagramPostTypeDistribution[]
+  topPosts: InstagramPost[]
+  hashtagAnalysis: InstagramHashtagAnalysis[]
+}
+
+// Client with all data relations included
+export interface FullClientData extends Client {
+  instagramProfile: InstagramProfile & {
     posts: InstagramPost[]
   } | null
 }
 
-// Client with guaranteed profile for dashboard pages
-export interface DashboardClientWithProfile extends Client {
-  profile: InstagramProfile & {
-    posts: InstagramPost[]
-  }
+// Generic datasource interface for future extensibility (e.g. twitter?: TwitterDashboardData)
+export interface DatasourcesData {
+  instagram?: InstagramDashboardData
 }
 
 // Dashboard page data
-export interface DashboardPageData {
-  client: DashboardClientWithProfile
-  metrics: DashboardMetrics
-  postTypes: PostTypeDistribution[]
-  topPosts: InstagramPost[]
-  hashtagAnalysis: HashtagAnalysis[]
+export interface DashboardData {
+  client: FullClientData
+  datasourcesData: DatasourcesData
+  availableDatasources: AvailableDatasources[]
 }

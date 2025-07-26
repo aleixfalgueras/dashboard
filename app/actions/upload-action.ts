@@ -23,15 +23,9 @@ export async function uploadDataSource(formData: FormData) {
       jsonData
     }
 
-    const result = await uploadService.processUpload(uploadRequestDto)
+    await uploadService.processUpload(uploadRequestDto)
     
-    return {
-      success: result.success,
-      data: {
-        slug: result.slug,
-        username: result.username
-      }
-    }
+    return { success: true }
   } catch (error) {
     console.error('Upload action error:', error)
     

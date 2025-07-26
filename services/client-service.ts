@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { clientRepository } from '@/repositories/client-repository'
 import { Client } from '@prisma/client'
-import { ClientDashboardData } from '@/lib/types/dashboard-types'
+import { FullClientData } from '@/lib/types/dashboard-types'
 
 export class ClientService {
   async createClient(name: string): Promise<Client> {
@@ -21,7 +21,7 @@ export class ClientService {
     return clientRepository.findById(id)
   }
 
-  async getClientDashboardData(slug: string): Promise<ClientDashboardData | null> {
+  async getClientFullData(slug: string): Promise<FullClientData | null> {
     return clientRepository.findBySlugWithFullData(slug)
   }
 

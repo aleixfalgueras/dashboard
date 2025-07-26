@@ -1,14 +1,15 @@
 import { instagramService } from './instagram-service'
 import { DataSource } from '@/lib/types/common/enums'
-import {UploadProcessingResult, UploadRequestDto} from "@/lib/types/common/upload-types";
+import { UploadRequestDto} from "@/lib/types/common/upload-types";
 
 export class UploadService {
-  async processUpload(uploadRequestDto: UploadRequestDto): Promise<UploadProcessingResult> {
+
+  async processUpload(uploadRequestDto: UploadRequestDto): Promise<boolean> {
     try {
       // Route to appropriate processor based on data source
       switch (uploadRequestDto.dataSource) {
         case DataSource.INSTAGRAM_CONTENT:
-          return await instagramService.processUpload(uploadRequestDto)
+          return await instagramService.processInstagramContentUpload(uploadRequestDto)
         default:
           throw new Error(`Unsupported data source: ${uploadRequestDto.dataSource}`)
       }
@@ -17,6 +18,7 @@ export class UploadService {
       throw error
     }
   }
+
 }
 
 // Export singleton instance

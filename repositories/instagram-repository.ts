@@ -3,12 +3,12 @@ import { InstagramProfile, InstagramPost, Prisma } from '@prisma/client'
 
 export class InstagramRepository {
   // Profile operations
-  async createProfile(data: Prisma.InstagramProfileCreateInput): Promise<InstagramProfile> {
+  async createInstagramProfile(data: Prisma.InstagramProfileCreateInput): Promise<InstagramProfile> {
     return prisma.instagramProfile.create({ data })
   }
 
   // Post operations
-  async createPost(data: Prisma.InstagramPostCreateInput): Promise<InstagramPost> {
+  async createInstagramPost(data: Prisma.InstagramPostCreateInput): Promise<InstagramPost> {
     return prisma.instagramPost.create({ data })
   }
 
@@ -17,14 +17,14 @@ export class InstagramRepository {
   }
 
   // Bulk operations for upload processing
-  async createPostsWithComments(
+  async createInstagramPostsWithComments(
     posts: Array<{
       post: Prisma.InstagramPostCreateInput
       comments: Prisma.InstagramCommentCreateManyInput[]
     }>
   ): Promise<void> {
     for (const { post, comments } of posts) {
-      const createdPost = await this.createPost(post)
+      const createdPost = await this.createInstagramPost(post)
       
       if (comments.length > 0) {
         const commentsWithPostId = comments.map(comment => ({
@@ -36,12 +36,13 @@ export class InstagramRepository {
     }
   }
 
-  // Delete operations
-  async deleteProfileByClientId(clientId: string): Promise<void> {
-    await prisma.instagramProfile.deleteMany({
+  // Find operations
+  async findInstagramProfileByClientId(clientId: string): Promise<InstagramProfile | null> {
+    return prisma.instagramProfile.findUnique({
       where: { clientId }
     })
   }
+
 }
 
 // Export singleton instance
