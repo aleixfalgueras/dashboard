@@ -7,14 +7,33 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { Upload, FileJson, Loader2 } from 'lucide-react'
-import { uploadInstagramData } from '@/app/actions/instagram-upload'
+import { Upload, FileJson, Loader2, Plus, Trash2 } from 'lucide-react'
+import { uploadInstagramData } from '@/app/actions/instagram-upload-action'
+import { useClientManagement } from '@/hooks/use-client-management'
 
 export default function AdminPage() {
-  const [clientName, setClientName] = useState('')
+  const [selectedClientId, setSelectedClientId] = useState<string>('')
+  const [newClientName, setNewClientName] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [showCreateForm, setShowCreateForm] = useState(false)
   const { toast } = useToast()
+  const { clients, creating, createClient, deleteClient } = useClientManagement()
+
+  const handleCreateClient = async () => {
+    const result = await createClient(newClientName)
+    if (result.success) {
+      setNewClientName('')
+      setShowCreateForm(false)
+    }
+  }
+
+  const handleDeleteClient = async (clientId: string) => {
+    const result = await deleteClient(clientId)
+    if (result.success && selectedClientId === clientId) {
+      setSelectedClientId('')
+    }
+  }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
@@ -31,10 +50,10 @@ export default function AdminPage() {
   })
 
   const handleUpload = async () => {
-    if (!uploadedFile || !clientName.trim()) {
+    if (!uploadedFile || !selectedClientId) {
       toast({
         title: 'Missing information',
-        description: 'Please provide both a client name and a JSON file.',
+        description: 'Please select a client and provide a JSON file.',
         variant: 'destructive'
       })
       return
@@ -47,7 +66,7 @@ export default function AdminPage() {
       const jsonData = JSON.parse(fileContent)
 
       const formData = new FormData()
-      formData.append('clientName', clientName)
+      formData.append('clientId', selectedClientId)
       formData.append('jsonData', JSON.stringify(jsonData))
 
       const result = await uploadInstagramData(formData)
@@ -62,7 +81,7 @@ export default function AdminPage() {
       })
 
       // Reset form
-      setClientName('')
+      setSelectedClientId('')
       setUploadedFile(null)
     } catch (error) {
       console.error('Upload error:', error)
@@ -78,24 +97,122 @@ export default function AdminPage() {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Upload Instagram Data</CardTitle>
-          <CardDescription>
-            Upload Instagram JSON data to create analytics dashboards
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="client-name">Client Name</Label>
-            <Input
-              id="client-name"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              placeholder="Enter client name"
-              disabled={uploading}
-            />
-          </div>
+      <div className="space-y-6">
+        {/* Client Management */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Client Management</CardTitle>
+            <CardDescription>
+              Manage clients and upload their Instagram data
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-medium">Existing Clients</h3>
+              <Button
+                onClick={() => setShowCreateForm(true)}
+                variant="outline"
+                size="sm"
+                disabled={creating || uploading}
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                New Client
+              </Button>
+            </div>
+
+            {showCreateForm && (
+              <div className="border rounded-lg p-4 space-y-3">
+                <Label htmlFor="new-client-name">Client Name</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="new-client-name"
+                    value={newClientName}
+                    onChange={(e) => setNewClientName(e.target.value)}
+                    placeholder="Enter client name"
+                    disabled={creating}
+                  />
+                  <Button
+                    onClick={handleCreateClient}
+                    disabled={!newClientName.trim() || creating}
+                  >
+                    {creating ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      'Create'
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowCreateForm(false)
+                      setNewClientName('')
+                    }}
+                    disabled={creating}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              {clients.length === 0 ? (
+                <p className="text-sm text-muted-foreground">No clients found. Create one to get started.</p>
+              ) : (
+                <div className="grid gap-2">
+                  {clients.map((client) => (
+                    <div key={client.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div>
+                        <h4 className="font-medium">{client.name}</h4>
+                        <p className="text-sm text-muted-foreground">Created {new Date(client.createdAt).toLocaleDateString()}</p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleDeleteClient(client.id)}
+                        disabled={uploading || creating}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Upload Data */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Upload Instagram Data</CardTitle>
+            <CardDescription>
+              Select a client and upload their Instagram JSON data
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="client-select">Select Client</Label>
+              <select
+                id="client-select"
+                value={selectedClientId}
+                onChange={(e) => setSelectedClientId(e.target.value)}
+                disabled={uploading || clients.length === 0}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value="" disabled>
+                  {clients.length === 0 ? "No clients available" : "Select a client"}
+                </option>
+                {clients.map((client) => (
+                  <option key={client.id} value={client.id}>
+                    {client.name}
+                  </option>
+                ))}
+              </select>
+            </div>
 
           <div
             {...getRootProps()}
@@ -124,7 +241,7 @@ export default function AdminPage() {
 
           <Button
             onClick={handleUpload}
-            disabled={!uploadedFile || !clientName.trim() || uploading}
+            disabled={!uploadedFile || !selectedClientId || uploading}
             className="w-full"
           >
             {uploading ? (
@@ -136,8 +253,9 @@ export default function AdminPage() {
               'Upload and Create Dashboard'
             )}
           </Button>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

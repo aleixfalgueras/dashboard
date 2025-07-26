@@ -10,28 +10,30 @@ import {
 import { z } from 'zod'
 
 export class UploadService {
-  async processUpload(dto: UploadRequestDto): Promise<UploadProcessingResult> {
+  async processUpload(uploadRequestDto: UploadRequestDto): Promise<UploadProcessingResult> {
     try {
       // Parse and validate the JSON data
-      const parsedData = JSON.parse(dto.jsonData)
+      const parsedData = JSON.parse(uploadRequestDto.jsonData)
       const validatedData = InstagramDataSchema.parse(parsedData)
 
-      // Extract username from the first post
+      // Get the client by ID
+      const client = await clientService.getClientById(uploadRequestDto.clientId)
+      if (!client) {
+        throw new Error('Client not found')
+      }
+
+      // Extract username from the first post for Instagram profile
       const firstPost = validatedData[0]
-      const username = clientService.extractUsernameFromUrl(firstPost.inputUrl)
+      const extractUsernameFromUrl = (url: string): string => {
+        const match = url.match(/instagram\.com\/([^\/]+)/)
+        return match ? match[1] : 'unknown'
+      }
+      const username = extractUsernameFromUrl(firstPost.inputUrl)
 
       // Process in a transaction
       const result = await prisma.$transaction(async () => {
-        // Check if client exists and delete old data if needed
-        const existingClient = await clientService.getClientByUsername(username)
-        
-        if (existingClient) {
-          // Delete existing client and all related data (cascade)
-          await clientService.deleteClientByUsername(username)
-        }
-
-        // Create new client
-        const client = await clientService.createClient(username)
+        // Delete existing Instagram profile (handles case where none exists)
+        await instagramService.deleteProfile(client.id)
 
         // Create Instagram profile
         const profileId = await instagramService.createProfileFromData(
@@ -45,7 +47,7 @@ export class UploadService {
         // Store raw upload data
         await uploadRepository.create({
           client: { connect: { id: client.id } },
-          filename: `${dto.clientName}_${new Date().toISOString()}.json`,
+          filename: `${client.name}_${new Date().toISOString()}.json`,
           rawData: parsedData
         })
 
@@ -55,7 +57,7 @@ export class UploadService {
       return {
         success: true,
         slug: result.slug,
-        username: result.username
+        username: username
       }
     } catch (error) {
       console.error('Upload processing error:', error)

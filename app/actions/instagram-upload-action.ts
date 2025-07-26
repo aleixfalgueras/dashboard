@@ -5,22 +5,22 @@ import { UploadRequestDto } from '@/lib/types/instagram/upload-dto'
 
 export async function uploadInstagramData(formData: FormData) {
   try {
-    const clientName = formData.get('clientName') as string
+    const clientId = formData.get('clientId') as string
     const jsonData = formData.get('jsonData') as string
 
-    if (!clientName || !jsonData) {
+    if (!clientId || !jsonData) {
       return {
         success: false,
-        error: 'Missing client name or data'
+        error: 'Missing client or data'
       }
     }
 
-    const dto: UploadRequestDto = {
-      clientName,
+    const uploadRequestDto: UploadRequestDto = {
+      clientId,
       jsonData
     }
 
-    const result = await uploadService.processUpload(dto)
+    const result = await uploadService.processUpload(uploadRequestDto)
     
     return {
       success: result.success,

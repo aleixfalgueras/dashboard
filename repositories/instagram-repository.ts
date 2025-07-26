@@ -35,6 +35,13 @@ export class InstagramRepository {
       }
     }
   }
+
+  // Delete operations
+  async deleteProfileByClientId(clientId: string): Promise<void> {
+    await prisma.instagramProfile.deleteMany({
+      where: { clientId }
+    })
+  }
 }
 
 // Export singleton instance

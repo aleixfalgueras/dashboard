@@ -4,17 +4,21 @@ import { Client } from '@prisma/client'
 import { ClientDashboardData, ClientListItem } from '@/lib/types/client/dashboard-dto'
 
 export class ClientService {
-  async createClient(username: string): Promise<Client> {
-    const slug = this.generateSlug(username)
+  async createClient(name: string): Promise<Client> {
+    const slug = this.generateSlug(name)
     
     return clientRepository.create({
-      username,
+      name,
       slug
     })
   }
 
-  async getClientByUsername(username: string): Promise<Client | null> {
-    return clientRepository.findByUsername(username)
+  async getClientByName(name: string): Promise<Client | null> {
+    return clientRepository.findByName(name)
+  }
+
+  async getClientById(id: string): Promise<Client | null> {
+    return clientRepository.findById(id)
   }
 
   async getClientDashboardData(slug: string): Promise<ClientDashboardData | null> {
@@ -32,19 +36,16 @@ export class ClientService {
     }))
   }
 
-  async deleteClientByUsername(username: string): Promise<void> {
-    await clientRepository.deleteByUsername(username)
+  async deleteClientById(id: string): Promise<void> {
+    await clientRepository.delete(id)
   }
 
-  private generateSlug(username: string): string {
-    return `${username}_${nanoid(6)}`
+  private generateSlug(name: string): string {
+    // Convert name to URL-friendly format
+    const cleanName = name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+    return `${cleanName}_${nanoid(6)}`
   }
 
-  // Extract username from Instagram URL
-  extractUsernameFromUrl(url: string): string {
-    const match = url.match(/instagram\.com\/([^\/]+)/)
-    return match ? match[1] : 'unknown'
-  }
 }
 
 // Export singleton instance

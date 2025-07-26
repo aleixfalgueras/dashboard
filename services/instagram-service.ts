@@ -17,6 +17,7 @@ export class InstagramService {
     
     const profile = await instagramRepository.createProfile({
       client: { connect: { id: clientId } },
+      username: firstPost.ownerUsername,
       fullName: firstPost.ownerFullName,
       followersCount: 0, // Would need additional API data
       followingCount: 0, // Would need additional API data
@@ -24,6 +25,10 @@ export class InstagramService {
     })
     
     return profile.id
+  }
+
+  async deleteProfile(clientId: string): Promise<void> {
+    await instagramRepository.deleteProfileByClientId(clientId)
   }
 
   async createPostsFromData(

@@ -6,9 +6,15 @@ export class ClientRepository {
     return prisma.client.create({ data })
   }
 
-  async findByUsername(username: string): Promise<Client | null> {
+  async findByName(name: string): Promise<Client | null> {
     return prisma.client.findFirst({
-      where: { username }
+      where: { name }
+    })
+  }
+
+  async findById(id: string): Promise<Client | null> {
+    return prisma.client.findUnique({
+      where: { id }
     })
   }
 
@@ -52,12 +58,6 @@ export class ClientRepository {
     })
   }
 
-  async deleteByUsername(username: string): Promise<void> {
-    const client = await this.findByUsername(username)
-    if (client) {
-      await this.delete(client.id)
-    }
-  }
 }
 
 // Export singleton instance

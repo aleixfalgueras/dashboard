@@ -40,7 +40,9 @@ export default async function Home() {
           {clients.map((client) => (
             <Card key={client.id}>
               <CardHeader>
-                <CardTitle>@{client.username}</CardTitle>
+                <CardTitle>
+                  {client.profile ? `@${client.profile.username}` : client.name}
+                </CardTitle>
                 {client.profile && (
                   <CardDescription>{client.profile.fullName}</CardDescription>
                 )}

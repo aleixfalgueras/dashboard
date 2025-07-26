@@ -60,6 +60,6 @@ export interface UploadProcessingResult {
 
 // Upload request DTO
 export interface UploadRequestDto {
-  clientName: string
+  clientId: string
   jsonData: string
 }

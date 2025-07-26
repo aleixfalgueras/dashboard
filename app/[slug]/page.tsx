@@ -27,7 +27,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">@{client.username}</h1>
+        <h1 className="text-3xl font-bold">@{profile.username}</h1>
         <p className="text-muted-foreground">{profile.fullName}</p>
       </div>
 
