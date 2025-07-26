@@ -37,11 +37,10 @@ export class InstagramService {
         // Create posts and comments
         await this.createInstagramPostsFromData(profileId, validatedData)
 
-        // Store raw upload data
+        // Store upload metadata
         await uploadRepository.create({
           client: { connect: { id: client.id } },
-          filename: uploadRequestDto.fileName,
-          rawData: parsedData
+          filename: uploadRequestDto.fileName
         })
       })
 
