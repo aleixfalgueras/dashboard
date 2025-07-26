@@ -1,4 +1,5 @@
 
 export enum DataSource {
-  INSTAGRAM = "Instagram"
+  INSTAGRAM_PROFILE = "Instagram Profile",
+  INSTAGRAM_CONTENT = "Instagram Content"
 }

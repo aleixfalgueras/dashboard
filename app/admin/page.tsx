@@ -1,27 +1,49 @@
 'use client'
 
-import { useState, useCallback } from 'react'
-import { useDropzone } from 'react-dropzone'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
-import { Upload, FileJson, Loader2, Plus, Trash2, ArrowRight } from 'lucide-react'
-import { uploadDataSource } from '@/app/actions/upload-action'
-import { useClientManagement } from '@/hooks/use-client-management'
-import { DataSource } from '@/lib/types/common/enums'
+import {useCallback, useState} from 'react'
+import {useDropzone} from 'react-dropzone'
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
+import {Button} from '@/components/ui/button'
+import {Input} from '@/components/ui/input'
+import {Label} from '@/components/ui/label'
+import {useToast} from '@/hooks/use-toast'
+import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload} from 'lucide-react'
+import {SiInstagram} from 'react-icons/si'
+import {uploadDataSource} from '@/app/actions/upload-action'
+import {useClientManagement} from '@/hooks/use-client-management'
+import {DataSource} from '@/lib/types/common/enums'
 import Link from 'next/link'
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from '@/components/ui/dropdown-menu'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
-  const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM)
+  const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM_CONTENT)
   const [newClientName, setNewClientName] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const { toast } = useToast()
   const { clients, creating, createClient, deleteClient } = useClientManagement()
+
+  const getDataSourceDisplay = (dataSource: DataSource) => {
+    switch (dataSource) {
+      case DataSource.INSTAGRAM_PROFILE:
+        return {
+          icon: <SiInstagram className="mr-2 h-4 w-4" />,
+          label: DataSource.INSTAGRAM_PROFILE
+        }
+      case DataSource.INSTAGRAM_CONTENT:
+        return {
+          icon: <SiInstagram className="mr-2 h-4 w-4" />,
+          label: DataSource.INSTAGRAM_CONTENT
+        }
+      default:
+        return {
+          icon: <SiInstagram className="mr-2 h-4 w-4" />,
+          label: 'Instagram Content'
+        }
+    }
+  }
 
   const handleCreateClient = async () => {
     const result = await createClient(newClientName)
@@ -86,7 +108,7 @@ export default function AdminPage() {
 
       // Reset form
       setSelectedClientId('')
-      setSelectedDataSource(DataSource.INSTAGRAM)
+      setSelectedDataSource(DataSource.INSTAGRAM_CONTENT)
       setUploadedFile(null)
     } catch (error) {
       console.error('Upload error:', error)
@@ -111,13 +133,10 @@ export default function AdminPage() {
         <Card>
           <CardHeader>
             <CardTitle>Client Management</CardTitle>
-            <CardDescription>
-              Manage clients and upload their Instagram data
-            </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-medium">Existing Clients</h3>
+              <h3 className="font-medium">Existing Clients</h3>
               <Button
                 onClick={() => setShowCreateForm(true)}
                 variant="outline"
@@ -204,43 +223,62 @@ export default function AdminPage() {
         {/* Upload Data */}
         <Card>
           <CardHeader>
-            <CardTitle>Upload Social Media Data</CardTitle>
-            <CardDescription>
-              Select a client and upload their social media JSON data
-            </CardDescription>
+            <CardTitle>Upload Data</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="data-source-select">Data Source</Label>
-              <select
-                id="data-source-select"
-                value={selectedDataSource}
-                onChange={(e) => setSelectedDataSource(e.target.value as DataSource)}
-                disabled={uploading}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value={DataSource.INSTAGRAM}>Instagram</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="client-select">Select Client</Label>
-              <select
-                id="client-select"
-                value={selectedClientId}
-                onChange={(e) => setSelectedClientId(e.target.value)}
-                disabled={uploading || clients.length === 0}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <option value="" disabled>
-                  {clients.length === 0 ? "No clients available" : "Select a client"}
-                </option>
-                {clients.map((client) => (
-                  <option key={client.id} value={client.id}>
-                    {client.name}
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="client-select">Select Client</Label>
+                <select
+                  id="client-select"
+                  value={selectedClientId}
+                  onChange={(e) => setSelectedClientId(e.target.value)}
+                  disabled={uploading || clients.length === 0}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="" disabled>
+                    {clients.length === 0 ? "No clients available" : "Select a client"}
                   </option>
-                ))}
-              </select>
+                  {clients.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="data-source-select">Data Source</Label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between h-10"
+                      disabled={uploading}
+                    >
+                      <div className="flex items-center">
+                        {getDataSourceDisplay(selectedDataSource).icon}
+                        {getDataSourceDisplay(selectedDataSource).label}
+                      </div>
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent 
+                    className="w-full" 
+                    style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
+                  >
+                    {Object.values(DataSource).map((dataSource) => (
+                      <DropdownMenuItem
+                        key={dataSource}
+                        onClick={() => setSelectedDataSource(dataSource)}
+                      >
+                        {getDataSourceDisplay(dataSource).icon}
+                        {getDataSourceDisplay(dataSource).label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
 
           <div
