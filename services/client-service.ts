@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { clientRepository } from '@/repositories/client-repository'
 import { Client } from '@prisma/client'
-import { ClientDashboardData } from '@/lib/types/client/dashboard-dto'
+import { ClientDashboardData } from '@/lib/types/dashboard-types'
 
 export class ClientService {
   async createClient(name: string): Promise<Client> {

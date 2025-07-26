@@ -1,6 +1,6 @@
 import { clientService } from './client-service'
 import { instagramService } from './instagram-service'
-import { DashboardPageData, DashboardClientWithProfile } from '@/lib/types/client/dashboard-dto'
+import { DashboardPageData, DashboardClientWithProfile } from '@/lib/types/dashboard-types'
 
 export class DashboardService {
   async getDashboardData(slug: string): Promise<DashboardPageData | null> {

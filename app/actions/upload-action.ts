@@ -1,22 +1,25 @@
 'use server'
 
 import { uploadService } from '@/services/upload-service'
-import { UploadRequestDto } from '@/lib/types/instagram/upload-dto'
+import { DataSource } from '@/lib/types/common/enums'
+import {UploadRequestDto} from "@/lib/types/common/upload-types";
 
-export async function uploadInstagramData(formData: FormData) {
+export async function uploadDataSource(formData: FormData) {
   try {
     const clientId = formData.get('clientId') as string
+    const dataSource = formData.get('dataSource') as string
     const jsonData = formData.get('jsonData') as string
 
-    if (!clientId || !jsonData) {
+    if (!clientId || !dataSource || !jsonData) {
       return {
         success: false,
-        error: 'Missing client or data'
+        error: 'Missing client, data source, or data'
       }
     }
 
     const uploadRequestDto: UploadRequestDto = {
       clientId,
+      dataSource: dataSource as DataSource,
       jsonData
     }
 

@@ -1,4 +1,4 @@
-import { z } from 'zod'
+import {z} from 'zod'
 
 // Instagram data validation schemas
 export const InstagramCommentSchema = z.object({
@@ -47,19 +47,4 @@ export const InstagramPostSchema = z.object({
 export const InstagramDataSchema = z.array(InstagramPostSchema)
 
 // Type exports for use in services
-export type RawInstagramComment = z.infer<typeof InstagramCommentSchema>
-export type RawInstagramPost = z.infer<typeof InstagramPostSchema>
 export type RawInstagramData = z.infer<typeof InstagramDataSchema>
-
-// Upload processing result
-export interface UploadProcessingResult {
-  success: boolean
-  slug: string
-  username: string
-}
-
-// Upload request DTO
-export interface UploadRequestDto {
-  clientId: string
-  jsonData: string
-}

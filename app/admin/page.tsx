@@ -8,12 +8,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { Upload, FileJson, Loader2, Plus, Trash2, ArrowRight } from 'lucide-react'
-import { uploadInstagramData } from '@/app/actions/instagram-upload-action'
+import { uploadDataSource } from '@/app/actions/upload-action'
 import { useClientManagement } from '@/hooks/use-client-management'
+import { DataSource } from '@/lib/types/common/enums'
 import Link from 'next/link'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
+  const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM)
   const [newClientName, setNewClientName] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -51,10 +53,10 @@ export default function AdminPage() {
   })
 
   const handleUpload = async () => {
-    if (!uploadedFile || !selectedClientId) {
+    if (!uploadedFile || !selectedClientId || !selectedDataSource) {
       toast({
         title: 'Missing information',
-        description: 'Please select a client and provide a JSON file.',
+        description: 'Please select a data source, client, and provide a JSON file.',
         variant: 'destructive'
       })
       return
@@ -68,9 +70,10 @@ export default function AdminPage() {
 
       const formData = new FormData()
       formData.append('clientId', selectedClientId)
+      formData.append('dataSource', selectedDataSource)
       formData.append('jsonData', JSON.stringify(jsonData))
 
-      const result = await uploadInstagramData(formData)
+      const result = await uploadDataSource(formData)
 
       if (!result.success) {
         throw new Error(result.error || 'Upload failed')
@@ -83,6 +86,7 @@ export default function AdminPage() {
 
       // Reset form
       setSelectedClientId('')
+      setSelectedDataSource(DataSource.INSTAGRAM)
       setUploadedFile(null)
     } catch (error) {
       console.error('Upload error:', error)
@@ -200,12 +204,25 @@ export default function AdminPage() {
         {/* Upload Data */}
         <Card>
           <CardHeader>
-            <CardTitle>Upload Instagram Data</CardTitle>
+            <CardTitle>Upload Social Media Data</CardTitle>
             <CardDescription>
-              Select a client and upload their Instagram JSON data
+              Select a client and upload their social media JSON data
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="data-source-select">Data Source</Label>
+              <select
+                id="data-source-select"
+                value={selectedDataSource}
+                onChange={(e) => setSelectedDataSource(e.target.value as DataSource)}
+                disabled={uploading}
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option value={DataSource.INSTAGRAM}>Instagram</option>
+              </select>
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="client-select">Select Client</Label>
               <select
@@ -253,7 +270,7 @@ export default function AdminPage() {
 
           <Button
             onClick={handleUpload}
-            disabled={!uploadedFile || !selectedClientId || uploading}
+            disabled={!uploadedFile || !selectedClientId || !selectedDataSource || uploading}
             className="w-full"
           >
             {uploading ? (
