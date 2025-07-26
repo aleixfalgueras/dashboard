@@ -11,11 +11,10 @@ import { Prisma, InstagramPost } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { uploadRepository } from '@/repositories/upload-repository'
 import { clientService } from './client-service'
-import { z } from 'zod'
 
 export class InstagramService {
 
-  async processInstagramContentUpload(uploadRequestDto: UploadRequestDto): Promise<boolean> {
+  async processInstagramContentUpload(uploadRequestDto: UploadRequestDto): Promise<void> {
     try {
       // Parse and validate the JSON data
       const parsedData = JSON.parse(uploadRequestDto.jsonData)
@@ -28,9 +27,9 @@ export class InstagramService {
       }
 
       // Process in a transaction
-      await prisma.$transaction(async () => {
+      return await prisma.$transaction(async () => {
         // Find existing Instagram profile or create new one
-        const profileId = await this.getInstagramProfileOrCreateFromData(
+        const profileId = await this.getInstagramProfileIdOrCreateFromData(
           client.id, 
           validatedData
         )
@@ -41,24 +40,18 @@ export class InstagramService {
         // Store raw upload data
         await uploadRepository.create({
           client: { connect: { id: client.id } },
-          filename: `${client.name}_${new Date().toISOString()}.json`,
+          filename: uploadRequestDto.fileName,
           rawData: parsedData
         })
       })
 
-      return true
     } catch (error) {
       console.error('Instagram upload processing error:', error)
-      
-      if (error instanceof z.ZodError) {
-        throw new Error(`Invalid data format: ${error.issues[0]?.message || 'Unknown validation error'}`)
-      }
-      
       throw error
     }
   }
 
-  async getInstagramProfileOrCreateFromData(
+  async getInstagramProfileIdOrCreateFromData(
     clientId: string, 
     instagramData: RawInstagramData
   ): Promise<string> {
@@ -66,8 +59,11 @@ export class InstagramService {
     const existingProfile = await instagramRepository.findInstagramProfileByClientId(clientId)
     
     if (existingProfile) {
+      console.info(`Instagram profile found for clientId ${clientId}: ${existingProfile}`)
       return existingProfile.id
     }
+
+    console.info(`Creating Instagram profile for clientId ${clientId}`)
     
     // Create new profile if none exists
     const firstPost = instagramData[0]
@@ -80,6 +76,8 @@ export class InstagramService {
       followingCount: 0, // Would need additional API data
       postsCount: instagramData.length
     })
+
+    console.info(`Instagram profile created successfully: ${profile}`)
     
     return profile.id
   }

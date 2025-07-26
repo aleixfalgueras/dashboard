@@ -9,23 +9,25 @@ export async function uploadDataSource(formData: FormData) {
     const clientId = formData.get('clientId') as string
     const dataSource = formData.get('dataSource') as string
     const jsonData = formData.get('jsonData') as string
+    const fileName = formData.get('fileName') as string
 
-    if (!clientId || !dataSource || !jsonData) {
+    if (!clientId || !dataSource || !jsonData || !fileName) {
       return {
         success: false,
-        error: 'Missing client, data source, or data'
+        error: 'Missing client, data source, data, or file name'
       }
     }
 
     const uploadRequestDto: UploadRequestDto = {
       clientId,
       dataSource: dataSource as DataSource,
-      jsonData
+      jsonData,
+      fileName
     }
 
     await uploadService.processUpload(uploadRequestDto)
-    
     return { success: true }
+
   } catch (error) {
     console.error('Upload action error:', error)
     

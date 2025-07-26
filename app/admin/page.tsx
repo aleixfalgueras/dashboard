@@ -105,6 +105,7 @@ export default function AdminPage() {
       formData.append('clientId', selectedClientId)
       formData.append('dataSource', selectedDataSource)
       formData.append('jsonData', JSON.stringify(jsonData))
+      formData.append('fileName', uploadedFile.name)
 
       const result = await uploadDataSource(formData)
 

@@ -23,6 +23,8 @@ export class InstagramRepository {
       comments: Prisma.InstagramCommentCreateManyInput[]
     }>
   ): Promise<void> {
+    console.info(`Proceed to create ${posts.length} Instagram posts`)
+
     for (const { post, comments } of posts) {
       const createdPost = await this.createInstagramPost(post)
       
@@ -34,6 +36,8 @@ export class InstagramRepository {
         await this.createManyComments(commentsWithPostId)
       }
     }
+
+    console.info("Instagram posts created successfully")
   }
 
   // Find operations
