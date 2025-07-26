@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
-import { Upload, FileJson, Loader2, Plus, Trash2 } from 'lucide-react'
+import { Upload, FileJson, Loader2, Plus, Trash2, ArrowRight } from 'lucide-react'
 import { uploadInstagramData } from '@/app/actions/instagram-upload-action'
 import { useClientManagement } from '@/hooks/use-client-management'
+import Link from 'next/link'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -97,6 +98,10 @@ export default function AdminPage() {
 
   return (
     <div className="container mx-auto max-w-4xl py-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Dico De Rooij Dashboards</h1>
+      </div>
+
       <div className="space-y-6">
         {/* Client Management */}
         <Card>
@@ -165,18 +170,25 @@ export default function AdminPage() {
                 <div className="grid gap-2">
                   {clients.map((client) => (
                     <div key={client.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div>
+                      <div className="flex-1">
                         <h4 className="font-medium">{client.name}</h4>
                         <p className="text-sm text-muted-foreground">Created {new Date(client.createdAt).toLocaleDateString()}</p>
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteClient(client.id)}
-                        disabled={uploading || creating}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <div className="flex gap-2">
+                        <Link href={`/${client.slug}`}>
+                          <Button variant="outline" size="sm">
+                            <ArrowRight className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDeleteClient(client.id)}
+                          disabled={uploading || creating}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>

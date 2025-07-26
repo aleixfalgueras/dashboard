@@ -35,17 +35,8 @@ export class ClientRepository {
     })
   }
 
-  async findMany() {
+  async findMany(): Promise<Client[]> {
     return prisma.client.findMany({
-      include: {
-        profile: true,
-        uploads: {
-          orderBy: {
-            processedAt: 'desc'
-          },
-          take: 1
-        }
-      },
       orderBy: {
         createdAt: 'desc'
       }

@@ -12,7 +12,8 @@ export function useClientManagement() {
 
   useEffect(() => {
     void loadClients()
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const loadClients = async () => {
     try {

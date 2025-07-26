@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid'
 import { clientRepository } from '@/repositories/client-repository'
 import { Client } from '@prisma/client'
-import { ClientDashboardData, ClientListItem } from '@/lib/types/client/dashboard-dto'
+import { ClientDashboardData } from '@/lib/types/client/dashboard-dto'
 
 export class ClientService {
   async createClient(name: string): Promise<Client> {
@@ -25,15 +25,8 @@ export class ClientService {
     return clientRepository.findBySlugWithFullData(slug)
   }
 
-  async getAllClients(): Promise<ClientListItem[]> {
-    const clients = await clientRepository.findMany()
-    
-    return clients.map(client => ({
-      ...client,
-      lastUpload: client.uploads[0] ? {
-        processedAt: client.uploads[0].processedAt
-      } : undefined
-    }))
+  async getAllClients(): Promise<Client[]> {
+    return await clientRepository.findMany()
   }
 
   async deleteClientById(id: string): Promise<void> {

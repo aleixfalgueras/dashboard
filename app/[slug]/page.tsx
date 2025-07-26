@@ -94,7 +94,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 {postTypes.map((type) => (
                   <div key={type.type} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {type.type === 'Image' ? <Image className="h-4 w-4" /> : <Video className="h-4 w-4" />}
+                      {/* eslint-disable-next-line jsx-a11y/alt-text */}
+                      {type.type === 'Image' ? <Image className="h-4 w-4"/> : <Video className="h-4 w-4" />}
                       <span className="font-medium">{type.type}</span>
                     </div>
                     <div className="flex items-center gap-2">

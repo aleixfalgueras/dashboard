@@ -44,11 +44,3 @@ export interface DashboardPageData {
   topPosts: InstagramPost[]
   hashtagAnalysis: HashtagAnalysis[]
 }
-
-// Client list item
-export interface ClientListItem extends Client {
-  profile: InstagramProfile | null
-  lastUpload?: {
-    processedAt: Date
-  }
-}

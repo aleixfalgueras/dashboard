@@ -45,14 +45,8 @@ export async function createClient(formData: FormData) {
 
 export async function getAllClients(): Promise<Client[]> {
   try {
-    const clients = await clientService.getAllClients()
-    return clients.map(client => ({
-      id: client.id,
-      name: client.name,
-      slug: client.slug,
-      createdAt: client.createdAt,
-      updatedAt: client.updatedAt
-    }))
+    return await clientService.getAllClients()
+
   } catch (error) {
     console.error('Get clients error:', error)
     return []
