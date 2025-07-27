@@ -193,7 +193,7 @@ export default function AdminPage() {
     <TooltipProvider>
       <div className="container mx-auto max-w-4xl py-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Dico De Rooij Dashboards</h1>
+        <h1 className="text-4xl font-bold mb-2 text-accent">Dico De Rooij Dashboards</h1>
       </div>
 
       <div className="space-y-6">
@@ -312,7 +312,7 @@ export default function AdminPage() {
             <Button
               onClick={handleUpload}
               disabled={!uploadedFile || !selectedClientId || !selectedDataSource || uploading}
-              className="w-full"
+              className="w-full bg-accent hover:bg-accent/90"
             >
               {uploading ? (
                 <>
@@ -432,7 +432,7 @@ export default function AdminPage() {
                               onClick={() => setClientToDelete(client.id)}
                               disabled={uploading || creating || cleaning}
                             >
-                              <Trash2 className="h-4 w-4" />
+                              <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
