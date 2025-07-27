@@ -4,4 +4,5 @@ export interface UploadRequestDto {
   dataSource: import('../common/enums').DataSource
   jsonData: string
   fileName: string
+  overwriteData: boolean
 }

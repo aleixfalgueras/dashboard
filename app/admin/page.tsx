@@ -6,6 +6,7 @@ import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
 import {Button} from '@/components/ui/button'
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
+import {Checkbox} from '@/components/ui/checkbox'
 import {useToast} from '@/hooks/use-toast'
 import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload, Eraser} from 'lucide-react'
 import {SiInstagram} from 'react-icons/si'
@@ -23,6 +24,7 @@ import {cleanClientData} from '@/app/actions/client-management-action';
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
   const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM_CONTENT)
+  const [overwriteData, setOverwriteData] = useState(true)
   const [newClientName, setNewClientName] = useState('')
   const [uploading, setUploading] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
@@ -157,6 +159,7 @@ export default function AdminPage() {
       formData.append('dataSource', selectedDataSource)
       formData.append('jsonData', JSON.stringify(jsonData))
       formData.append('fileName', uploadedFile.name)
+      formData.append('overwriteData', overwriteData.toString())
 
       const result = await uploadDataSource(formData)
 
@@ -172,6 +175,7 @@ export default function AdminPage() {
       // Reset form
       setSelectedClientId('')
       setSelectedDataSource(DataSource.INSTAGRAM_CONTENT)
+      setOverwriteData(true)
       setUploadedFile(null)
     } catch (error) {
       logger.error('Upload error:', error)
@@ -263,6 +267,21 @@ export default function AdminPage() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="overwrite-data"
+                checked={overwriteData}
+                onCheckedChange={(checked) => setOverwriteData(checked === true)}
+                disabled={uploading}
+              />
+              <Label
+                htmlFor="overwrite-data"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Overwrite existing data
+              </Label>
             </div>
 
             <div

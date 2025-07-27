@@ -11,7 +11,8 @@ export class UploadService {
       logger.info(`Processing upload:
        datasource: ${uploadRequestDto.dataSource}, 
        clientId: ${uploadRequestDto.clientId}, 
-       fileName: ${uploadRequestDto.fileName}`
+       fileName: ${uploadRequestDto.fileName}, 
+       overwrite: ${uploadRequestDto.overwriteData}`
       )
 
       // Route to appropriate processor based on data source

@@ -91,6 +91,27 @@ export class InstagramRepository {
     return result
   }
 
+  async deleteInstagramPostsByClientId(clientId: string): Promise<number> {
+    logger.info(`Attempting to delete Instagram posts for client ${clientId}`)
+    
+    // Check if profile exists first
+    const existingProfile = await this.findInstagramProfileByClientId(clientId)
+    
+    if (!existingProfile) {
+      logger.info(`No Instagram profile found for client ${clientId}, nothing to delete`)
+      return 0
+    }
+    
+    const result = await prisma.instagramPost.deleteMany({
+      where: {
+        profileId: existingProfile.id
+      }
+    })
+    
+    logger.info(`Deleted ${result.count} Instagram posts for client ${clientId}`)
+    return result.count
+  }
+
 }
 
 // Export singleton instance

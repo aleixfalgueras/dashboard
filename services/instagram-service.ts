@@ -26,6 +26,11 @@ export class InstagramService {
         throw new Error('Client not found')
       }
 
+      // Delete existing posts if overwrite is enabled
+      if (uploadRequestDto.overwriteData) {
+        await this.deleteInstagramPostsByClientId(uploadRequestDto.clientId)
+      }
+
       // Find existing Instagram profile or create new one
       const profileId = await this.getInstagramProfileIdOrCreateFromData(
         client.id, 
@@ -176,6 +181,14 @@ export class InstagramService {
   async deleteInstagramProfileByClientId(clientId: string): Promise<InstagramProfile | null> {
     try {
       return await instagramRepository.deleteInstagramProfileByClientId(clientId)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async deleteInstagramPostsByClientId(clientId: string): Promise<number> {
+    try {
+      return await instagramRepository.deleteInstagramPostsByClientId(clientId)
     } catch (error) {
       throw error
     }

@@ -11,6 +11,7 @@ export async function uploadDataSource(formData: FormData) {
     const dataSource = formData.get('dataSource') as string
     const jsonData = formData.get('jsonData') as string
     const fileName = formData.get('fileName') as string
+    const overwriteData = formData.get('overwriteData') === 'true'
 
     if (!clientId || !dataSource || !jsonData || !fileName) {
       return {
@@ -23,7 +24,8 @@ export async function uploadDataSource(formData: FormData) {
       clientId,
       dataSource: dataSource as DataSource,
       jsonData,
-      fileName
+      fileName,
+      overwriteData
     }
 
     await uploadService.processUpload(uploadRequestDto)
