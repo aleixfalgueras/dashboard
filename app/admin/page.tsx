@@ -146,6 +146,120 @@ export default function AdminPage() {
       </div>
 
       <div className="space-y-6">
+        {/* Upload Data */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Upload Data</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex gap-4">
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="client-select">Select Client</Label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between h-10"
+                      disabled={uploading || clients.length === 0}
+                    >
+                      <div className="flex items-center">
+                        {getSelectedClientDisplay()}
+                      </div>
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-full"
+                    style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
+                  >
+                    {clients.map((client) => (
+                      <DropdownMenuItem
+                        key={client.id}
+                        onClick={() => setSelectedClientId(client.id)}
+                      >
+                        {client.name}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              <div className="flex-1 space-y-2">
+                <Label htmlFor="data-source-select">Data Source</Label>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-between h-10"
+                      disabled={uploading}
+                    >
+                      <div className="flex items-center">
+                        {getDataSourceDisplay(selectedDataSource).icon}
+                        {getDataSourceDisplay(selectedDataSource).label}
+                      </div>
+                      <ChevronDown className="h-4 w-4 opacity-50" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    className="w-full"
+                    style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
+                  >
+                    {Object.values(DataSource).map((dataSource) => (
+                      <DropdownMenuItem
+                        key={dataSource}
+                        onClick={() => setSelectedDataSource(dataSource)}
+                      >
+                        {getDataSourceDisplay(dataSource).icon}
+                        {getDataSourceDisplay(dataSource).label}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
+
+            <div
+              {...getRootProps()}
+              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
+                isDragActive ? 'border-primary bg-primary/10' : 'border-muted-foreground/25 hover:border-primary'
+              }`}
+            >
+              <input {...getInputProps()} />
+              {uploadedFile ? (
+                <div className="space-y-2">
+                  <FileJson className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <p className="text-sm font-medium">{uploadedFile.name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {(uploadedFile.size / 1024).toFixed(2)} KB
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <p className="text-sm text-muted-foreground">
+                    {isDragActive ? 'Drop the file here' : 'Drag & drop a JSON file here, or click to select'}
+                  </p>
+                </div>
+              )}
+            </div>
+
+            <Button
+              onClick={handleUpload}
+              disabled={!uploadedFile || !selectedClientId || !selectedDataSource || uploading}
+              className="w-full"
+            >
+              {uploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                'Upload Data'
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
         {/* Client Management */}
         <Card>
           <CardHeader>
@@ -250,120 +364,6 @@ export default function AdminPage() {
                 </div>
               )}
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Upload Data */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Upload Data</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex gap-4">
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="client-select">Select Client</Label>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between h-10"
-                      disabled={uploading || clients.length === 0}
-                    >
-                      <div className="flex items-center">
-                        {getSelectedClientDisplay()}
-                      </div>
-                      <ChevronDown className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    className="w-full" 
-                    style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
-                  >
-                    {clients.map((client) => (
-                      <DropdownMenuItem
-                        key={client.id}
-                        onClick={() => setSelectedClientId(client.id)}
-                      >
-                        {client.name}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
-              <div className="flex-1 space-y-2">
-                <Label htmlFor="data-source-select">Data Source</Label>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between h-10"
-                      disabled={uploading}
-                    >
-                      <div className="flex items-center">
-                        {getDataSourceDisplay(selectedDataSource).icon}
-                        {getDataSourceDisplay(selectedDataSource).label}
-                      </div>
-                      <ChevronDown className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent 
-                    className="w-full" 
-                    style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
-                  >
-                    {Object.values(DataSource).map((dataSource) => (
-                      <DropdownMenuItem
-                        key={dataSource}
-                        onClick={() => setSelectedDataSource(dataSource)}
-                      >
-                        {getDataSourceDisplay(dataSource).icon}
-                        {getDataSourceDisplay(dataSource).label}
-                      </DropdownMenuItem>
-                    ))}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </div>
-
-          <div
-            {...getRootProps()}
-            className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
-              isDragActive ? 'border-primary bg-primary/10' : 'border-muted-foreground/25 hover:border-primary'
-            }`}
-          >
-            <input {...getInputProps()} />
-            {uploadedFile ? (
-              <div className="space-y-2">
-                <FileJson className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="text-sm font-medium">{uploadedFile.name}</p>
-                <p className="text-xs text-muted-foreground">
-                  {(uploadedFile.size / 1024).toFixed(2)} KB
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-2">
-                <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
-                <p className="text-sm text-muted-foreground">
-                  {isDragActive ? 'Drop the file here' : 'Drag & drop a JSON file here, or click to select'}
-                </p>
-              </div>
-            )}
-          </div>
-
-          <Button
-            onClick={handleUpload}
-            disabled={!uploadedFile || !selectedClientId || !selectedDataSource || uploading}
-            className="w-full"
-          >
-            {uploading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              'Upload Data'
-            )}
-          </Button>
           </CardContent>
         </Card>
       </div>

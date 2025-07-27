@@ -40,7 +40,7 @@ export class ClientRepository {
   async findMany(): Promise<Client[]> {
     return prisma.client.findMany({
       orderBy: {
-        createdAt: 'desc'
+        name: 'asc'
       }
     })
   }
