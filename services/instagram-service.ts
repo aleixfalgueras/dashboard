@@ -11,6 +11,7 @@ import { Prisma, InstagramPost } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { uploadRepository } from '@/repositories/upload-repository'
 import { clientService } from './client-service'
+import {logger} from "@/lib/utils";
 
 export class InstagramService {
 
@@ -45,7 +46,7 @@ export class InstagramService {
       })
 
     } catch (error) {
-      console.error('Instagram upload processing error:', error)
+      logger.error('Instagram upload processing error:', error)
       throw error
     }
   }
@@ -58,11 +59,11 @@ export class InstagramService {
     const existingProfile = await instagramRepository.findInstagramProfileByClientId(clientId)
     
     if (existingProfile) {
-      console.info(`Instagram profile found for clientId ${clientId}: ${existingProfile}`)
+      logger.info(`Instagram profile found for clientId ${clientId}: ${existingProfile}`)
       return existingProfile.id
     }
 
-    console.info(`Creating Instagram profile for clientId ${clientId}`)
+    logger.info(`Creating Instagram profile for clientId ${clientId}`)
     
     // Create new profile if none exists
     const firstPost = instagramData[0]
@@ -76,7 +77,7 @@ export class InstagramService {
       postsCount: instagramData.length
     })
 
-    console.info(`Instagram profile created successfully: ${profile}`)
+    logger.info(`Instagram profile created successfully: ${profile}`)
     
     return profile.id
   }

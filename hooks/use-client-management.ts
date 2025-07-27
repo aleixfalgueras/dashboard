@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Client } from '@prisma/client'
 import { createClient, getAllClients, deleteClient } from '@/app/actions/client-management-action'
 import { useToast } from '@/hooks/use-toast'
+import {logger} from "@/lib/utils";
 
 export function useClientManagement() {
   const [clients, setClients] = useState<Client[]>([])
@@ -20,7 +21,7 @@ export function useClientManagement() {
       const clientList = await getAllClients()
       setClients(clientList)
     } catch (error) {
-      console.error('Error loading clients:', error)
+      logger.error('Error loading clients:', error)
       toast({
         title: 'Error',
         description: 'Failed to load clients',
@@ -59,7 +60,7 @@ export function useClientManagement() {
       await loadClients()
       return { success: true, data: result.data }
     } catch (error) {
-      console.error('Create client error:', error)
+      logger.error('Create client error:', error)
       toast({
         title: 'Create failed',
         description: error instanceof Error ? error.message : 'Failed to create client',
@@ -87,7 +88,7 @@ export function useClientManagement() {
       await loadClients()
       return { success: true, clientId }
     } catch (error) {
-      console.error('Delete client error:', error)
+      logger.error('Delete client error:', error)
       toast({
         title: 'Delete failed',
         description: error instanceof Error ? error.message : 'Failed to delete client',

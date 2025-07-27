@@ -1,10 +1,11 @@
 import { prisma } from '@/lib/prisma'
 import { Client, Prisma } from '@prisma/client'
 import {FullClientData} from "@/lib/types/dashboard-types";
+import {logger} from "@/lib/utils";
 
 export class ClientRepository {
   async create(data: Prisma.ClientCreateInput): Promise<Client> {
-    console.info(`Creating new client: ${data.name}, ${data.slug}`)
+    logger.info(`Creating new client: ${data.name}, ${data.slug}`)
     return prisma.client.create({ data })
   }
 

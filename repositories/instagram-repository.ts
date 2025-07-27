@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { InstagramProfile, InstagramPost, Prisma } from '@prisma/client'
+import {logger} from "@/lib/utils";
 
 export class InstagramRepository {
   // Profile operations
@@ -23,7 +24,7 @@ export class InstagramRepository {
       comments: Prisma.InstagramCommentCreateManyInput[]
     }>
   ): Promise<void> {
-    console.info(`Proceed to create ${posts.length} Instagram posts`)
+    logger.info(`Proceed to create ${posts.length} Instagram posts`)
 
     for (const { post, comments } of posts) {
       const createdPost = await this.createInstagramPost(post)
@@ -37,7 +38,7 @@ export class InstagramRepository {
       }
     }
 
-    console.info("Instagram posts created successfully")
+    logger.info("Instagram posts created successfully")
   }
 
   // Find operations

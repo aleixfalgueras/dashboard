@@ -3,6 +3,7 @@
 import { uploadService } from '@/services/upload-service'
 import { DataSource } from '@/lib/types/common/enums'
 import {UploadRequestDto} from "@/lib/types/common/upload-types";
+import {logger} from "@/lib/utils";
 
 export async function uploadDataSource(formData: FormData) {
   try {
@@ -29,7 +30,7 @@ export async function uploadDataSource(formData: FormData) {
     return { success: true }
 
   } catch (error) {
-    console.error('Upload action error:', error)
+    logger.error('Upload action error:', error)
     
     return {
       success: false,

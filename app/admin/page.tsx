@@ -16,6 +16,7 @@ import {useClientManagement} from '@/hooks/use-client-management'
 import {DataSource} from '@/lib/types/common/enums'
 import Link from 'next/link'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from '@/components/ui/dropdown-menu'
+import {logger} from "@/lib/utils";
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -127,7 +128,7 @@ export default function AdminPage() {
       setSelectedDataSource(DataSource.INSTAGRAM_CONTENT)
       setUploadedFile(null)
     } catch (error) {
-      console.error('Upload error:', error)
+      logger.error('Upload error:', error)
       toast({
         title: 'Upload failed',
         description: error instanceof Error ? error.message : 'Failed to process the file',

@@ -2,6 +2,7 @@ import { clientService } from './client-service'
 import { instagramService } from './instagram-service'
 import { DashboardData, DatasourcesData, InstagramDashboardData } from '@/lib/types/dashboard-types'
 import { AvailableDatasources } from '@/lib/types/common/enums'
+import {logger} from "@/lib/utils";
 
 export class DashboardService {
   async getDashboardData(slug: string): Promise<DashboardData | null> {
@@ -61,7 +62,7 @@ export class DashboardService {
         hashtagAnalysis
       }
     } catch (error) {
-      console.error('Error processing Instagram data:', error)
+      logger.error('Error processing Instagram data:', error)
       return null
     }
   }

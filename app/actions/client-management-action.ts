@@ -2,6 +2,7 @@
 
 import { clientService } from '@/services/client-service'
 import { Client } from '@prisma/client'
+import {logger} from "@/lib/utils";
 
 export async function createClient(formData: FormData) {
   try {
@@ -34,7 +35,7 @@ export async function createClient(formData: FormData) {
       }
     }
   } catch (error) {
-    console.error('Create client error:', error)
+    logger.error('Create client error:', error)
     
     return {
       success: false,
@@ -48,7 +49,7 @@ export async function getAllClients(): Promise<Client[]> {
     return await clientService.getAllClients()
 
   } catch (error) {
-    console.error('Get clients error:', error)
+    logger.error('Get clients error:', error)
     return []
   }
 }
@@ -61,7 +62,7 @@ export async function deleteClient(clientId: string) {
       success: true
     }
   } catch (error) {
-    console.error('Delete client error:', error)
+    logger.error('Delete client error:', error)
     
     return {
       success: false,
