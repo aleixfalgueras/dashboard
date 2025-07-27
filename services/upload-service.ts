@@ -19,6 +19,9 @@ export class UploadService {
       if (uploadRequestDto.dataSource === DataSource.INSTAGRAM_CONTENT) {
         await instagramService.processInstagramContentUpload(uploadRequestDto)
       }
+      else if (uploadRequestDto.dataSource === DataSource.INSTAGRAM_PROFILE) {
+        await instagramService.processInstagramProfileUpload(uploadRequestDto)
+      }
       else { throw new Error(`Unsupported data source: ${uploadRequestDto.dataSource}`) }
 
       logger.info("Upload processed successfully!")

@@ -8,6 +8,13 @@ export class InstagramRepository {
     return prisma.instagramProfile.create({ data })
   }
 
+  async updateInstagramProfile(id: string, data: Prisma.InstagramProfileUpdateInput): Promise<InstagramProfile> {
+    return prisma.instagramProfile.update({
+      where: { id },
+      data
+    })
+  }
+
   // Post operations
   async createInstagramPost(data: Prisma.InstagramPostCreateInput): Promise<InstagramPost> {
     return prisma.instagramPost.create({ data })

@@ -4,6 +4,7 @@ import {
   InstagramHashtagAnalysis,
   InstagramMetrics,
   InstagramPostTypeDistribution,
+  InstagramProfileDataSchema,
   RawInstagramData
 } from '@/lib/types/instagram-types'
 import {UploadRequestDto} from '@/lib/types/common/upload-types'
@@ -13,6 +14,72 @@ import {clientService} from './client-service'
 import {logger} from "@/lib/utils";
 
 export class InstagramService {
+
+  async processInstagramProfileUpload(uploadRequestDto: UploadRequestDto): Promise<void> {
+    try {
+      // Parse and validate the JSON data
+      const parsedData = JSON.parse(uploadRequestDto.jsonData)
+      const validatedData = InstagramProfileDataSchema.parse(parsedData)
+
+      // Get the client by ID
+      const client = await clientService.getClientById(uploadRequestDto.clientId)
+      if (!client) {
+        throw new Error('Client not found')
+      }
+
+      // Process profile data (should be array with single profile)
+      const profileData = validatedData[0]
+      if (!profileData) {
+        throw new Error('No profile data found')
+      }
+
+      // Check if profile already exists for this client
+      const existingProfile = await instagramRepository.findInstagramProfileByClientId(uploadRequestDto.clientId)
+      
+      if (existingProfile) {
+        if (uploadRequestDto.overwriteData) {
+          // Update existing profile
+          await instagramRepository.updateInstagramProfile(existingProfile.id, {
+            username: profileData.username,
+            fullName: profileData.fullName,
+            followersCount: profileData.followersCount,
+            followingCount: profileData.followsCount,
+            postsCount: profileData.postsCount,
+            bio: profileData.biography,
+            profilePicUrl: profileData.profilePicUrl,
+            isVerified: profileData.verified
+          })
+          logger.info(`Instagram profile updated for clientId ${uploadRequestDto.clientId}`)
+        } else {
+          logger.info(`Instagram profile already exists for clientId ${uploadRequestDto.clientId}, skipping update`)
+        }
+      } else {
+        // Create new profile
+        await instagramRepository.createInstagramProfile({
+          client: { connect: { id: uploadRequestDto.clientId } },
+          username: profileData.username,
+          fullName: profileData.fullName,
+          followersCount: profileData.followersCount,
+          followingCount: profileData.followsCount,
+          postsCount: profileData.postsCount,
+          bio: profileData.biography,
+          profilePicUrl: profileData.profilePicUrl,
+          isVerified: profileData.verified
+        })
+        logger.info(`Instagram profile created for clientId ${uploadRequestDto.clientId}`)
+      }
+
+      // Store upload metadata
+      await uploadRepository.create({
+        client: { connect: { id: client.id } },
+        filename: uploadRequestDto.fileName
+      })
+
+    } catch (error) {
+      logger.error('Instagram profile upload processing error:', error)
+      throw error
+    }
+  }
 
   async processInstagramContentUpload(uploadRequestDto: UploadRequestDto): Promise<void> {
     try {

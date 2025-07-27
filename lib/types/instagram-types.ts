@@ -1,5 +1,19 @@
 import {z} from 'zod'
 
+export const InstagramProfileDataSchema = z.array(z.object({
+  fullName: z.string(),
+  profilePicUrl: z.string(),
+  username: z.string(),
+  postsCount: z.number(),
+  followersCount: z.number(),
+  followsCount: z.number(),
+  private: z.boolean(),
+  verified: z.boolean(),
+  isBusinessAccount: z.boolean(),
+  biography: z.string()
+}))
+
+
 // Instagram data validation schemas
 export const InstagramCommentSchema = z.object({
   id: z.string(),
