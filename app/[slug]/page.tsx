@@ -45,7 +45,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           <TabsList>
             {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && (
               <TabsTrigger value={AvailableDatasources.INSTAGRAM} className="flex items-center gap-2">
-                <RiInstagramFill className="h-4 w-4" />
+                <RiInstagramFill className="h-4 w-4 instagram-gradient-text" />
                 Instagram
               </TabsTrigger>
             )}
@@ -57,7 +57,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <div className="space-y-4">
                 <div>
                   <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <RiInstagramFill className="h-6 w-6" />
+                    <RiInstagramFill className="h-6 w-6 instagram-gradient-text" />
                     @{datasourcesData.instagram.profile.username}
                   </h2>
                   <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
@@ -74,7 +74,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <div className="space-y-4">
               <div>
                 <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <RiInstagramFill className="h-6 w-6" />
+                  <RiInstagramFill className="h-6 w-6 instagram-gradient-text" />
                   @{datasourcesData.instagram.profile.username}
                 </h2>
                 <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>

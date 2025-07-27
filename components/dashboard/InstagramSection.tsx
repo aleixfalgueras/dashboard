@@ -1,6 +1,6 @@
 import {InstagramDashboardData} from "@/lib/types/dashboard-types";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Heart, Image, MessageCircle, TrendingUp, Video} from "lucide-react";
+import {BarChart3, Calendar, Heart, Image as ImageIcon, MessageCircle, TrendingUp, Video} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {format} from "date-fns";
 
@@ -11,43 +11,43 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
     <div className="space-y-8">
       {/* Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="border-l-4 border-l-accent accent-gradient-subtle">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground"/>
+            <BarChart3 className="h-4 w-4 text-accent"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalPosts}</div>
+            <div className="text-2xl font-bold text-accent">{metrics.totalPosts}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-red-400 bg-gradient-to-br from-red-50/50 to-transparent dark:from-red-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
-            <Heart className="h-4 w-4 text-muted-foreground"/>
+            <Heart className="h-4 w-4 text-red-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalLikes.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{metrics.totalLikes.toLocaleString()}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Comments</CardTitle>
-            <MessageCircle className="h-4 w-4 text-muted-foreground"/>
+            <MessageCircle className="h-4 w-4 text-blue-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.totalComments.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{metrics.totalComments.toLocaleString()}</div>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground"/>
+            <TrendingUp className="h-4 w-4 text-green-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{metrics.avgEngagementPerPost.toFixed(0)}</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{metrics.avgEngagementPerPost.toFixed(0)}</div>
             <p className="text-xs text-muted-foreground">per post</p>
           </CardContent>
         </Card>
@@ -56,9 +56,9 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
       {/* Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="posts">Top Posts</TabsTrigger>
-          <TabsTrigger value="content">Content Analysis</TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
+          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Content Analysis</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -72,15 +72,14 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                 {postTypes.map((type) => (
                   <div key={type.type} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                      {type.type === 'Image' ? <Image className="h-4 w-4"/> : <Video className="h-4 w-4"/>}
+                      {type.type === 'Image' ? <ImageIcon className="h-4 w-4"/> : <Video className="h-4 w-4"/>}
                       <span className="font-medium">{type.type}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">{type.count} posts</span>
                       <div className="w-32 bg-secondary rounded-full h-2">
                         <div
-                          className="bg-primary h-2 rounded-full"
+                          className="instagram-gradient h-2 rounded-full"
                           style={{width: `${type.percentage}%`}}
                         />
                       </div>
@@ -113,11 +112,11 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                     </div>
                     <div className="flex gap-4 text-sm">
                       <span className="flex items-center gap-1">
-                        <Heart className="h-3 w-3"/>
+                        <Heart className="h-3 w-3 text-red-500"/>
                         {post.likesCount}
                       </span>
                       <span className="flex items-center gap-1">
-                        <MessageCircle className="h-3 w-3"/>
+                        <MessageCircle className="h-3 w-3 text-blue-500"/>
                         {post.commentsCount}
                       </span>
                     </div>
@@ -135,37 +134,32 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
               <CardDescription>Posts with highest engagement</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="space-y-4">
                 {topPosts.map((post) => (
-                  <Card key={post.id}>
-                    <CardContent className="p-4">
-                      <div className="aspect-square relative mb-2">
-                        {post.displayUrl && (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={post.displayUrl}
-                            alt={post.caption?.substring(0, 50) || 'Instagram post'}
-                            className="rounded-md object-cover w-full h-full"
-                          />
-                        )}
-                      </div>
-                      <div className="space-y-2">
-                        <p className="text-sm line-clamp-2">
-                          {post.caption || 'No caption'}
+                  <div key={post.id} className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        {post.type === 'Image' ? <ImageIcon className="h-3 w-3 text-muted-foreground"/> : <Video className="h-3 w-3 text-muted-foreground"/>}
+                        <p className="text-sm font-medium leading-none">
+                          {post.caption ? post.caption.substring(0, 50) + '...' : 'No caption'}
                         </p>
-                        <div className="flex justify-between text-sm">
-                          <span className="flex items-center gap-1">
-                            <Heart className="h-3 w-3"/>
-                            {post.likesCount}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <MessageCircle className="h-3 w-3"/>
-                            {post.commentsCount}
-                          </span>
-                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                      <p className="text-sm text-muted-foreground">
+                        <Calendar className="inline h-3 w-3 mr-1"/>
+                        {format(new Date(post.timestamp), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <div className="flex gap-4 text-sm">
+                      <span className="flex items-center gap-1">
+                        <Heart className="h-3 w-3 text-red-500"/>
+                        {post.likesCount}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MessageCircle className="h-3 w-3 text-blue-500"/>
+                        {post.commentsCount}
+                      </span>
+                    </div>
+                  </div>
                 ))}
               </div>
             </CardContent>
