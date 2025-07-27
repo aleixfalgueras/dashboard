@@ -33,6 +33,15 @@ export class ClientRepository {
               }
             }
           }
+        },
+        tiktokProfile: {
+          include: {
+            posts: {
+              orderBy: {
+                createTime: 'desc'
+              }
+            }
+          }
         }
       }
     })

@@ -2,8 +2,10 @@ import {dashboardService} from '@/services/dashboard-service'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Card, CardHeader, CardTitle, CardDescription} from '@/components/ui/card'
 import {RiInstagramFill} from 'react-icons/ri'
+import {SiTiktok} from 'react-icons/si'
 import {AvailableDatasources} from '@/lib/types/common/enums'
 import {InstagramSection} from "@/components/dashboard/InstagramSection";
+import {TikTokSection} from "@/components/dashboard/TikTokSection";
 
 interface DashboardPageProps {
   params: {
@@ -49,7 +51,12 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 Instagram
               </TabsTrigger>
             )}
-            {/* Future datasources can be added here */}
+            {availableDatasources.includes(AvailableDatasources.TIKTOK) && (
+              <TabsTrigger value={AvailableDatasources.TIKTOK} className="flex items-center gap-2">
+                <SiTiktok className="h-4 w-4" />
+                TikTok
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && datasourcesData.instagram && (
@@ -63,6 +70,20 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                   <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
                 </div>
                 <InstagramSection data={datasourcesData.instagram} />
+              </div>
+            </TabsContent>
+          )}
+          {availableDatasources.includes(AvailableDatasources.TIKTOK) && datasourcesData.tiktok && (
+            <TabsContent value={AvailableDatasources.TIKTOK}>
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <SiTiktok className="h-6 w-6" />
+                    @{datasourcesData.tiktok.profile.username}
+                  </h2>
+                  <p className="text-muted-foreground">{datasourcesData.tiktok.profile.nickname}</p>
+                </div>
+                <TikTokSection data={datasourcesData.tiktok} />
               </div>
             </TabsContent>
           )}
@@ -80,6 +101,18 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
               </div>
               <InstagramSection data={datasourcesData.instagram} />
+            </div>
+          )}
+          {availableDatasources.includes(AvailableDatasources.TIKTOK) && datasourcesData.tiktok && (
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <SiTiktok className="h-6 w-6" />
+                  @{datasourcesData.tiktok.profile.username}
+                </h2>
+                <p className="text-muted-foreground">{datasourcesData.tiktok.profile.nickname}</p>
+              </div>
+              <TikTokSection data={datasourcesData.tiktok} />
             </div>
           )}
         </>

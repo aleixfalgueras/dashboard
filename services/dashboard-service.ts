@@ -1,6 +1,7 @@
 import { clientService } from './client-service'
 import { instagramService } from './instagram-service'
-import { DashboardData, DatasourcesData, InstagramDashboardData } from '@/lib/types/dashboard-types'
+import { tiktokService } from './tiktok-service'
+import { DashboardData, DatasourcesData, InstagramDashboardData, TiktokDashboardData } from '@/lib/types/dashboard-types'
 import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
 
@@ -24,14 +25,14 @@ export class DashboardService {
       }
     }
 
-    // Future datasources can be added here
-    // if (client.twitterProfile) {
-    //   const twitterData = await this.getTwitterDashboardData(client.twitterProfile)
-    //   if (twitterData) {
-    //     datasources.twitter = twitterData
-    //     availableDatasources.push('twitter')
-    //   }
-    // }
+    // Check and process TikTok data
+    if (client.tiktokProfile && client.tiktokProfile.posts.length > 0) {
+      const tiktokData = await this.getTiktokDashboardData(client.tiktokProfile)
+      if (tiktokData) {
+        datasourcesData.tiktok = tiktokData
+        availableDatasources.push(AvailableDatasources.TIKTOK)
+      }
+    }
 
     // Return null if no datasources have data
     if (availableDatasources.length === 0) {
@@ -63,6 +64,26 @@ export class DashboardService {
       }
     } catch (error) {
       logger.error('Error processing Instagram data:', error)
+      return null
+    }
+  }
+
+  private async getTiktokDashboardData(
+    profile: NonNullable<DashboardData['client']['tiktokProfile']>
+  ): Promise<TiktokDashboardData | null> {
+    try {
+      const metrics = tiktokService.calculateTiktokMetrics(profile.posts)
+      const topPosts = tiktokService.getTopPosts(profile.posts, 6)
+      const hashtagAnalysis = tiktokService.analyzeHashtags(profile.posts, 10)
+
+      return {
+        profile,
+        metrics,
+        topPosts,
+        hashtagAnalysis
+      }
+    } catch (error) {
+      logger.error('Error processing TikTok data:', error)
       return null
     }
   }

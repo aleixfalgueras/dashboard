@@ -1,0 +1,195 @@
+import {TiktokDashboardData} from "@/lib/types/dashboard-types";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {BarChart3, Calendar, Heart, Play, Share2, MessageCircle, TrendingUp} from "lucide-react";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {format} from "date-fns";
+
+export function TikTokSection({data}: { data: TiktokDashboardData }) {
+  const {profile, metrics, topPosts, hashtagAnalysis} = data
+
+  return (
+    <div className="space-y-8">
+      {/* Overview Cards */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="border-l-4 border-l-accent accent-gradient-subtle">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
+            <BarChart3 className="h-4 w-4 text-accent"/>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-accent">{metrics.totalPosts}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-red-400 bg-gradient-to-br from-red-50/50 to-transparent dark:from-red-950/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Diggs</CardTitle>
+            <Heart className="h-4 w-4 text-red-500"/>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{metrics.totalDiggs.toLocaleString()}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Plays</CardTitle>
+            <Play className="h-4 w-4 text-blue-500"/>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{metrics.totalPlays.toLocaleString()}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+            <TrendingUp className="h-4 w-4 text-green-500"/>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{metrics.avgEngagementPerPost.toFixed(0)}</div>
+            <p className="text-xs text-muted-foreground">per post</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Content Tabs */}
+      <Tabs defaultValue="overview" className="space-y-4">
+        <TabsList>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
+          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Content Analysis</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          {/* Engagement Metrics */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Engagement Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Share2 className="h-4 w-4"/>
+                    <span className="font-medium">Total Shares</span>
+                  </div>
+                  <span className="text-sm font-medium">{metrics.totalShares.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageCircle className="h-4 w-4"/>
+                    <span className="font-medium">Total Comments</span>
+                  </div>
+                  <span className="text-sm font-medium">{metrics.totalComments.toLocaleString()}</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Recent Activity */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Posts</CardTitle>
+              <CardDescription>Latest content performance</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {profile.posts.slice(0, 5).map((post) => (
+                  <div key={post.id} className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <p className="text-sm font-medium leading-none">
+                        {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        <Calendar className="inline h-3 w-3 mr-1"/>
+                        {format(new Date(post.createTime), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <div className="flex gap-4 text-sm">
+                      <span className="flex items-center gap-1">
+                        <Heart className="h-3 w-3 text-red-500"/>
+                        {post.diggCount.toLocaleString()}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Play className="h-3 w-3 text-blue-500"/>
+                        {post.playCount.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="posts" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Top Performing Posts</CardTitle>
+              <CardDescription>Posts with highest engagement</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {topPosts.map((post) => (
+                  <div key={post.id} className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        {post.isSlideshow && <span className="text-xs bg-muted px-1 rounded">Slideshow</span>}
+                        {post.isPinned && <span className="text-xs bg-accent px-1 rounded text-accent-foreground">Pinned</span>}
+                        <p className="text-sm font-medium leading-none">
+                          {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
+                        </p>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        <Calendar className="inline h-3 w-3 mr-1"/>
+                        {format(new Date(post.createTime), 'MMM d, yyyy')}
+                      </p>
+                    </div>
+                    <div className="flex gap-4 text-sm">
+                      <span className="flex items-center gap-1">
+                        <Heart className="h-3 w-3 text-red-500"/>
+                        {post.diggCount.toLocaleString()}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Share2 className="h-3 w-3 text-green-500"/>
+                        {post.shareCount.toLocaleString()}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <MessageCircle className="h-3 w-3 text-blue-500"/>
+                        {post.commentCount.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="content" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Hashtag Analysis</CardTitle>
+              <CardDescription>Most used hashtags</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {hashtagAnalysis.length > 0 ? (
+                  hashtagAnalysis.map(({tag, count}) => (
+                    <div key={tag} className="flex justify-between">
+                      <span className="text-sm">#{tag}</span>
+                      <span className="text-sm text-muted-foreground">{count} posts</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground">No hashtags found</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
