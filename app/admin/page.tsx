@@ -7,16 +7,18 @@ import {Button} from '@/components/ui/button'
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
 import {useToast} from '@/hooks/use-toast'
-import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload} from 'lucide-react'
+import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload, Eraser} from 'lucide-react'
 import {SiInstagram} from 'react-icons/si'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
 import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
 import {uploadDataSource} from '@/app/actions/upload-action'
 import {useClientManagement} from '@/hooks/use-client-management'
-import {DataSource} from '@/lib/types/common/enums'
+import {DataSource, AvailableDatasources} from '@/lib/types/common/enums'
 import Link from 'next/link'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from '@/components/ui/dropdown-menu'
 import {logger} from "@/lib/utils";
+import {cleanClientData} from '@/app/actions/client-management-action';
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -26,6 +28,10 @@ export default function AdminPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
   const [clientToDelete, setClientToDelete] = useState<string | null>(null)
+  const [showCleanDataDialog, setShowCleanDataDialog] = useState(false)
+  const [clientToClean, setClientToClean] = useState<string | null>(null)
+  const [selectedCleanDataSource, setSelectedCleanDataSource] = useState<AvailableDatasources | null>(null)
+  const [cleaning, setCleaning] = useState(false)
   const { toast } = useToast()
   const { clients, creating, createClient, deleteClient } = useClientManagement()
 
@@ -74,6 +80,46 @@ export default function AdminPage() {
       setSelectedClientId('')
     }
     setClientToDelete(null)
+  }
+
+  const handleOpenCleanDataDialog = (clientId: string) => {
+    setClientToClean(clientId)
+    setSelectedCleanDataSource(null)
+    setShowCleanDataDialog(true)
+  }
+
+  const handleCloseCleanDataDialog = () => {
+    setShowCleanDataDialog(false)
+    setClientToClean(null)
+    setSelectedCleanDataSource(null)
+  }
+
+  const handleCleanData = async () => {
+    if (!clientToClean || !selectedCleanDataSource) return
+
+    setCleaning(true)
+    try {
+      const result = await cleanClientData(clientToClean, selectedCleanDataSource)
+      
+      if (result.success) {
+        toast({
+          title: 'Data cleaned successfully',
+          description: `${selectedCleanDataSource} data has been removed for this client.`
+        })
+        handleCloseCleanDataDialog()
+      } else {
+        throw new Error(result.error || 'Failed to clean data')
+      }
+    } catch (error) {
+      logger.error('Clean data error:', error)
+      toast({
+        title: 'Failed to clean data',
+        description: error instanceof Error ? error.message : 'An error occurred while cleaning data',
+        variant: 'destructive'
+      })
+    } finally {
+      setCleaning(false)
+    }
   }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -349,8 +395,23 @@ export default function AdminPage() {
                             <Button
                               variant="outline"
                               size="sm"
+                              onClick={() => handleOpenCleanDataDialog(client.id)}
+                              disabled={uploading || creating || cleaning}
+                            >
+                              <Eraser className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Clean data</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
                               onClick={() => setClientToDelete(client.id)}
-                              disabled={uploading || creating}
+                              disabled={uploading || creating || cleaning}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -369,6 +430,81 @@ export default function AdminPage() {
         </Card>
       </div>
       </div>
+
+      <Dialog open={showCleanDataDialog} onOpenChange={handleCloseCleanDataDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Clean Data</DialogTitle>
+            <DialogDescription>
+              Select the data source you want to clean for this client. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select Data Source</Label>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full justify-between h-10"
+                    disabled={cleaning}
+                  >
+                    <div className="flex items-center">
+                      {selectedCleanDataSource ? (
+                        <>
+                          <SiInstagram className="mr-2 h-4 w-4" />
+                          {selectedCleanDataSource}
+                        </>
+                      ) : (
+                        'Select data source'
+                      )}
+                    </div>
+                    <ChevronDown className="h-4 w-4 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  className="w-full"
+                  style={{width: 'var(--radix-dropdown-menu-trigger-width)'}}>
+                  {Object.values(AvailableDatasources).map((dataSource) => (
+                    <DropdownMenuItem
+                      key={dataSource}
+                      onClick={() => setSelectedCleanDataSource(dataSource)}
+                    >
+                      <SiInstagram className="mr-2 h-4 w-4" />
+                      {dataSource}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleCloseCleanDataDialog}
+              disabled={cleaning}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleCleanData}
+              disabled={!selectedCleanDataSource || cleaning}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {cleaning ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Cleaning...
+                </>
+              ) : (
+                'Clean Data'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
         <AlertDialogContent>

@@ -69,6 +69,28 @@ export class InstagramRepository {
     })
   }
 
+  // Delete operations
+  async deleteInstagramProfileByClientId(clientId: string): Promise<InstagramProfile | null> {
+    logger.info(`Attempting to delete Instagram profile for client ${clientId}`)
+    
+    // Check if profile exists first
+    const existingProfile = await this.findInstagramProfileByClientId(clientId)
+    
+    if (!existingProfile) {
+      logger.info(`No Instagram profile found for client ${clientId}, nothing to delete`)
+      return null
+    }
+    
+    const result = await prisma.instagramProfile.delete({
+      where: {
+        clientId: clientId
+      }
+    })
+    
+    logger.info(`Deleted Instagram profile for client ${clientId}`)
+    return result
+  }
+
 }
 
 // Export singleton instance

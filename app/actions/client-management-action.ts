@@ -1,7 +1,9 @@
 'use server'
 
 import { clientService } from '@/services/client-service'
+import { instagramService } from '@/services/instagram-service'
 import { Client } from '@prisma/client'
+import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
 
 export async function createClient(formData: FormData) {
@@ -67,6 +69,29 @@ export async function deleteClient(clientId: string) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to delete client'
+    }
+  }
+}
+
+export async function cleanClientData(clientId: string, dataSource: AvailableDatasources) {
+  try {
+    switch (dataSource) {
+      case AvailableDatasources.INSTAGRAM:
+        await instagramService.deleteInstagramProfileByClientId(clientId)
+        break
+      default:
+        throw new Error(`Unsupported data source: ${dataSource}`)
+    }
+    
+    return {
+      success: true
+    }
+  } catch (error) {
+    logger.error('Clean client data error:', error)
+    
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to clean client data'
     }
   }
 }

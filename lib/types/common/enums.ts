@@ -5,7 +5,7 @@ export enum DataSource {
 }
 
 export enum AvailableDatasources {
-  INSTAGRAM = 'instagram',
+  INSTAGRAM = 'Instagram',
   // Future datasources
   // TWITTER = 'twitter',
   // YOUTUBE = 'youtube',

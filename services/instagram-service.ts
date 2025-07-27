@@ -1,15 +1,15 @@
-import { instagramRepository } from '@/repositories/instagram-repository'
+import {instagramRepository} from '@/repositories/instagram-repository'
 import {
-  RawInstagramData,
   InstagramDataSchema,
   InstagramHashtagAnalysis,
+  InstagramMetrics,
   InstagramPostTypeDistribution,
-  InstagramMetrics
+  RawInstagramData
 } from '@/lib/types/instagram-types'
-import { UploadRequestDto } from '@/lib/types/common/upload-types'
-import { Prisma, InstagramPost } from '@prisma/client'
-import { uploadRepository } from '@/repositories/upload-repository'
-import { clientService } from './client-service'
+import {UploadRequestDto} from '@/lib/types/common/upload-types'
+import {InstagramPost, InstagramProfile, Prisma} from '@prisma/client'
+import {uploadRepository} from '@/repositories/upload-repository'
+import {clientService} from './client-service'
 import {logger} from "@/lib/utils";
 
 export class InstagramService {
@@ -171,6 +171,14 @@ export class InstagramService {
       .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
       .map(([tag, count]) => ({ tag, count }))
+  }
+
+  async deleteInstagramProfileByClientId(clientId: string): Promise<InstagramProfile | null> {
+    try {
+      return await instagramRepository.deleteInstagramProfileByClientId(clientId)
+    } catch (error) {
+      throw error
+    }
   }
 }
 
