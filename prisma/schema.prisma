@@ -22,6 +22,7 @@ model Client {
   updatedAt DateTime @updatedAt
 
   instagramProfile InstagramProfile?
+  tiktokProfile    TiktokProfile?
   uploads          Upload[]
 
   @@index([slug])
@@ -104,4 +105,61 @@ model Upload {
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 
   @@index([clientId])
+}
+
+model TiktokProfile {
+  id        String   @id @default(cuid())
+  clientId  String   @unique
+  username  String
+  nickname  String?
+  signature String?
+  verified  Boolean  @default(false)
+  fans      Int      @default(0)
+  following Int      @default(0)
+  friends   Int      @default(0)
+  heart     Int      @default(0)
+  video     Int      @default(0)
+  digg      Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  posts  TiktokPost[]
+}
+
+model TiktokPost {
+  id               String   @id @default(cuid())
+  profileId        String
+  postId           String   @unique
+  text             String?
+  textLanguage     String?
+  createTime       DateTime
+  isAd             Boolean  @default(false)
+  webVideoUrl      String
+  diggCount        Int      @default(0)
+  shareCount       Int      @default(0)
+  playCount        Int      @default(0)
+  collectCount     Int      @default(0)
+  commentCount     Int      @default(0)
+  isSlideshow      Boolean  @default(false)
+  isPinned         Boolean  @default(false)
+  isSponsored      Boolean  @default(false)
+  hashtags         String[]
+  mentions         String[]
+  musicName        String?
+  musicAuthor      String?
+  musicOriginal    Boolean  @default(false)
+  videoDuration    Int?
+  videoHeight      Int?
+  videoWidth       Int?
+  videoCoverUrl    String?
+  videoDefinition  String?
+  videoFormat      String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  profile TiktokProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([createTime])
 }

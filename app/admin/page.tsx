@@ -9,7 +9,7 @@ import {Label} from '@/components/ui/label'
 import {Checkbox} from '@/components/ui/checkbox'
 import {useToast} from '@/hooks/use-toast'
 import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload, Eraser} from 'lucide-react'
-import {SiInstagram} from 'react-icons/si'
+import {SiInstagram, SiTiktok} from 'react-icons/si'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
 import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
@@ -48,6 +48,11 @@ export default function AdminPage() {
         return {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
           label: DataSource.INSTAGRAM_CONTENT
+        }
+      case DataSource.TIKTOK:
+        return {
+          icon: <SiTiktok className="mr-2 h-4 w-4" />,
+          label: DataSource.TIKTOK
         }
       default:
         return {
@@ -469,7 +474,11 @@ export default function AdminPage() {
                     <div className="flex items-center">
                       {selectedCleanDataSource ? (
                         <>
-                          <SiInstagram className="mr-2 h-4 w-4" />
+                          {selectedCleanDataSource === AvailableDatasources.TIKTOK ? (
+                            <SiTiktok className="mr-2 h-4 w-4" />
+                          ) : (
+                            <SiInstagram className="mr-2 h-4 w-4" />
+                          )}
                           {selectedCleanDataSource}
                         </>
                       ) : (
@@ -487,7 +496,11 @@ export default function AdminPage() {
                       key={dataSource}
                       onClick={() => setSelectedCleanDataSource(dataSource)}
                     >
-                      <SiInstagram className="mr-2 h-4 w-4" />
+                      {dataSource === AvailableDatasources.TIKTOK ? (
+                        <SiTiktok className="mr-2 h-4 w-4" />
+                      ) : (
+                        <SiInstagram className="mr-2 h-4 w-4" />
+                      )}
                       {dataSource}
                     </DropdownMenuItem>
                   ))}

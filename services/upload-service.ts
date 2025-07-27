@@ -1,4 +1,5 @@
 import { instagramService } from './instagram-service'
+import { tiktokService } from './tiktok-service'
 import { DataSource } from '@/lib/types/common/enums'
 import { UploadRequestDto} from "@/lib/types/common/upload-types";
 import { z } from 'zod'
@@ -21,6 +22,9 @@ export class UploadService {
       }
       else if (uploadRequestDto.dataSource === DataSource.INSTAGRAM_PROFILE) {
         await instagramService.processInstagramProfileUpload(uploadRequestDto)
+      }
+      else if (uploadRequestDto.dataSource === DataSource.TIKTOK) {
+        await tiktokService.processTikTokUpload(uploadRequestDto)
       }
       else { throw new Error(`Unsupported data source: ${uploadRequestDto.dataSource}`) }
 
