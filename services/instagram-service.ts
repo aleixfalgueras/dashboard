@@ -8,7 +8,6 @@ import {
 } from '@/lib/types/instagram-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { Prisma, InstagramPost } from '@prisma/client'
-import { prisma } from '@/lib/prisma'
 import { uploadRepository } from '@/repositories/upload-repository'
 import { clientService } from './client-service'
 import {logger} from "@/lib/utils";
@@ -27,22 +26,19 @@ export class InstagramService {
         throw new Error('Client not found')
       }
 
-      // Process in a transaction
-      return await prisma.$transaction(async () => {
-        // Find existing Instagram profile or create new one
-        const profileId = await this.getInstagramProfileIdOrCreateFromData(
-          client.id, 
-          validatedData
-        )
+      // Find existing Instagram profile or create new one
+      const profileId = await this.getInstagramProfileIdOrCreateFromData(
+        client.id, 
+        validatedData
+      )
 
-        // Create posts and comments
-        await this.createInstagramPostsFromData(profileId, validatedData)
+      // Create posts and comments
+      await this.createInstagramPostsFromData(profileId, validatedData)
 
-        // Store upload metadata
-        await uploadRepository.create({
-          client: { connect: { id: client.id } },
-          filename: uploadRequestDto.fileName
-        })
+      // Store upload metadata
+      await uploadRepository.create({
+        client: { connect: { id: client.id } },
+        filename: uploadRequestDto.fileName
       })
 
     } catch (error) {
@@ -88,7 +84,7 @@ export class InstagramService {
   ): Promise<void> {
     const postsToCreate = instagramData.map(post => ({
       post: {
-        profile: { connect: { id: profileId } },
+        profileId: profileId,
         postId: post.id,
         type: post.type,
         shortCode: post.shortCode,
@@ -107,7 +103,7 @@ export class InstagramService {
         hashtags: post.hashtags,
         mentions: post.mentions,
         images: post.images
-      } as Prisma.InstagramPostCreateInput,
+      } as Prisma.InstagramPostCreateManyInput,
       comments: post.latestComments.map(comment => ({
         commentId: comment.id,
         text: comment.text,

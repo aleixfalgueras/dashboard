@@ -20,22 +20,43 @@ export class InstagramRepository {
   // Bulk operations for upload processing
   async createInstagramPostsWithComments(
     posts: Array<{
-      post: Prisma.InstagramPostCreateInput
+      post: Prisma.InstagramPostCreateManyInput
       comments: Prisma.InstagramCommentCreateManyInput[]
     }>
   ): Promise<void> {
     logger.info(`Proceed to create ${posts.length} Instagram posts`)
 
-    for (const { post, comments } of posts) {
-      const createdPost = await this.createInstagramPost(post)
-      
-      if (comments.length > 0) {
+    // Create all posts in bulk
+    const postsData = posts.map(({ post }) => post)
+    await prisma.instagramPost.createMany({ data: postsData })
+
+    // Get created posts to map comments
+    const createdPosts = await prisma.instagramPost.findMany({
+      where: {
+        postId: { in: postsData.map(post => post.postId) }
+      },
+      select: { id: true, postId: true }
+    })
+
+    // Create postId lookup map
+    const postIdMap = new Map(createdPosts.map(post => [post.postId, post.id]))
+
+    // Prepare all comments with correct postId references
+    const allComments: Prisma.InstagramCommentCreateManyInput[] = []
+    posts.forEach(({ post, comments }) => {
+      const dbPostId = postIdMap.get(post.postId)
+      if (dbPostId && comments.length > 0) {
         const commentsWithPostId = comments.map(comment => ({
           ...comment,
-          postId: createdPost.id
+          postId: dbPostId
         }))
-        await this.createManyComments(commentsWithPostId)
+        allComments.push(...commentsWithPostId)
       }
+    })
+
+    // Create all comments in bulk
+    if (allComments.length > 0) {
+      await this.createManyComments(allComments)
     }
 
     logger.info("Instagram posts created successfully")

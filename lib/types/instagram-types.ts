@@ -39,9 +39,9 @@ export const InstagramPostSchema = z.object({
   ownerFullName: z.string(),
   ownerUsername: z.string(),
   ownerId: z.string(),
-  isSponsored: z.boolean(),
-  isPinned: z.boolean(),
-  isCommentsDisabled: z.boolean()
+  isSponsored: z.coerce.boolean().default(false),
+  isPinned: z.coerce.boolean().default(false),
+  isCommentsDisabled: z.coerce.boolean().default(false)
 })
 
 export const InstagramDataSchema = z.array(InstagramPostSchema)
