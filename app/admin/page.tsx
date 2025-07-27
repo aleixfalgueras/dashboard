@@ -172,10 +172,7 @@ export default function AdminPage() {
         description: `${selectedDataSource} data propagated successfully`
       })
 
-      // Reset form
-      setSelectedClientId('')
-      setSelectedDataSource(DataSource.INSTAGRAM_CONTENT)
-      setOverwriteData(true)
+      // Reset upload file
       setUploadedFile(null)
     } catch (error) {
       logger.error('Upload error:', error)
