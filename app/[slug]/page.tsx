@@ -1,6 +1,6 @@
-import {notFound} from 'next/navigation'
 import {dashboardService} from '@/services/dashboard-service'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
+import {Card, CardHeader, CardTitle, CardDescription} from '@/components/ui/card'
 import {RiInstagramFill} from 'react-icons/ri'
 import {AvailableDatasources} from '@/lib/types/common/enums'
 import {InstagramSection} from "@/components/dashboard/InstagramSection";
@@ -15,7 +15,18 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const dashboardData = await dashboardService.getDashboardData(params.slug)
 
   if (!dashboardData) {
-    notFound()
+    return (
+      <div className="container mx-auto py-8 flex items-center justify-center min-h-[60vh]">
+        <Card className="w-full max-w-md text-center">
+          <CardHeader>
+            <CardTitle>No Data Available</CardTitle>
+            <CardDescription>
+              There is no data to be shown for this user.
+            </CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    )
   }
 
   const { client, datasourcesData, availableDatasources } = dashboardData

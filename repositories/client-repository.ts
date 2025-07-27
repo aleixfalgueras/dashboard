@@ -4,6 +4,7 @@ import {FullClientData} from "@/lib/types/dashboard-types";
 
 export class ClientRepository {
   async create(data: Prisma.ClientCreateInput): Promise<Client> {
+    console.info(`Creating new client: ${data.name}, ${data.slug}`)
     return prisma.client.create({ data })
   }
 

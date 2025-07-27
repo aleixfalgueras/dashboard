@@ -9,6 +9,8 @@ import {Label} from '@/components/ui/label'
 import {useToast} from '@/hooks/use-toast'
 import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload} from 'lucide-react'
 import {SiInstagram} from 'react-icons/si'
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
+import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
 import {uploadDataSource} from '@/app/actions/upload-action'
 import {useClientManagement} from '@/hooks/use-client-management'
 import {DataSource} from '@/lib/types/common/enums'
@@ -22,6 +24,7 @@ export default function AdminPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [clientToDelete, setClientToDelete] = useState<string | null>(null)
   const { toast } = useToast()
   const { clients, creating, createClient, deleteClient } = useClientManagement()
 
@@ -69,6 +72,7 @@ export default function AdminPage() {
     if (result.success && selectedClientId === clientId) {
       setSelectedClientId('')
     }
+    setClientToDelete(null)
   }
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -135,7 +139,8 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="container mx-auto max-w-4xl py-8">
+    <TooltipProvider>
+      <div className="container mx-auto max-w-4xl py-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold mb-2">Dico De Rooij Dashboards</h1>
       </div>
@@ -206,23 +211,39 @@ export default function AdminPage() {
                   {clients.map((client) => (
                     <div key={client.id} className="flex items-center justify-between p-3 border rounded-lg">
                       <div className="flex-1">
-                        <h4 className="font-medium">{client.name}</h4>
+                        <h4 className="font-medium">
+                          {client.name} <span className="text-sm text-muted-foreground font-normal">({client.slug})</span>
+                        </h4>
                         <p className="text-sm text-muted-foreground">Created {new Date(client.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex gap-2">
-                        <Link href={`/${client.slug}`}>
-                          <Button variant="outline" size="sm">
-                            <ArrowRight className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleDeleteClient(client.id)}
-                          disabled={uploading || creating}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Link href={`/${client.slug}`}>
+                              <Button variant="outline" size="sm">
+                                <ArrowRight className="h-4 w-4" />
+                              </Button>
+                            </Link>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>View dashboard</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setClientToDelete(client.id)}
+                              disabled={uploading || creating}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Delete client</p>
+                          </TooltipContent>
+                        </Tooltip>
                       </div>
                     </div>
                   ))}
@@ -346,6 +367,27 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+      </div>
+
+      <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Client</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this client? This action cannot be undone and will remove all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => clientToDelete && handleDeleteClient(clientToDelete)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </TooltipProvider>
   )
 }
