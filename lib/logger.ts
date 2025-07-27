@@ -12,7 +12,7 @@ const formatTimestamp = (): string => {
 
 export const logger = {
   info: (...args: unknown[]) => {
-    logger.info(formatTimestamp(), ...args)
+    console.info(formatTimestamp(), ...args)
   },
   
   warn: (...args: unknown[]) => {
@@ -20,6 +20,6 @@ export const logger = {
   },
   
   error: (...args: unknown[]) => {
-    logger.error(formatTimestamp(), ...args)
+    console.error(formatTimestamp(), ...args)
   }
 }
