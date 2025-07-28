@@ -59,6 +59,8 @@ model InstagramPost {
   url              String
   likesCount       Int
   commentsCount    Int
+  videoPlayCount   Int?
+  videoViewCount   Int?
   timestamp        DateTime
   displayUrl       String?
   dimensionsHeight Int?

@@ -47,6 +47,8 @@ export const InstagramPostSchema = z.object({
   displayUrl: z.string().optional(),
   images: z.array(z.string()),
   likesCount: z.number(),
+  videoPlayCount: z.number().optional(),
+  videoViewCount: z.number().optional(),
   timestamp: z.string(),
   locationName: z.string().optional(),
   locationId: z.string().optional(),

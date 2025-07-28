@@ -165,6 +165,8 @@ export class InstagramService {
         url: post.url,
         likesCount: post.likesCount,
         commentsCount: post.commentsCount,
+        videoPlayCount: post.videoPlayCount,
+        videoViewCount: post.videoViewCount,
         timestamp: new Date(post.timestamp),
         displayUrl: post.displayUrl,
         dimensionsHeight: post.dimensionsHeight,
@@ -197,8 +199,15 @@ export class InstagramService {
     const totalComments = posts.reduce((sum, post) => sum + post.commentsCount, 0)
     const totalPosts = posts.length
     
-    const avgEngagementPerPost = totalPosts > 0 
-      ? (totalLikes + totalComments) / totalPosts 
+    // Calculate avgEngagementPerPost only for video posts using videoViewCount
+    const videoPosts = posts.filter(post => post.type === "Video")
+    const validVideoPosts = videoPosts.filter(post => post.videoViewCount && post.videoViewCount > 0)
+    
+    const avgEngagementPerPost = validVideoPosts.length > 0
+      ? validVideoPosts.reduce((sum, post) => {
+          const engagement = (post.likesCount + post.commentsCount) / post.videoViewCount!
+          return sum + engagement
+        }, 0) / validVideoPosts.length
       : 0
 
     return {
