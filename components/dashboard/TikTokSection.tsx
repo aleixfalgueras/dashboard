@@ -1,14 +1,16 @@
 import {TiktokDashboardData} from "@/lib/types/dashboard-types";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Heart, Play, Share2, MessageCircle, TrendingUp} from "lucide-react";
+import {BarChart3, Calendar, Heart, Play, Share2, MessageCircle, TrendingUp, HelpCircle} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
 
 export function TikTokSection({data}: { data: TiktokDashboardData }) {
   const {profile, metrics, topPosts, hashtagAnalysis} = data
 
   return (
-    <div className="space-y-8">
+    <TooltipProvider>
+      <div className="space-y-8">
       {/* Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-accent accent-gradient-subtle">
@@ -43,7 +45,19 @@ export function TikTokSection({data}: { data: TiktokDashboardData }) {
 
         <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+            <div className="flex items-center gap-1">
+              <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">
+                    Calculated as average of (Diggs + Comments + Shares + Collects) ÷ Plays per post
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <TrendingUp className="h-4 w-4 text-green-500"/>
           </CardHeader>
           <CardContent>
@@ -190,6 +204,7 @@ export function TikTokSection({data}: { data: TiktokDashboardData }) {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </TooltipProvider>
   )
 }

@@ -149,8 +149,14 @@ export class TiktokService {
     const totalComments = posts.reduce((sum, post) => sum + post.commentCount, 0)
     const totalPosts = posts.length
     
-    const avgEngagementPerPost = totalPosts > 0 
-      ? (totalDiggs + totalShares + totalComments) / totalPosts 
+    // Calculate engagement rate per post: (diggCount + commentCount + shareCount + collectCount) / playCount
+    // Then take the average of these individual engagement rates
+    const engagementRates = posts
+      .filter(post => post.playCount > 0) // Avoid division by zero
+      .map(post => (post.diggCount + post.commentCount + post.shareCount + post.collectCount) / post.playCount)
+    
+    const avgEngagementPerPost = engagementRates.length > 0 
+      ? engagementRates.reduce((sum, rate) => sum + rate, 0) / engagementRates.length
       : 0
 
     return {
