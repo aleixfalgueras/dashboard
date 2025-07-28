@@ -77,16 +77,16 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 TikTok
               </TabsTrigger>
             )}
-            {availableDatasources.includes(AvailableDatasources.LINKEDIN) && (
-              <TabsTrigger value={AvailableDatasources.LINKEDIN} className="flex items-center gap-2">
-                <SiLinkedin className="h-4 w-4 text-[#0077B5]" />
-                LinkedIn
-              </TabsTrigger>
-            )}
             {availableDatasources.includes(AvailableDatasources.YOUTUBE) && (
               <TabsTrigger value={AvailableDatasources.YOUTUBE} className="flex items-center gap-2">
                 <SiYoutube className="h-4 w-4 text-[#FF0000]" />
                 YouTube
+              </TabsTrigger>
+            )}
+            {availableDatasources.includes(AvailableDatasources.LINKEDIN) && (
+              <TabsTrigger value={AvailableDatasources.LINKEDIN} className="flex items-center gap-2">
+                <SiLinkedin className="h-4 w-4 text-[#0077B5]" />
+                LinkedIn
               </TabsTrigger>
             )}
           </TabsList>
@@ -119,20 +119,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </div>
             </TabsContent>
           )}
-          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
-            <TabsContent value={AvailableDatasources.LINKEDIN}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
-                    {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
-                  </h2>
-                  <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
-                </div>
-                <LinkedInSection data={datasourcesData.linkedin} />
-              </div>
-            </TabsContent>
-          )}
           {availableDatasources.includes(AvailableDatasources.YOUTUBE) && datasourcesData.youtube && (
             <TabsContent value={AvailableDatasources.YOUTUBE}>
               <div className="space-y-4">
@@ -146,6 +132,20 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                   </p>
                 </div>
                 <YoutubeSection data={datasourcesData.youtube} />
+              </div>
+            </TabsContent>
+          )}
+          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
+            <TabsContent value={AvailableDatasources.LINKEDIN}>
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
+                    {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
+                  </h2>
+                  <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
+                </div>
+                <LinkedInSection data={datasourcesData.linkedin} />
               </div>
             </TabsContent>
           )}
@@ -177,18 +177,6 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <TikTokSection data={datasourcesData.tiktok} />
             </div>
           )}
-          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
-                  {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
-                </h2>
-                <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
-              </div>
-              <LinkedInSection data={datasourcesData.linkedin} />
-            </div>
-          )}
           {availableDatasources.includes(AvailableDatasources.YOUTUBE) && datasourcesData.youtube && (
             <div className="space-y-4">
               <div>
@@ -201,6 +189,18 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 </p>
               </div>
               <YoutubeSection data={datasourcesData.youtube} />
+            </div>
+          )}
+          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
+                  {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
+                </h2>
+                <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
+              </div>
+              <LinkedInSection data={datasourcesData.linkedin} />
             </div>
           )}
         </>

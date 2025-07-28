@@ -149,6 +149,14 @@ export class YoutubeService {
     const avgLikesPerVideo = totalVideos > 0 ? totalLikes / totalVideos : 0
     const avgCommentsPerVideo = totalVideos > 0 ? totalComments / totalVideos : 0
 
+    // Calculate average engagement per post: (likes + comments) / viewCount for each video, then average
+    const avgEngagementPerPost = totalVideos > 0 
+      ? videos.reduce((sum, video) => {
+          const engagement = video.viewCount > 0 ? (video.likes + video.commentsCount) / video.viewCount : 0
+          return sum + engagement
+        }, 0) / totalVideos
+      : 0
+
     return {
       totalVideos,
       totalViews,
@@ -156,7 +164,8 @@ export class YoutubeService {
       totalComments,
       avgViewsPerVideo,
       avgLikesPerVideo,
-      avgCommentsPerVideo
+      avgCommentsPerVideo,
+      avgEngagementPerPost
     }
   }
 

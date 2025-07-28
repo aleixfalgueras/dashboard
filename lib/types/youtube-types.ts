@@ -89,6 +89,7 @@ export interface YoutubeMetrics {
   avgViewsPerVideo: number
   avgLikesPerVideo: number
   avgCommentsPerVideo: number
+  avgEngagementPerPost: number
 }
 
 export interface YoutubeHashtagAnalysis {
