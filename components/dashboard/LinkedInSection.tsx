@@ -1,8 +1,8 @@
 import {LinkedinDashboardData} from "@/lib/types/dashboard-types";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Heart, MessageCircle, TrendingUp, Share2, ThumbsUp, HelpCircle} from "lucide-react";
+import {BarChart3, Calendar, Heart, MessageCircle, Share2, ThumbsUp} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {TooltipProvider} from "@/components/ui/tooltip";
 import {format} from "date-fns";
 
 export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
