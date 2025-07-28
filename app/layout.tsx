@@ -25,6 +25,15 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "Dico De Rooij",
   description: "Dico De Rooij sales dashboards project",
+  icons: {
+    icon: '/icon.svg',
+    apple: '/apple-icon.svg',
+  },
+  openGraph: {
+    title: "Dico De Rooij",
+    description: "Dico De Rooij sales dashboards project",
+    images: ['/icon.svg'],
+  },
 };
 
 export default function RootLayout({

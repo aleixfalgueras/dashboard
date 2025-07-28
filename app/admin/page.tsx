@@ -23,6 +23,7 @@ import {cleanClientData, updateClientStatsDataStartDate} from '@/app/actions/cli
 import {DatePicker} from '@/components/ui/date-picker'
 import {Settings} from 'lucide-react'
 import {format, parse} from 'date-fns'
+import {Logo} from '@/components/ui/logo'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -299,7 +300,8 @@ export default function AdminPage() {
   return (
     <TooltipProvider>
       <div className="container mx-auto max-w-4xl py-8">
-      <div className="mb-8">
+      <div className="mb-8 flex items-center gap-4">
+        <Logo size="lg" />
         <h1 className="text-4xl font-bold mb-2 text-accent">Dico De Rooij Dashboards</h1>
       </div>
 
