@@ -2,7 +2,8 @@ import { clientService } from './client-service'
 import { instagramService } from './instagram-service'
 import { tiktokService } from './tiktok-service'
 import { linkedinService } from './linkedin-service'
-import { DashboardData, DatasourcesData, InstagramDashboardData, LinkedinDashboardData, TiktokDashboardData } from '@/lib/types/dashboard-types'
+import { youtubeService } from './youtube-service'
+import { DashboardData, DatasourcesData, InstagramDashboardData, LinkedinDashboardData, TiktokDashboardData, YoutubeDashboardData } from '@/lib/types/dashboard-types'
 import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
 
@@ -41,6 +42,15 @@ export class DashboardService {
       if (linkedinData) {
         datasourcesData.linkedin = linkedinData
         availableDatasources.push(AvailableDatasources.LINKEDIN)
+      }
+    }
+
+    // Check and process YouTube data
+    if (client.youtubeProfile && client.youtubeProfile.videos.length > 0) {
+      const youtubeData = await this.getYoutubeDashboardData(client.youtubeProfile)
+      if (youtubeData) {
+        datasourcesData.youtube = youtubeData
+        availableDatasources.push(AvailableDatasources.YOUTUBE)
       }
     }
 
@@ -114,6 +124,26 @@ export class DashboardService {
       }
     } catch (error) {
       logger.error('Error processing LinkedIn data:', error)
+      return null
+    }
+  }
+
+  private async getYoutubeDashboardData(
+    profile: NonNullable<DashboardData['client']['youtubeProfile']>
+  ): Promise<YoutubeDashboardData | null> {
+    try {
+      const metrics = youtubeService.calculateYoutubeMetrics(profile.videos)
+      const topVideos = youtubeService.getTopVideos(profile.videos, 6)
+      const hashtagAnalysis = youtubeService.analyzeHashtags(profile.videos, 10)
+
+      return {
+        profile,
+        metrics,
+        topVideos,
+        hashtagAnalysis
+      }
+    } catch (error) {
+      logger.error('Error processing YouTube data:', error)
       return null
     }
   }

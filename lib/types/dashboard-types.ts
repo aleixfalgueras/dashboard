@@ -1,7 +1,8 @@
-import {Client, InstagramPost, InstagramProfile, LinkedinPost, LinkedinProfile, TiktokPost, TiktokProfile} from '@prisma/client'
+import {Client, InstagramPost, InstagramProfile, LinkedinPost, LinkedinProfile, TiktokPost, TiktokProfile, YoutubeVideo, YoutubeProfile} from '@prisma/client'
 import {InstagramHashtagAnalysis, InstagramMetrics, InstagramPostTypeDistribution} from "@/lib/types/instagram-types";
 import {TiktokHashtagAnalysis, TiktokMetrics} from "@/lib/types/tiktok-types";
 import {LinkedinHashtagAnalysis, LinkedinMetrics} from "@/lib/types/linkedin-types";
+import {YoutubeHashtagAnalysis, YoutubeMetrics} from "@/lib/types/youtube-types";
 import { AvailableDatasources } from './common/enums'
 
 export interface InstagramDashboardData {
@@ -32,6 +33,15 @@ export interface LinkedinDashboardData {
   hashtagAnalysis: LinkedinHashtagAnalysis[]
 }
 
+export interface YoutubeDashboardData {
+  profile: YoutubeProfile & {
+    videos: YoutubeVideo[]
+  }
+  metrics: YoutubeMetrics
+  topVideos: YoutubeVideo[]
+  hashtagAnalysis: YoutubeHashtagAnalysis[]
+}
+
 // Client with all data relations included
 export interface FullClientData extends Client {
   instagramProfile: InstagramProfile & {
@@ -43,6 +53,9 @@ export interface FullClientData extends Client {
   linkedinProfile: LinkedinProfile & {
     posts: LinkedinPost[]
   } | null
+  youtubeProfile: YoutubeProfile & {
+    videos: YoutubeVideo[]
+  } | null
 }
 
 // Generic datasource interface for future extensibility (e.g. twitter?: TwitterDashboardData)
@@ -50,6 +63,7 @@ export interface DatasourcesData {
   instagram?: InstagramDashboardData
   tiktok?: TiktokDashboardData
   linkedin?: LinkedinDashboardData
+  youtube?: YoutubeDashboardData
 }
 
 // Dashboard page data

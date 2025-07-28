@@ -2,11 +2,12 @@ import {dashboardService} from '@/services/dashboard-service'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Card, CardHeader, CardTitle, CardDescription} from '@/components/ui/card'
 import {RiInstagramFill} from 'react-icons/ri'
-import {SiTiktok, SiLinkedin} from 'react-icons/si'
+import {SiTiktok, SiLinkedin, SiYoutube} from 'react-icons/si'
 import {AvailableDatasources} from '@/lib/types/common/enums'
 import {InstagramSection} from "@/components/dashboard/InstagramSection";
 import {TikTokSection} from "@/components/dashboard/TikTokSection";
 import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
+import {YoutubeSection} from "@/components/dashboard/YoutubeSection";
 
 interface DashboardPageProps {
   params: {
@@ -64,6 +65,12 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 LinkedIn
               </TabsTrigger>
             )}
+            {availableDatasources.includes(AvailableDatasources.YOUTUBE) && (
+              <TabsTrigger value={AvailableDatasources.YOUTUBE} className="flex items-center gap-2">
+                <SiYoutube className="h-4 w-4 text-[#FF0000]" />
+                YouTube
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && datasourcesData.instagram && (
@@ -108,6 +115,22 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </div>
             </TabsContent>
           )}
+          {availableDatasources.includes(AvailableDatasources.YOUTUBE) && datasourcesData.youtube && (
+            <TabsContent value={AvailableDatasources.YOUTUBE}>
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <SiYoutube className="h-6 w-6 text-[#FF0000]" />
+                    {datasourcesData.youtube.profile.channelName}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {datasourcesData.youtube.profile.numberOfSubscribers.toLocaleString()} subscribers • {datasourcesData.youtube.profile.channelTotalVideos} videos
+                  </p>
+                </div>
+                <YoutubeSection data={datasourcesData.youtube} />
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
       ) : (
         // Single datasource view
@@ -146,6 +169,20 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
               </div>
               <LinkedInSection data={datasourcesData.linkedin} />
+            </div>
+          )}
+          {availableDatasources.includes(AvailableDatasources.YOUTUBE) && datasourcesData.youtube && (
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <SiYoutube className="h-6 w-6 text-[#FF0000]" />
+                  {datasourcesData.youtube.profile.channelName}
+                </h2>
+                <p className="text-muted-foreground">
+                  {datasourcesData.youtube.profile.numberOfSubscribers.toLocaleString()} subscribers • {datasourcesData.youtube.profile.channelTotalVideos} videos
+                </p>
+              </div>
+              <YoutubeSection data={datasourcesData.youtube} />
             </div>
           )}
         </>

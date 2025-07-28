@@ -51,6 +51,15 @@ export class ClientRepository {
               }
             }
           }
+        },
+        youtubeProfile: {
+          include: {
+            videos: {
+              orderBy: {
+                publishedAt: 'desc'
+              }
+            }
+          }
         }
       }
     })
