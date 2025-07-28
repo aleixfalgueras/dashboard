@@ -1,14 +1,16 @@
 import {LinkedinDashboardData} from "@/lib/types/dashboard-types";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Heart, MessageCircle, TrendingUp, Share2, ThumbsUp} from "lucide-react";
+import {BarChart3, Calendar, Heart, MessageCircle, TrendingUp, Share2, ThumbsUp, HelpCircle} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
 
 export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
   const {profile, metrics, topPosts, hashtagAnalysis} = data
 
   return (
-    <div className="space-y-8">
+    <TooltipProvider>
+      <div className="space-y-8">
       {/* Overview Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-accent accent-gradient-subtle">
@@ -41,13 +43,25 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
+        <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
-            <TrendingUp className="h-4 w-4 text-purple-500"/>
+            <div className="flex items-center gap-1">
+              <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs">
+                    Calculated as average of (Reactions + Comments + Reposts) ÷ Impressions per post
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <TrendingUp className="h-4 w-4 text-green-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{metrics.avgEngagementPerPost.toFixed(0)}</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{(metrics.avgEngagementPerPost * 100).toFixed(2)}%</div>
             <p className="text-xs text-muted-foreground">per post</p>
           </CardContent>
         </Card>
@@ -196,6 +210,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </TooltipProvider>
   )
 }

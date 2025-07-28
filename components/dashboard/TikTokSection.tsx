@@ -61,7 +61,7 @@ export function TikTokSection({data}: { data: TiktokDashboardData }) {
             <TrendingUp className="h-4 w-4 text-green-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{metrics.avgEngagementPerPost.toFixed(0)}</div>
+            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{(metrics.avgEngagementPerPost * 100).toFixed(2)}%</div>
             <p className="text-xs text-muted-foreground">per post</p>
           </CardContent>
         </Card>
