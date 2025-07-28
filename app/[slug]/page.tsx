@@ -9,6 +9,7 @@ import {TikTokSection} from "@/components/dashboard/TikTokSection";
 import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
 import {YoutubeSection} from "@/components/dashboard/YoutubeSection";
 import {Logo} from "@/components/ui/logo";
+import {Alert, AlertDescription} from "@/components/ui/alert";
 
 interface DashboardPageProps {
   params: {
@@ -39,13 +40,26 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   return (
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
-      <div className="space-y-2">
+      <div className="space-y-1">
         <div className="flex items-center gap-3">
           <Logo size="md" />
           <h1 className="text-3xl font-bold">{client.name}</h1>
         </div>
         <p className="text-muted-foreground">Analytics Dashboard</p>
       </div>
+
+      {/* Stats Data Start Date Message */}
+      {client.statsDataStartDate && (
+        <Alert>
+          <AlertDescription>
+            Showing analytics data from {new Date(client.statsDataStartDate).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })} onwards.
+          </AlertDescription>
+        </Alert>
+      )}
 
       {/* Datasource Sections */}
       {availableDatasources.length > 1 ? (
