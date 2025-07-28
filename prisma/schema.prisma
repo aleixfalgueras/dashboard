@@ -15,11 +15,12 @@ datasource db {
 }
 
 model Client {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                String    @id @default(cuid())
+  name              String
+  slug              String    @unique
+  statsDataStartDate DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   instagramProfile InstagramProfile?
   tiktokProfile    TiktokProfile?

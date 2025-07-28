@@ -19,7 +19,10 @@ import {DataSource, AvailableDatasources} from '@/lib/types/common/enums'
 import Link from 'next/link'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from '@/components/ui/dropdown-menu'
 import {logger} from "@/lib/utils";
-import {cleanClientData} from '@/app/actions/client-management-action';
+import {cleanClientData, updateClientStatsDataStartDate} from '@/app/actions/client-management-action';
+import {DatePicker} from '@/components/ui/date-picker'
+import {Settings} from 'lucide-react'
+import {format, parse} from 'date-fns'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -34,8 +37,12 @@ export default function AdminPage() {
   const [clientToClean, setClientToClean] = useState<string | null>(null)
   const [selectedCleanDataSource, setSelectedCleanDataSource] = useState<AvailableDatasources | null>(null)
   const [cleaning, setCleaning] = useState(false)
+  const [showConfigureDialog, setShowConfigureDialog] = useState(false)
+  const [selectedConfigClient, setSelectedConfigClient] = useState<string | null>(null)
+  const [selectedStartDate, setSelectedStartDate] = useState<string>('')
+  const [configuringDashboard, setConfiguringDashboard] = useState(false)
   const { toast } = useToast()
-  const { clients, creating, createClient, deleteClient } = useClientManagement()
+  const { clients, creating, loadClients, createClient, deleteClient } = useClientManagement()
 
   const getDataSourceDisplay = (dataSource: DataSource) => {
     switch (dataSource) {
@@ -173,6 +180,51 @@ export default function AdminPage() {
       })
     } finally {
       setCleaning(false)
+    }
+  }
+
+  const handleOpenConfigureDialog = (clientId: string) => {
+    const client = clients.find(c => c.id === clientId)
+    setSelectedConfigClient(clientId)
+    setSelectedStartDate(client?.statsDataStartDate ? format(client.statsDataStartDate, 'dd-MM-yyyy') : '')
+    setShowConfigureDialog(true)
+  }
+
+  const handleCloseConfigureDialog = () => {
+    setShowConfigureDialog(false)
+    setSelectedConfigClient(null)
+    setSelectedStartDate('')
+  }
+
+  const handleUpdateStatsDataStartDate = async () => {
+    if (!selectedConfigClient) return
+
+    setConfiguringDashboard(true)
+    try {
+      const dateToSend = selectedStartDate ? parse(selectedStartDate, 'dd-MM-yyyy', new Date()) : null
+      const result = await updateClientStatsDataStartDate(selectedConfigClient, dateToSend)
+      
+      if (result.success) {
+        toast({
+          title: 'Configuration updated',
+          description: selectedStartDate 
+            ? `Stats will be calculated from ${selectedStartDate}`
+            : 'Stats data start date has been cleared'
+        })
+        await loadClients()
+        handleCloseConfigureDialog()
+      } else {
+        throw new Error(result.error || 'Failed to update configuration')
+      }
+    } catch (error) {
+      logger.error('Configure dashboard error:', error)
+      toast({
+        title: 'Failed to update configuration',
+        description: error instanceof Error ? error.message : 'An error occurred while updating configuration',
+        variant: 'destructive'
+      })
+    } finally {
+      setConfiguringDashboard(false)
     }
   }
 
@@ -469,6 +521,21 @@ export default function AdminPage() {
                             <Button
                               variant="outline"
                               size="sm"
+                              onClick={() => handleOpenConfigureDialog(client.id)}
+                              disabled={uploading || creating || cleaning || configuringDashboard}
+                            >
+                              <Settings className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Configure dashboard</p>
+                          </TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="sm"
                               onClick={() => handleOpenCleanDataDialog(client.id)}
                               disabled={uploading || creating || cleaning}
                             >
@@ -485,7 +552,7 @@ export default function AdminPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => setClientToDelete(client.id)}
-                              disabled={uploading || creating || cleaning}
+                              disabled={uploading || creating || cleaning || configuringDashboard}
                             >
                               <Trash2 className="h-4 w-4 text-destructive hover:text-destructive/80" />
                             </Button>
@@ -574,6 +641,63 @@ export default function AdminPage() {
                 </>
               ) : (
                 'Clean Data'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showConfigureDialog} onOpenChange={handleCloseConfigureDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Configure Dashboard</DialogTitle>
+            <DialogDescription>
+              Set the start date for statistics calculations. Only data created after this date will be included in dashboard metrics.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Stats Data Start Date</Label>
+              <DatePicker
+                value={selectedStartDate}
+                onChange={setSelectedStartDate}
+                placeholder="Pick a date"
+                disabled={configuringDashboard}
+              />
+              {selectedStartDate && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => setSelectedStartDate('')}
+                  className="text-xs text-muted-foreground"
+                >
+                  Clear date
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={handleCloseConfigureDialog}
+              disabled={configuringDashboard}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdateStatsDataStartDate}
+              disabled={configuringDashboard}
+              className="bg-accent hover:bg-accent/90"
+            >
+              {configuringDashboard ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Updating...
+                </>
+              ) : (
+                'Update Configuration'
               )}
             </Button>
           </DialogFooter>

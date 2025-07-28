@@ -21,8 +21,8 @@ export class ClientService {
     return clientRepository.findById(id)
   }
 
-  async getClientFullData(slug: string): Promise<FullClientData | null> {
-    return clientRepository.findBySlugWithFullData(slug)
+  async getClientFullData(slug: string, startDate?: Date): Promise<FullClientData | null> {
+    return clientRepository.findBySlugWithFullData(slug, startDate)
   }
 
   async getAllClients(): Promise<Client[]> {
@@ -31,6 +31,10 @@ export class ClientService {
 
   async deleteClientById(id: string): Promise<void> {
     await clientRepository.delete(id)
+  }
+
+  async updateClientStatsDataStartDate(id: string, statsDataStartDate: Date | null): Promise<Client> {
+    return clientRepository.updateStatsDataStartDate(id, statsDataStartDate)
   }
 
   private generateSlug(name: string): string {

@@ -9,18 +9,36 @@ import {logger} from "@/lib/utils";
 
 export class DashboardService {
   async getDashboardData(slug: string): Promise<DashboardData | null> {
-    const client = await clientService.getClientFullData(slug)
+    const client = await clientService.getClientFullData(slug, undefined)
     
     if (!client) {
       return null
     }
 
+    // If client has a statsDataStartDate, fetch filtered data
+    if (client.statsDataStartDate) {
+      logger.info(`Calculating stats from ${client.statsDataStartDate} on`)
+
+      const filteredClient = await clientService.getClientFullData(slug, client.statsDataStartDate)
+      if (!filteredClient) {
+        return null
+      }
+      // Use the filtered client data for dashboard calculations
+      return this.processDashboardData(filteredClient)
+    }
+
+    // Otherwise use all data
+    return this.processDashboardData(client)
+  }
+
+  private async processDashboardData(fullClientData: NonNullable<Awaited<ReturnType<typeof clientService.getClientFullData>>>): Promise<DashboardData | null> {
+
     const datasourcesData: DatasourcesData = {}
     const availableDatasources: AvailableDatasources[] = []
 
     // Check and process Instagram data
-    if (client.instagramProfile && client.instagramProfile.posts.length > 0) {
-      const instagramData = await this.getInstagramDashboardData(client.instagramProfile)
+    if (fullClientData.instagramProfile && fullClientData.instagramProfile.posts.length > 0) {
+      const instagramData = await this.getInstagramDashboardData(fullClientData.instagramProfile)
       if (instagramData) {
         datasourcesData.instagram = instagramData
         availableDatasources.push(AvailableDatasources.INSTAGRAM)
@@ -28,8 +46,8 @@ export class DashboardService {
     }
 
     // Check and process TikTok data
-    if (client.tiktokProfile && client.tiktokProfile.posts.length > 0) {
-      const tiktokData = await this.getTiktokDashboardData(client.tiktokProfile)
+    if (fullClientData.tiktokProfile && fullClientData.tiktokProfile.posts.length > 0) {
+      const tiktokData = await this.getTiktokDashboardData(fullClientData.tiktokProfile)
       if (tiktokData) {
         datasourcesData.tiktok = tiktokData
         availableDatasources.push(AvailableDatasources.TIKTOK)
@@ -37,8 +55,8 @@ export class DashboardService {
     }
 
     // Check and process LinkedIn data
-    if (client.linkedinProfile && client.linkedinProfile.posts.length > 0) {
-      const linkedinData = await this.getLinkedinDashboardData(client.linkedinProfile)
+    if (fullClientData.linkedinProfile && fullClientData.linkedinProfile.posts.length > 0) {
+      const linkedinData = await this.getLinkedinDashboardData(fullClientData.linkedinProfile)
       if (linkedinData) {
         datasourcesData.linkedin = linkedinData
         availableDatasources.push(AvailableDatasources.LINKEDIN)
@@ -46,8 +64,8 @@ export class DashboardService {
     }
 
     // Check and process YouTube data
-    if (client.youtubeProfile && client.youtubeProfile.videos.length > 0) {
-      const youtubeData = await this.getYoutubeDashboardData(client.youtubeProfile)
+    if (fullClientData.youtubeProfile && fullClientData.youtubeProfile.videos.length > 0) {
+      const youtubeData = await this.getYoutubeDashboardData(fullClientData.youtubeProfile)
       if (youtubeData) {
         datasourcesData.youtube = youtubeData
         availableDatasources.push(AvailableDatasources.YOUTUBE)
@@ -60,7 +78,7 @@ export class DashboardService {
     }
 
     return {
-      client,
+      client: fullClientData,
       datasourcesData: datasourcesData,
       availableDatasources
     }

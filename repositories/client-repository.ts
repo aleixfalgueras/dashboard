@@ -21,13 +21,18 @@ export class ClientRepository {
     })
   }
 
-  async findBySlugWithFullData(slug: string): Promise<FullClientData | null> {
+  async findBySlugWithFullData(slug: string, startDate?: Date): Promise<FullClientData | null> {
     return prisma.client.findUnique({
       where: { slug },
       include: {
         instagramProfile: {
           include: {
             posts: {
+              where: startDate ? {
+                timestamp: {
+                  gte: startDate
+                }
+              } : undefined,
               orderBy: {
                 timestamp: 'desc'
               }
@@ -37,6 +42,11 @@ export class ClientRepository {
         tiktokProfile: {
           include: {
             posts: {
+              where: startDate ? {
+                createTime: {
+                  gte: startDate
+                }
+              } : undefined,
               orderBy: {
                 createTime: 'desc'
               }
@@ -46,6 +56,11 @@ export class ClientRepository {
         linkedinProfile: {
           include: {
             posts: {
+              where: startDate ? {
+                postedAt: {
+                  gte: startDate
+                }
+              } : undefined,
               orderBy: {
                 postedAt: 'desc'
               }
@@ -55,6 +70,11 @@ export class ClientRepository {
         youtubeProfile: {
           include: {
             videos: {
+              where: startDate ? {
+                publishedAt: {
+                  gte: startDate
+                }
+              } : undefined,
               orderBy: {
                 publishedAt: 'desc'
               }
@@ -76,6 +96,14 @@ export class ClientRepository {
   async delete(id: string): Promise<void> {
     await prisma.client.delete({
       where: { id }
+    })
+  }
+
+  async updateStatsDataStartDate(id: string, statsDataStartDate: Date | null): Promise<Client> {
+    logger.info(`Updating client stats data start date: ${id}, ${statsDataStartDate}`)
+    return prisma.client.update({
+      where: { id },
+      data: { statsDataStartDate }
     })
   }
 

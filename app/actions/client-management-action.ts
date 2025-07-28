@@ -8,6 +8,7 @@ import { youtubeService } from '@/services/youtube-service'
 import { Client } from '@prisma/client'
 import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
+import { revalidatePath } from 'next/cache';
 
 export async function createClient(formData: FormData) {
   try {
@@ -104,6 +105,25 @@ export async function cleanClientData(clientId: string, dataSource: AvailableDat
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to clean client data'
+    }
+  }
+}
+
+export async function updateClientStatsDataStartDate(
+  clientId: string,
+  statsDataStartDate: Date | null
+) {
+  try {
+    await clientService.updateClientStatsDataStartDate(clientId, statsDataStartDate)
+
+    revalidatePath('/admin')
+    
+    return { success: true }
+  } catch (error) {
+    logger.error('Update client stats data start date error:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to update configuration'
     }
   }
 }
