@@ -9,7 +9,7 @@ import {Label} from '@/components/ui/label'
 import {Checkbox} from '@/components/ui/checkbox'
 import {useToast} from '@/hooks/use-toast'
 import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload, Eraser} from 'lucide-react'
-import {SiInstagram, SiTiktok, SiLinkedin} from 'react-icons/si'
+import {SiInstagram, SiTiktok, SiLinkedin, SiYoutube} from 'react-icons/si'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
 import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
@@ -59,6 +59,11 @@ export default function AdminPage() {
           icon: <SiLinkedin className="mr-2 h-4 w-4" />,
           label: DataSource.LINKEDIN
         }
+      case DataSource.YOUTUBE:
+        return {
+          icon: <SiYoutube className="mr-2 h-4 w-4" />,
+          label: DataSource.YOUTUBE
+        }
       default:
         return {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
@@ -75,6 +80,8 @@ export default function AdminPage() {
         return <SiLinkedin className="mr-2 h-4 w-4" />
       case AvailableDatasources.INSTAGRAM:
         return <SiInstagram className="mr-2 h-4 w-4" />
+      case AvailableDatasources.YOUTUBE:
+        return <SiYoutube className="mr-2 h-4 w-4" />
       default:
         return <SiInstagram className="mr-2 h-4 w-4" />
     }
@@ -94,6 +101,9 @@ export default function AdminPage() {
     }
     if (lowerFilename.includes('linkedin')) {
       return DataSource.LINKEDIN
+    }
+    if (lowerFilename.includes('youtube')) {
+      return DataSource.YOUTUBE
     }
     
     return null

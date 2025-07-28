@@ -24,6 +24,7 @@ model Client {
   instagramProfile InstagramProfile?
   tiktokProfile    TiktokProfile?
   linkedinProfile  LinkedinProfile?
+  youtubeProfile   YoutubeProfile?
   uploads          Upload[]
 
   @@index([slug])
@@ -210,4 +211,57 @@ model LinkedinPost {
 
   @@index([profileId])
   @@index([postedAt])
+}
+
+model YoutubeProfile {
+  id                    String   @id @default(cuid())
+  clientId              String   @unique
+  channelId             String
+  channelName           String
+  channelUsername       String?
+  channelUrl            String
+  channelDescription    String?
+  channelAvatarUrl      String?
+  channelBannerUrl      String?
+  channelLocation       String?
+  channelJoinedDate     String?
+  numberOfSubscribers   Int      @default(0)
+  channelTotalVideos    Int      @default(0)
+  channelTotalViews     Int      @default(0)
+  isChannelVerified     Boolean  @default(false)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  client Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  videos YoutubeVideo[]
+
+  @@index([channelId])
+}
+
+model YoutubeVideo {
+  id             String   @id @default(cuid())
+  profileId      String
+  videoId        String   @unique
+  title          String
+  type           String
+  url            String
+  thumbnailUrl   String?
+  viewCount      Int      @default(0)
+  likes          Int      @default(0)
+  commentsCount  Int      @default(0)
+  publishedAt    DateTime
+  duration       String?
+  text           String?
+  location       String?
+  hashtags       String[]
+  isAgeRestricted Boolean  @default(false)
+  isMonetized    Boolean?
+  isMembersOnly  Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  profile YoutubeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([publishedAt])
 }
