@@ -9,7 +9,7 @@ import {Label} from '@/components/ui/label'
 import {Checkbox} from '@/components/ui/checkbox'
 import {useToast} from '@/hooks/use-toast'
 import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload, Eraser} from 'lucide-react'
-import {SiInstagram, SiTiktok} from 'react-icons/si'
+import {SiInstagram, SiTiktok, SiLinkedin} from 'react-icons/si'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
 import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
@@ -54,12 +54,49 @@ export default function AdminPage() {
           icon: <SiTiktok className="mr-2 h-4 w-4" />,
           label: DataSource.TIKTOK
         }
+      case DataSource.LINKEDIN:
+        return {
+          icon: <SiLinkedin className="mr-2 h-4 w-4" />,
+          label: DataSource.LINKEDIN
+        }
       default:
         return {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
           label: 'Not Found'
         }
     }
+  }
+
+  const getAvailableDataSourceDisplay = (dataSource: AvailableDatasources) => {
+    switch (dataSource) {
+      case AvailableDatasources.TIKTOK:
+        return <SiTiktok className="mr-2 h-4 w-4" />
+      case AvailableDatasources.LINKEDIN:
+        return <SiLinkedin className="mr-2 h-4 w-4" />
+      case AvailableDatasources.INSTAGRAM:
+        return <SiInstagram className="mr-2 h-4 w-4" />
+      default:
+        return <SiInstagram className="mr-2 h-4 w-4" />
+    }
+  }
+
+  const getDataSourceFromFilename = (filename: string): DataSource | null => {
+    const lowerFilename = filename.toLowerCase()
+    
+    if (lowerFilename.includes('instagramprofile')) {
+      return DataSource.INSTAGRAM_PROFILE
+    }
+    if (lowerFilename.includes('instagram')) {
+      return DataSource.INSTAGRAM_CONTENT
+    }
+    if (lowerFilename.includes('tiktok')) {
+      return DataSource.TIKTOK
+    }
+    if (lowerFilename.includes('linkedin')) {
+      return DataSource.LINKEDIN
+    }
+    
+    return null
   }
 
   const getSelectedClientDisplay = () => {
@@ -131,7 +168,13 @@ export default function AdminPage() {
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      setUploadedFile(acceptedFiles[0])
+      const file = acceptedFiles[0]
+      setUploadedFile(file)
+      
+      const detectedDataSource = getDataSourceFromFilename(file.name)
+      if (detectedDataSource) {
+        setSelectedDataSource(detectedDataSource)
+      }
     }
   }, [])
 
@@ -474,11 +517,7 @@ export default function AdminPage() {
                     <div className="flex items-center">
                       {selectedCleanDataSource ? (
                         <>
-                          {selectedCleanDataSource === AvailableDatasources.TIKTOK ? (
-                            <SiTiktok className="mr-2 h-4 w-4" />
-                          ) : (
-                            <SiInstagram className="mr-2 h-4 w-4" />
-                          )}
+                          {getAvailableDataSourceDisplay(selectedCleanDataSource)}
                           {selectedCleanDataSource}
                         </>
                       ) : (
@@ -496,11 +535,7 @@ export default function AdminPage() {
                       key={dataSource}
                       onClick={() => setSelectedCleanDataSource(dataSource)}
                     >
-                      {dataSource === AvailableDatasources.TIKTOK ? (
-                        <SiTiktok className="mr-2 h-4 w-4" />
-                      ) : (
-                        <SiInstagram className="mr-2 h-4 w-4" />
-                      )}
+                      {getAvailableDataSourceDisplay(dataSource)}
                       {dataSource}
                     </DropdownMenuItem>
                   ))}

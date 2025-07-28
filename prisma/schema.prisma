@@ -23,6 +23,7 @@ model Client {
 
   instagramProfile InstagramProfile?
   tiktokProfile    TiktokProfile?
+  linkedinProfile  LinkedinProfile?
   uploads          Upload[]
 
   @@index([slug])
@@ -162,4 +163,51 @@ model TiktokPost {
 
   @@index([profileId])
   @@index([createTime])
+}
+
+model LinkedinProfile {
+  id            String   @id @default(cuid())
+  clientId      String   @unique
+  firstName     String
+  lastName      String
+  headline      String?
+  username      String
+  profileUrl    String
+  profilePicUrl String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  client Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  posts  LinkedinPost[]
+}
+
+model LinkedinPost {
+  id                String   @id @default(cuid())
+  profileId         String
+  urn               String   @unique
+  fullUrn           String
+  postType          String
+  text              String?
+  url               String
+  postedAt          DateTime
+  totalReactions    Int      @default(0)
+  likesCount        Int      @default(0)
+  supportsCount     Int      @default(0)
+  lovesCount        Int      @default(0)
+  insightsCount     Int      @default(0)
+  celebratesCount   Int      @default(0)
+  commentsCount     Int      @default(0)
+  repostsCount      Int      @default(0)
+  mediaType         String?
+  mediaUrl          String?
+  mediaThumbnail    String?
+  imageUrls         String[]
+  paginationToken   String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  profile LinkedinProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@index([postedAt])
 }

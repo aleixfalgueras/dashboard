@@ -2,14 +2,12 @@
 export enum DataSource {
   INSTAGRAM_PROFILE = "Instagram Profile",
   INSTAGRAM_CONTENT = "Instagram Content",
-  TIKTOK = "TikTok"
+  TIKTOK = "TikTok",
+  LINKEDIN = "LinkedIn"
 }
 
 export enum AvailableDatasources {
   INSTAGRAM = 'Instagram',
-  TIKTOK = 'TikTok'
-  // Future datasources
-  // TWITTER = 'twitter',
-  // YOUTUBE = 'youtube',
-  // TIKTOK = 'tiktok',
+  TIKTOK = 'TikTok',
+  LINKEDIN = "LinkedIn"
 }

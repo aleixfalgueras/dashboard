@@ -3,6 +3,7 @@
 import { clientService } from '@/services/client-service'
 import { instagramService } from '@/services/instagram-service'
 import { tiktokService } from '@/services/tiktok-service'
+import { linkedinService } from '@/services/linkedin-service'
 import { Client } from '@prisma/client'
 import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
@@ -82,6 +83,9 @@ export async function cleanClientData(clientId: string, dataSource: AvailableDat
         break
       case AvailableDatasources.TIKTOK:
         await tiktokService.deleteTiktokProfileByClientId(clientId)
+        break
+      case AvailableDatasources.LINKEDIN:
+        await linkedinService.deleteLinkedinProfileByClientId(clientId)
         break
       default:
         throw new Error(`Unsupported data source: ${dataSource}`)
