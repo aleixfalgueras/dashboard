@@ -19,8 +19,8 @@ export class UploadService {
       )
 
       // Route to appropriate processor based on data source
-      if (uploadRequestDto.dataSource === DataSource.INSTAGRAM_CONTENT) {
-        await instagramService.processInstagramContentUpload(uploadRequestDto)
+      if (uploadRequestDto.dataSource === DataSource.INSTAGRAM_POSTS) {
+        await instagramService.processInstagramPostsUpload(uploadRequestDto)
       }
       else if (uploadRequestDto.dataSource === DataSource.INSTAGRAM_PROFILE) {
         await instagramService.processInstagramProfileUpload(uploadRequestDto)

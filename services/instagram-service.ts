@@ -82,7 +82,7 @@ export class InstagramService {
     }
   }
 
-  async processInstagramContentUpload(uploadRequestDto: UploadRequestDto): Promise<void> {
+  async processInstagramPostsUpload(uploadRequestDto: UploadRequestDto): Promise<void> {
     try {
       // Parse and validate the JSON data
       const parsedData = JSON.parse(uploadRequestDto.jsonData)

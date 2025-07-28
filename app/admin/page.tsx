@@ -26,7 +26,7 @@ import {format, parse} from 'date-fns'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
-  const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM_CONTENT)
+  const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM_POSTS)
   const [overwriteData, setOverwriteData] = useState(true)
   const [newClientName, setNewClientName] = useState('')
   const [uploading, setUploading] = useState(false)
@@ -51,10 +51,10 @@ export default function AdminPage() {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
           label: DataSource.INSTAGRAM_PROFILE
         }
-      case DataSource.INSTAGRAM_CONTENT:
+      case DataSource.INSTAGRAM_POSTS:
         return {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
-          label: DataSource.INSTAGRAM_CONTENT
+          label: DataSource.INSTAGRAM_POSTS
         }
       case DataSource.TIKTOK:
         return {
@@ -101,7 +101,7 @@ export default function AdminPage() {
       return DataSource.INSTAGRAM_PROFILE
     }
     if (lowerFilename.includes('instagram')) {
-      return DataSource.INSTAGRAM_CONTENT
+      return DataSource.INSTAGRAM_POSTS
     }
     if (lowerFilename.includes('tiktok')) {
       return DataSource.TIKTOK
