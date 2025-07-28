@@ -33,13 +33,13 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-pink-400 bg-gradient-to-br from-pink-50/50 to-transparent dark:from-pink-950/20">
+        <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
-            <Heart className="h-4 w-4 text-pink-500"/>
+            <Heart className="h-4 w-4 text-blue-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-pink-600 dark:text-pink-400">{metrics.totalLikes.toLocaleString()}</div>
+            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{metrics.totalLikes.toLocaleString()}</div>
           </CardContent>
         </Card>
 
