@@ -65,7 +65,7 @@ export interface LinkedinMetrics {
   totalReactions: number
   totalComments: number
   totalReposts: number
-  avgEngagementPerPost: number
+  avgRepostsPerPost: number
 }
 
 export interface LinkedinHashtagAnalysis {

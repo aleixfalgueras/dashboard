@@ -133,16 +133,14 @@ export class LinkedinService {
     const totalReposts = posts.reduce((sum, post) => sum + post.repostsCount, 0)
     const totalPosts = posts.length
     
-    const avgEngagementPerPost = totalPosts > 0 
-      ? (totalReactions + totalComments + totalReposts) / totalPosts 
-      : 0
+    const avgRepostsPerPost = totalPosts > 0 ? totalReposts / totalPosts : 0
 
     return {
       totalPosts,
       totalReactions,
       totalComments,
       totalReposts,
-      avgEngagementPerPost
+      avgRepostsPerPost
     }
   }
 

@@ -43,25 +43,13 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
+        <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <div className="flex items-center gap-1">
-              <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p className="max-w-xs">
-                    Calculated as average of (Reactions + Comments + Reposts) ÷ Impressions per post
-                  </p>
-                </TooltipContent>
-              </Tooltip>
-            </div>
-            <TrendingUp className="h-4 w-4 text-green-500"/>
+            <CardTitle className="text-sm font-medium">Avg. Reposts</CardTitle>
+            <Share2 className="h-4 w-4 text-purple-500"/>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{(metrics.avgEngagementPerPost * 100).toFixed(2)}%</div>
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{metrics.avgRepostsPerPost.toFixed(1)}</div>
             <p className="text-xs text-muted-foreground">per post</p>
           </CardContent>
         </Card>
