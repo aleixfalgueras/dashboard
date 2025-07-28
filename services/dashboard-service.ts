@@ -1,7 +1,8 @@
 import { clientService } from './client-service'
 import { instagramService } from './instagram-service'
 import { tiktokService } from './tiktok-service'
-import { DashboardData, DatasourcesData, InstagramDashboardData, TiktokDashboardData } from '@/lib/types/dashboard-types'
+import { linkedinService } from './linkedin-service'
+import { DashboardData, DatasourcesData, InstagramDashboardData, LinkedinDashboardData, TiktokDashboardData } from '@/lib/types/dashboard-types'
 import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
 
@@ -31,6 +32,15 @@ export class DashboardService {
       if (tiktokData) {
         datasourcesData.tiktok = tiktokData
         availableDatasources.push(AvailableDatasources.TIKTOK)
+      }
+    }
+
+    // Check and process LinkedIn data
+    if (client.linkedinProfile && client.linkedinProfile.posts.length > 0) {
+      const linkedinData = await this.getLinkedinDashboardData(client.linkedinProfile)
+      if (linkedinData) {
+        datasourcesData.linkedin = linkedinData
+        availableDatasources.push(AvailableDatasources.LINKEDIN)
       }
     }
 
@@ -84,6 +94,26 @@ export class DashboardService {
       }
     } catch (error) {
       logger.error('Error processing TikTok data:', error)
+      return null
+    }
+  }
+
+  private async getLinkedinDashboardData(
+    profile: NonNullable<DashboardData['client']['linkedinProfile']>
+  ): Promise<LinkedinDashboardData | null> {
+    try {
+      const metrics = linkedinService.calculateLinkedinMetrics(profile.posts)
+      const topPosts = linkedinService.getTopPosts(profile.posts, 6)
+      const hashtagAnalysis = linkedinService.analyzeHashtags(profile.posts, 10)
+
+      return {
+        profile,
+        metrics,
+        topPosts,
+        hashtagAnalysis
+      }
+    } catch (error) {
+      logger.error('Error processing LinkedIn data:', error)
       return null
     }
   }

@@ -2,10 +2,11 @@ import {dashboardService} from '@/services/dashboard-service'
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs'
 import {Card, CardHeader, CardTitle, CardDescription} from '@/components/ui/card'
 import {RiInstagramFill} from 'react-icons/ri'
-import {SiTiktok} from 'react-icons/si'
+import {SiTiktok, SiLinkedin} from 'react-icons/si'
 import {AvailableDatasources} from '@/lib/types/common/enums'
 import {InstagramSection} from "@/components/dashboard/InstagramSection";
 import {TikTokSection} from "@/components/dashboard/TikTokSection";
+import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
 
 interface DashboardPageProps {
   params: {
@@ -57,6 +58,12 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 TikTok
               </TabsTrigger>
             )}
+            {availableDatasources.includes(AvailableDatasources.LINKEDIN) && (
+              <TabsTrigger value={AvailableDatasources.LINKEDIN} className="flex items-center gap-2">
+                <SiLinkedin className="h-4 w-4 text-[#0077B5]" />
+                LinkedIn
+              </TabsTrigger>
+            )}
           </TabsList>
 
           {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && datasourcesData.instagram && (
@@ -87,6 +94,20 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </div>
             </TabsContent>
           )}
+          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
+            <TabsContent value={AvailableDatasources.LINKEDIN}>
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-bold flex items-center gap-2">
+                    <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
+                    {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
+                  </h2>
+                  <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
+                </div>
+                <LinkedInSection data={datasourcesData.linkedin} />
+              </div>
+            </TabsContent>
+          )}
         </Tabs>
       ) : (
         // Single datasource view
@@ -113,6 +134,18 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 <p className="text-muted-foreground">{datasourcesData.tiktok.profile.nickname}</p>
               </div>
               <TikTokSection data={datasourcesData.tiktok} />
+            </div>
+          )}
+          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
+            <div className="space-y-4">
+              <div>
+                <h2 className="text-2xl font-bold flex items-center gap-2">
+                  <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
+                  {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
+                </h2>
+                <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
+              </div>
+              <LinkedInSection data={datasourcesData.linkedin} />
             </div>
           )}
         </>

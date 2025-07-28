@@ -42,6 +42,15 @@ export class ClientRepository {
               }
             }
           }
+        },
+        linkedinProfile: {
+          include: {
+            posts: {
+              orderBy: {
+                postedAt: 'desc'
+              }
+            }
+          }
         }
       }
     })
