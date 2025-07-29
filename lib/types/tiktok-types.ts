@@ -111,11 +111,18 @@ export interface TiktokHashtagAnalysis {
   count: number
 }
 
+export interface TiktokHeatmapCell {
+  dayOfWeek: number // 1-7 (Monday to Sunday)
+  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
+  postCount: number
+}
+
 export interface TiktokConsistencyMetrics {
   activeDays: number
   inactiveDays: number
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
+  heatmapData: TiktokHeatmapCell[]
   consistencyScore: number // 0-100 composite score
 }
