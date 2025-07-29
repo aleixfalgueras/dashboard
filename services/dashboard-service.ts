@@ -182,11 +182,19 @@ export class DashboardService {
     let totalViews = 0
     let totalVideoCount = 0
     let totalEngagement = 0
+    let totalConsistencyScore = 0
+    let consistencyDatasourcesCount = 0
 
     // Instagram followers and video posts
     if (datasourcesData.instagram) {
-      const { profile } = datasourcesData.instagram
+      const { profile, consistencyMetrics } = datasourcesData.instagram
       totalFollowers += profile.followersCount || 0
+
+      // Add consistency score
+      if (consistencyMetrics && consistencyMetrics.consistencyScore !== undefined) {
+        totalConsistencyScore += consistencyMetrics.consistencyScore
+        consistencyDatasourcesCount++
+      }
 
       // Only count video posts for views and engagement
       const videoPosts = profile.posts.filter(post => post.type === "Video")
@@ -201,8 +209,14 @@ export class DashboardService {
 
     // TikTok followers and posts (all are videos)
     if (datasourcesData.tiktok) {
-      const { profile } = datasourcesData.tiktok
+      const { profile, consistencyMetrics } = datasourcesData.tiktok
       totalFollowers += profile.following || 0
+
+      // Add consistency score
+      if (consistencyMetrics && consistencyMetrics.consistencyScore !== undefined) {
+        totalConsistencyScore += consistencyMetrics.consistencyScore
+        consistencyDatasourcesCount++
+      }
 
       profile.posts.forEach(post => {
         if (post.playCount && post.playCount > 0) {
@@ -213,10 +227,27 @@ export class DashboardService {
       })
     }
 
+    // LinkedIn followers and posts
+    if (datasourcesData.linkedin) {
+      const { consistencyMetrics } = datasourcesData.linkedin
+
+      // Add consistency score
+      if (consistencyMetrics && consistencyMetrics.consistencyScore !== undefined) {
+        totalConsistencyScore += consistencyMetrics.consistencyScore
+        consistencyDatasourcesCount++
+      }
+    }
+
     // YouTube followers and videos
     if (datasourcesData.youtube) {
-      const { profile } = datasourcesData.youtube
+      const { profile, consistencyMetrics } = datasourcesData.youtube
       totalFollowers += profile.numberOfSubscribers || 0
+
+      // Add consistency score
+      if (consistencyMetrics && consistencyMetrics.consistencyScore !== undefined) {
+        totalConsistencyScore += consistencyMetrics.consistencyScore
+        consistencyDatasourcesCount++
+      }
 
       profile.videos.forEach(video => {
         if (video.viewCount && video.viewCount > 0) {
@@ -229,12 +260,13 @@ export class DashboardService {
 
     const avgViews = totalVideoCount > 0 ? Math.round(totalViews / totalVideoCount) : 0
     const globalAvgEngagement = totalViews > 0 ? Number((totalEngagement / totalViews * 100).toFixed(2)) : 0
+    const avgConsistencyScore = consistencyDatasourcesCount > 0 ? Math.round(totalConsistencyScore / consistencyDatasourcesCount) : 0
 
     return {
       totalFollowers,
       avgViews,
       globalAvgEngagement,
-      consistency: 1 // Hardcoded for now as requested
+      avgConsistencyScore
     }
   }
 }

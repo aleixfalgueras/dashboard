@@ -107,7 +107,7 @@ export interface GeneralMetrics {
   totalFollowers: number
   avgViews: number
   globalAvgEngagement: number
-  consistency: number
+  avgConsistencyScore: number
 }
 
 // Dashboard page data
