@@ -83,10 +83,17 @@ export interface InstagramHashtagAnalysis {
   count: number
 }
 
+export interface InstagramHeatmapCell {
+  dayOfWeek: number // 1-7 (Monday to Sunday)
+  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
+  postCount: number
+}
+
 export interface InstagramConsistencyMetrics {
   activeDays: number
   inactiveDays: number
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
+  heatmapData: InstagramHeatmapCell[]
 }

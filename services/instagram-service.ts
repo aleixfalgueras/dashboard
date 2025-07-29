@@ -6,7 +6,8 @@ import {
   InstagramPostTypeDistribution,
   InstagramProfileDataSchema,
   RawInstagramData,
-  InstagramConsistencyMetrics
+  InstagramConsistencyMetrics,
+  InstagramHeatmapCell
 } from '@/lib/types/instagram-types'
 import {UploadRequestDto} from '@/lib/types/common/upload-types'
 import {InstagramPost, InstagramProfile, Prisma} from '@prisma/client'
@@ -252,7 +253,8 @@ export class InstagramService {
         inactiveDays: 0,
         dailyConsistencyRate: 0,
         longestSilence: 0,
-        longestActiveStreak: 0
+        longestActiveStreak: 0,
+        heatmapData: []
       }
     }
 
@@ -311,12 +313,49 @@ export class InstagramService {
       }
     })
 
+    // Calculate heatmap data
+    const heatmapMap = new Map<string, number>()
+    
+    // Initialize all cells with 0
+    for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+      for (let hour = 0; hour < 24; hour += 3) {
+        const key = `${dayOfWeek}-${hour}`
+        heatmapMap.set(key, 0)
+      }
+    }
+
+    // Count posts for each day/hour combination
+    posts.forEach(post => {
+      const date = new Date(post.timestamp)
+      // getDay() returns 0 for Sunday, we want 1-7 with Monday as 1
+      const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay()
+      const hour = date.getHours()
+      const hourBlock = Math.floor(hour / 3) * 3
+      const key = `${dayOfWeek}-${hourBlock}`
+      
+      heatmapMap.set(key, (heatmapMap.get(key) || 0) + 1)
+    })
+
+    // Convert map to array of cells
+    const heatmapData: InstagramHeatmapCell[] = []
+    for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+      for (let hourBlock = 0; hourBlock < 24; hourBlock += 3) {
+        const key = `${dayOfWeek}-${hourBlock}`
+        heatmapData.push({
+          dayOfWeek,
+          hourBlock,
+          postCount: heatmapMap.get(key) || 0
+        })
+      }
+    }
+
     return {
       activeDays,
       inactiveDays,
       dailyConsistencyRate: Number(dailyConsistencyRate.toFixed(2)),
       longestSilence,
-      longestActiveStreak
+      longestActiveStreak,
+      heatmapData
     }
   }
 
