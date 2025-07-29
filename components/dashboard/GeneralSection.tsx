@@ -88,6 +88,22 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${yScale(d.forecast)}`
     ).join(' ');
 
+    // Generate area path for forecast fill
+    const forecastAreaPath = [
+      // Start at bottom left
+      `M ${xScale(0)} ${chartHeight}`,
+      // Go up to first forecast point
+      `L ${xScale(0)} ${yScale(chartData[0].forecast)}`,
+      // Follow the forecast line
+      ...chartData.slice(1).map((d, i) => 
+        `L ${xScale(i + 1)} ${yScale(d.forecast)}`
+      ),
+      // Go down to bottom right
+      `L ${xScale(chartData.length - 1)} ${chartHeight}`,
+      // Close the path
+      'Z'
+    ].join(' ');
+
     return (
       <div 
         className="relative w-full h-[300px] flex items-center justify-center"
@@ -134,6 +150,14 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
           ))}
 
           <g transform={`translate(${padding.left}, ${padding.top})`}>
+            {/* Forecast area fill */}
+            <path
+              d={forecastAreaPath}
+              fill="hsl(var(--accent))"
+              fillOpacity="0.2"
+              className="transition-colors"
+            />
+
             {/* Current trend line */}
             <path
               d={currentPath}
@@ -293,7 +317,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       </div>
 
       {/* Follower Growth Forecast Chart */}
-      <Card className="col-span-full border-l-4 border-l-accent accent-gradient-subtle">
+      <Card className="col-span-full border-l-4 border-l-accent">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             Follower Growth Forecast

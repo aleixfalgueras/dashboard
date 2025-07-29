@@ -12,6 +12,7 @@ import {GeneralSection} from "@/components/dashboard/GeneralSection";
 import {Logo} from "@/components/ui/logo";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {ExpandableText} from "@/components/ui/expandable-text";
+import {ThemeToggle} from "@/components/theme-toggle";
 
 interface DashboardPageProps {
   params: {
@@ -157,9 +158,12 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     <div className="container mx-auto py-8 space-y-8">
       {/* Header */}
       <div className="space-y-1">
-        <div className="flex items-center gap-3">
-          <Logo size="md" />
-          <h1 className="text-3xl font-bold">{client.name}</h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Logo size="md" />
+            <h1 className="text-3xl font-bold">{client.name}</h1>
+          </div>
+          <ThemeToggle />
         </div>
         <p className="text-muted-foreground">Analytics Dashboard</p>
       </div>
