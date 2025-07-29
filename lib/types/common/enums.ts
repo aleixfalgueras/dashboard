@@ -11,5 +11,6 @@ export enum AvailableDatasources {
   INSTAGRAM = "Instagram",
   TIKTOK = "TikTok",
   LINKEDIN = "LinkedIn",
-  YOUTUBE = "YouTube"
+  YOUTUBE = "YouTube",
+  ALL = "All Data"
 }

@@ -19,7 +19,7 @@ import {DataSource, AvailableDatasources} from '@/lib/types/common/enums'
 import Link from 'next/link'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from '@/components/ui/dropdown-menu'
 import {logger} from "@/lib/utils";
-import {cleanClientData, updateClientStatsDataStartDate} from '@/app/actions/client-management-action';
+import {cleanClientData, cleanAllClientData, updateClientStatsDataStartDate} from '@/app/actions/client-management-action';
 import {DatePicker} from '@/components/ui/date-picker'
 import {Settings} from 'lucide-react'
 import {format, parse} from 'date-fns'
@@ -91,6 +91,8 @@ export default function AdminPage() {
         return <SiInstagram className="mr-2 h-4 w-4" />
       case AvailableDatasources.YOUTUBE:
         return <SiYoutube className="mr-2 h-4 w-4" />
+      case AvailableDatasources.ALL:
+        return <Eraser className="mr-2 h-4 w-4" />
       default:
         return <SiInstagram className="mr-2 h-4 w-4" />
     }
@@ -162,12 +164,19 @@ export default function AdminPage() {
 
     setCleaning(true)
     try {
-      const result = await cleanClientData(clientToClean, selectedCleanDataSource)
+      let result
+      if (selectedCleanDataSource === AvailableDatasources.ALL) {
+        result = await cleanAllClientData(clientToClean)
+      } else {
+        result = await cleanClientData(clientToClean, selectedCleanDataSource)
+      }
       
       if (result.success) {
         toast({
           title: 'Data cleaned successfully',
-          description: `${selectedCleanDataSource} data has been removed for this client.`
+          description: selectedCleanDataSource === AvailableDatasources.ALL 
+            ? 'All data has been removed for this client.'
+            : `${selectedCleanDataSource} data has been removed for this client.`
         })
         handleCloseCleanDataDialog()
       } else {
@@ -583,7 +592,7 @@ export default function AdminPage() {
           <DialogHeader>
             <DialogTitle>Clean Data</DialogTitle>
             <DialogDescription>
-              Select the data source you want to clean for this client. This action cannot be undone.
+              Select the data source you want to clean for this client. Choose &quot;All Data&quot; to remove all platform data at once. This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           

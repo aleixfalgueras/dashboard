@@ -109,6 +109,29 @@ export async function cleanClientData(clientId: string, dataSource: AvailableDat
   }
 }
 
+export async function cleanAllClientData(clientId: string) {
+  try {
+    // Clean all data sources for the client
+    await Promise.allSettled([
+      instagramService.deleteInstagramProfileByClientId(clientId),
+      tiktokService.deleteTiktokProfileByClientId(clientId),
+      linkedinService.deleteLinkedinProfileByClientId(clientId),
+      youtubeService.deleteYoutubeProfileByClientId(clientId)
+    ])
+    
+    return {
+      success: true
+    }
+  } catch (error) {
+    logger.error('Clean all client data error:', error)
+    
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to clean all client data'
+    }
+  }
+}
+
 export async function updateClientStatsDataStartDate(
   clientId: string,
   statsDataStartDate: Date | null
