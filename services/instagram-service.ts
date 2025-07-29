@@ -246,6 +246,98 @@ export class InstagramService {
     return analyzeHashtagsGeneric(posts, limit)
   }
 
+  private calculatePostingFrequencyConsistency(posts: InstagramPost[]): number {
+    if (posts.length < 7) return 0.5 // Not enough data for weekly analysis
+    
+    // Group posts by week
+    const weeklyPostCounts = new Map<string, number>()
+    
+    posts.forEach(post => {
+      const date = new Date(post.timestamp)
+      // Get Monday of the week as the key (ISO week)
+      const monday = new Date(date)
+      monday.setDate(date.getDate() - (date.getDay() + 6) % 7)
+      const weekKey = monday.toISOString().split('T')[0]
+      
+      weeklyPostCounts.set(weekKey, (weeklyPostCounts.get(weekKey) || 0) + 1)
+    })
+    
+    const counts = Array.from(weeklyPostCounts.values())
+    if (counts.length < 2) return 0.5
+    
+    // Calculate coefficient of variation (CV = std_dev / mean)
+    const mean = counts.reduce((sum, count) => sum + count, 0) / counts.length
+    const variance = counts.reduce((sum, count) => sum + Math.pow(count - mean, 2), 0) / counts.length
+    const stdDev = Math.sqrt(variance)
+    const cv = mean > 0 ? stdDev / mean : 1
+    
+    // Convert CV to 0-1 scale (lower CV = higher consistency)
+    // CV of 0 = perfect consistency (1.0), CV of 1+ = poor consistency (0.0)
+    return Math.max(0, 1 - cv)
+  }
+
+  private calculateTimePatternConsistency(heatmapData: InstagramHeatmapCell[]): number {
+    const nonZeroCells = heatmapData.filter(cell => cell.postCount > 0)
+    if (nonZeroCells.length < 2) return 0.5
+    
+    // Calculate variance in posting times
+    const totalPosts = nonZeroCells.reduce((sum, cell) => sum + cell.postCount, 0)
+    
+    // Calculate entropy-based consistency score
+    let entropy = 0
+    nonZeroCells.forEach(cell => {
+      const probability = cell.postCount / totalPosts
+      entropy -= probability * Math.log2(probability)
+    })
+    
+    // Normalize entropy (max entropy for 56 time slots = log2(56) ≈ 5.8)
+    const maxEntropy = Math.log2(56) // 7 days × 8 time slots
+    const normalizedEntropy = entropy / maxEntropy
+    
+    // Lower entropy = more consistent (concentrated posting times)
+    return Math.max(0, 1 - normalizedEntropy)
+  }
+
+  private calculateStreakStability(longestActiveStreak: number, longestSilence: number, totalDays: number): number {
+    if (totalDays === 0) return 0
+    
+    // Ideal scenario: moderate active streaks, minimal silence periods
+    const activeStreakRatio = longestActiveStreak / totalDays
+    const silenceRatio = longestSilence / totalDays
+    
+    // Penalize both very short streaks and very long silences
+    const streakScore = Math.min(1, activeStreakRatio * 2) // Reward longer active streaks up to 50% of total days
+    const silenceScore = Math.max(0, 1 - silenceRatio * 3) // Heavily penalize long silences
+    
+    return (streakScore + silenceScore) / 2
+  }
+
+  private calculateOverallConsistencyScore(
+    frequencyConsistency: number,
+    timePatternConsistency: number,
+    dailyConsistencyRate: number,
+    streakStability: number
+  ): number {
+    // Weighted combination
+    const weights = {
+      frequency: 0.40,
+      timePattern: 0.25,
+      dailyRate: 0.20,
+      streakStability: 0.15
+    }
+    
+    const normalizedDailyRate = dailyConsistencyRate / 100 // Convert percentage to 0-1
+    
+    const weightedScore = 
+      frequencyConsistency * weights.frequency +
+      timePatternConsistency * weights.timePattern +
+      normalizedDailyRate * weights.dailyRate +
+      streakStability * weights.streakStability
+    
+    // Convert to 0-100 scale and round
+    return Math.round(weightedScore * 100)
+  }
+
   calculateConsistencyMetrics(posts: InstagramPost[]): InstagramConsistencyMetrics {
     if (posts.length === 0) {
       return {
@@ -254,7 +346,8 @@ export class InstagramService {
         dailyConsistencyRate: 0,
         longestSilence: 0,
         longestActiveStreak: 0,
-        heatmapData: []
+        heatmapData: [],
+        consistencyScore: 0
       }
     }
 
@@ -349,13 +442,25 @@ export class InstagramService {
       }
     }
 
+    // Calculate consistency score components
+    const frequencyConsistency = this.calculatePostingFrequencyConsistency(posts)
+    const timePatternConsistency = this.calculateTimePatternConsistency(heatmapData)
+    const streakStability = this.calculateStreakStability(longestActiveStreak, longestSilence, totalDays)
+    const consistencyScore = this.calculateOverallConsistencyScore(
+      frequencyConsistency,
+      timePatternConsistency,
+      dailyConsistencyRate,
+      streakStability
+    )
+
     return {
       activeDays,
       inactiveDays,
       dailyConsistencyRate: Number(dailyConsistencyRate.toFixed(2)),
       longestSilence,
       longestActiveStreak,
-      heatmapData
+      heatmapData,
+      consistencyScore
     }
   }
 

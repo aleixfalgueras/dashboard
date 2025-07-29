@@ -96,4 +96,5 @@ export interface InstagramConsistencyMetrics {
   longestSilence: number
   longestActiveStreak: number
   heatmapData: InstagramHeatmapCell[]
+  consistencyScore: number // 0-100 composite score
 }

@@ -263,6 +263,35 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                   </div>
                   <span className="text-sm font-medium">{consistencyMetrics.longestActiveStreak} {consistencyMetrics.longestActiveStreak === 1 ? 'day' : 'days'}</span>
                 </div>
+                <div className="pt-4 border-t">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-green-500"/>
+                      <span className="font-medium">Consistency Score</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">
+                            Composite score (0-100) based on posting frequency consistency (40%), 
+                            time pattern regularity (25%), daily activity rate (20%), 
+                            and streak stability (15%)
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">{consistencyMetrics.consistencyScore}/100</span>
+                      <div className="w-16 h-2 bg-secondary rounded-full">
+                        <div
+                          className="h-2 rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"
+                          style={{ width: `${consistencyMetrics.consistencyScore}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
