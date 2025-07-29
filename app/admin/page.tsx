@@ -25,6 +25,7 @@ import {Settings} from 'lucide-react'
 import {format, parse} from 'date-fns'
 import {Logo} from '@/components/ui/logo'
 import {ThemeToggle} from '@/components/theme-toggle'
+import {LogoutButton} from '@/components/auth/logout-button'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -315,7 +316,10 @@ export default function AdminPage() {
           <Logo size="lg" />
           <h1 className="text-4xl font-bold mb-2 text-accent">Dico De Rooij Dashboards</h1>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <LogoutButton />
+        </div>
       </div>
 
       <div className="space-y-6">

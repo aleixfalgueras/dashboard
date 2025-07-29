@@ -13,6 +13,7 @@ import {Logo} from "@/components/ui/logo";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {ExpandableText} from "@/components/ui/expandable-text";
 import {ThemeToggle} from "@/components/theme-toggle";
+import {LogoutButton} from '@/components/auth/logout-button';
 
 interface DashboardPageProps {
   params: {
@@ -163,7 +164,10 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <Logo size="md" />
             <h1 className="text-3xl font-bold">{client.name}</h1>
           </div>
-          <ThemeToggle />
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <LogoutButton />
+          </div>
         </div>
         <p className="text-muted-foreground">Analytics Dashboard</p>
       </div>
