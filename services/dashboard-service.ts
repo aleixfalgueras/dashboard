@@ -95,13 +95,15 @@ export class DashboardService {
       const postTypes = instagramService.getPostTypeDistribution(profile.posts)
       const topPosts = instagramService.getTopPosts(profile.posts, 6)
       const hashtagAnalysis = instagramService.analyzeHashtags(profile.posts, 10)
+      const consistencyMetrics = instagramService.calculateConsistencyMetrics(profile.posts)
 
       return {
         profile,
         metrics,
         postTypes,
         topPosts,
-        hashtagAnalysis
+        hashtagAnalysis,
+        consistencyMetrics
       }
     } catch (error) {
       logger.error('Error processing Instagram data:', error)

@@ -82,3 +82,11 @@ export interface InstagramHashtagAnalysis {
   tag: string
   count: number
 }
+
+export interface InstagramConsistencyMetrics {
+  activeDays: number
+  inactiveDays: number
+  dailyConsistencyRate: number
+  longestSilence: number
+  longestActiveStreak: number
+}

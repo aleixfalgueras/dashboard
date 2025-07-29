@@ -5,7 +5,8 @@ import {
   InstagramMetrics,
   InstagramPostTypeDistribution,
   InstagramProfileDataSchema,
-  RawInstagramData
+  RawInstagramData,
+  InstagramConsistencyMetrics
 } from '@/lib/types/instagram-types'
 import {UploadRequestDto} from '@/lib/types/common/upload-types'
 import {InstagramPost, InstagramProfile, Prisma} from '@prisma/client'
@@ -242,6 +243,81 @@ export class InstagramService {
 
   analyzeHashtags(posts: InstagramPost[], limit: number = 10): InstagramHashtagAnalysis[] {
     return analyzeHashtagsGeneric(posts, limit)
+  }
+
+  calculateConsistencyMetrics(posts: InstagramPost[]): InstagramConsistencyMetrics {
+    if (posts.length === 0) {
+      return {
+        activeDays: 0,
+        inactiveDays: 0,
+        dailyConsistencyRate: 0,
+        longestSilence: 0,
+        longestActiveStreak: 0
+      }
+    }
+
+    // Sort posts by timestamp
+    const sortedPosts = [...posts].sort((a, b) => 
+      new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+    )
+
+    // Get date range
+    const firstPost = new Date(sortedPosts[0].timestamp)
+    const lastPost = new Date(sortedPosts[sortedPosts.length - 1].timestamp)
+    
+    // Calculate total days in range
+    const totalDays = Math.ceil((lastPost.getTime() - firstPost.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
+    // Create a Set of unique days with posts
+    const activeDaysSet = new Set<string>()
+    sortedPosts.forEach(post => {
+      const dateStr = new Date(post.timestamp).toISOString().split('T')[0]
+      activeDaysSet.add(dateStr)
+    })
+
+    const activeDays = activeDaysSet.size
+    const inactiveDays = totalDays - activeDays
+    const dailyConsistencyRate = (activeDays / totalDays) * 100
+
+    // Calculate streaks
+    const allDays = []
+    const currentDate = new Date(firstPost)
+    while (currentDate <= lastPost) {
+      const dateStr = currentDate.toISOString().split('T')[0]
+      allDays.push({
+        date: dateStr,
+        hasPost: activeDaysSet.has(dateStr)
+      })
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    // Find longest silence (consecutive days without posts)
+    let longestSilence = 0
+    let currentSilence = 0
+    
+    // Find longest active streak (consecutive days with posts)
+    let longestActiveStreak = 0
+    let currentActiveStreak = 0
+
+    allDays.forEach(day => {
+      if (day.hasPost) {
+        currentActiveStreak++
+        longestActiveStreak = Math.max(longestActiveStreak, currentActiveStreak)
+        currentSilence = 0
+      } else {
+        currentSilence++
+        longestSilence = Math.max(longestSilence, currentSilence)
+        currentActiveStreak = 0
+      }
+    })
+
+    return {
+      activeDays,
+      inactiveDays,
+      dailyConsistencyRate: Number(dailyConsistencyRate.toFixed(2)),
+      longestSilence,
+      longestActiveStreak
+    }
   }
 
   async deleteInstagramProfileByClientId(clientId: string): Promise<InstagramProfile | null> {
