@@ -5,7 +5,7 @@ import {RiInstagramFill} from 'react-icons/ri'
 import {SiTiktok, SiLinkedin, SiYoutube} from 'react-icons/si'
 import {AvailableDatasources} from '@/lib/types/common/enums'
 import {InstagramSection} from "@/components/dashboard/InstagramSection";
-import {TikTokSection} from "@/components/dashboard/TikTokSection";
+import {TiktokSection} from "@/components/dashboard/TiktokSection";
 import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
 import {YoutubeSection} from "@/components/dashboard/YoutubeSection";
 import {GeneralSection} from "@/components/dashboard/GeneralSection";
@@ -87,7 +87,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             />
           </div>
         </div>
-        <TikTokSection data={datasourcesData.tiktok} />
+        <TiktokSection data={datasourcesData.tiktok} />
       </div>
     )
 

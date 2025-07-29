@@ -118,12 +118,14 @@ export class DashboardService {
       const metrics = tiktokService.calculateTiktokMetrics(profile.posts)
       const topPosts = tiktokService.getTopPosts(profile.posts, 6)
       const hashtagAnalysis = tiktokService.analyzeHashtags(profile.posts, 10)
+      const consistencyMetrics = tiktokService.calculateConsistencyMetrics(profile.posts)
 
       return {
         profile,
         metrics,
         topPosts,
-        hashtagAnalysis
+        hashtagAnalysis,
+        consistencyMetrics
       }
     } catch (error) {
       logger.error('Error processing TikTok data:', error)

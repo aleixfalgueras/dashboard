@@ -110,3 +110,12 @@ export interface TiktokHashtagAnalysis {
   tag: string
   count: number
 }
+
+export interface TiktokConsistencyMetrics {
+  activeDays: number
+  inactiveDays: number
+  dailyConsistencyRate: number
+  longestSilence: number
+  longestActiveStreak: number
+  consistencyScore: number // 0-100 composite score
+}
