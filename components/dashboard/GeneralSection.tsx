@@ -18,6 +18,7 @@ interface TooltipData {
 
 export function GeneralSection({ metrics }: GeneralSectionProps) {
   const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; data: TooltipData } | null>(null);
+  const [growthPercentage, setGrowthPercentage] = useState(15);
   
   // Auto-hide tooltip after delay
   useEffect(() => {
@@ -31,7 +32,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
   }, [hoveredPoint]);
 
   // Generate chart data for follower growth forecast
-  const generateChartData = () => {
+  const generateChartData = (growthPercent: number) => {
     const currentFollowers = metrics.totalFollowers;
     const today = new Date();
     
@@ -47,8 +48,8 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       const monthlyGrowthRate = 0.02;
       const currentTrend = Math.round(currentFollowers * Math.pow(1 + monthlyGrowthRate, index));
       
-      // 15% growth forecast: distributed over 6 months starting from current followers
-      const forecastGrowthRate = 0.15 / 6; // ~2.5% per month to reach 15% total
+      // Dynamic growth forecast: distributed over 6 months starting from current followers
+      const forecastGrowthRate = (growthPercent / 100) / 6; // Monthly rate to reach target total
       const forecast = Math.round(currentFollowers * Math.pow(1 + forecastGrowthRate, index));
       
       return {
@@ -59,7 +60,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
     });
   };
 
-  const chartData = generateChartData();
+  const chartData = generateChartData(growthPercentage);
 
   // Simple SVG Chart Component
   const SimpleLineChart = () => {
@@ -155,7 +156,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
               d={forecastAreaPath}
               fill="hsl(var(--accent))"
               fillOpacity="0.2"
-              className="transition-colors"
+              className="transition-all duration-300"
             />
 
             {/* Current trend line */}
@@ -164,7 +165,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
               fill="none"
               stroke="hsl(var(--foreground))"
               strokeWidth="2"
-              className="transition-colors"
+              className="transition-all duration-300"
             />
 
             {/* Forecast line */}
@@ -174,7 +175,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
               stroke="hsl(var(--accent))"
               strokeWidth="2"
               strokeDasharray="5,5"
-              className="transition-colors"
+              className="transition-all duration-300"
             />
 
             {/* Data points for interactivity */}
@@ -204,7 +205,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
                   onMouseEnter={(e) => setHoveredPoint({
                     x: e.clientX + 15,
                     y: e.clientY - 50,
-                    data: { month: d.month, value: d.forecast, type: '15% Growth Forecast' }
+                    data: { month: d.month, value: d.forecast, type: `${growthPercentage}% Growth Forecast` }
                   })}
                   onMouseLeave={() => setHoveredPoint(null)}
                 />
@@ -221,7 +222,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-0.5 bg-accent" style={{ backgroundImage: 'repeating-linear-gradient(to right, hsl(var(--accent)) 0, hsl(var(--accent)) 3px, transparent 3px, transparent 6px)' }}></div>
-            <span>15% Growth Forecast</span>
+            <span>{growthPercentage}% Growth Forecast</span>
           </div>
         </div>
 
@@ -319,13 +320,32 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       {/* Follower Growth Forecast Chart */}
       <Card className="col-span-full border-l-4 border-l-accent">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            Follower Growth Forecast
-            <TrendingUp className="h-4 w-4 text-accent" />
-          </CardTitle>
-          <CardDescription>
-            Current trend vs. 15% growth projection
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                Follower Growth Forecast
+                <TrendingUp className="h-4 w-4 text-accent" />
+              </CardTitle>
+              <CardDescription>
+                Current trend vs. {growthPercentage}% growth projection
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-muted-foreground">Growth:</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  step="5"
+                  value={growthPercentage}
+                  onChange={(e) => setGrowthPercentage(Number(e.target.value))}
+                  className="w-24 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
+                />
+                <span className="text-sm font-medium text-accent min-w-[3rem]">{growthPercentage}%</span>
+              </div>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <SimpleLineChart />
