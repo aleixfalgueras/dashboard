@@ -1,5 +1,4 @@
-import { z } from 'zod'
-import { HeatmapCell } from './common/heatmap-types'
+import {z} from 'zod'
 
 // LinkedIn author schema
 export const LinkedinAuthorSchema = z.object({
@@ -72,15 +71,4 @@ export interface LinkedinMetrics {
 export interface LinkedinHashtagAnalysis {
   tag: string
   count: number
-}
-
-
-export interface LinkedinConsistencyMetrics {
-  activeDays: number
-  inactiveDays: number
-  dailyConsistencyRate: number
-  longestSilence: number
-  longestActiveStreak: number
-  heatmapData: HeatmapCell[]
-  consistencyScore: number // 0-100 composite score
 }

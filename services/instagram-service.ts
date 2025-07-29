@@ -5,16 +5,15 @@ import {
   InstagramMetrics,
   InstagramPostTypeDistribution,
   InstagramProfileDataSchema,
-  RawInstagramData,
-  InstagramConsistencyMetrics
+  RawInstagramData
 } from '@/lib/types/instagram-types'
-import { HeatmapCell } from '@/lib/types/common/heatmap-types'
 import {UploadRequestDto} from '@/lib/types/common/upload-types'
 import {InstagramPost, InstagramProfile, Prisma} from '@prisma/client'
 import {uploadRepository} from '@/repositories/upload-repository'
 import {clientService} from './client-service'
 import {logger} from "@/lib/utils"
 import { analyzeHashtagsGeneric } from './utils-service'
+import {ConsistencyMetrics, HeatmapCell} from "@/lib/types/dashboard-types";
 
 export class InstagramService {
 
@@ -338,7 +337,7 @@ export class InstagramService {
     return Math.round(weightedScore * 100)
   }
 
-  calculateConsistencyMetrics(posts: InstagramPost[]): InstagramConsistencyMetrics {
+  calculateConsistencyMetrics(posts: InstagramPost[]): ConsistencyMetrics {
     if (posts.length === 0) {
       return {
         activeDays: 0,

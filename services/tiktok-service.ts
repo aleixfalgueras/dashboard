@@ -3,16 +3,15 @@ import {
   TiktokDataSchema,
   RawTiktokData,
   TiktokMetrics,
-  TiktokHashtagAnalysis,
-  TiktokConsistencyMetrics
+  TiktokHashtagAnalysis
 } from '@/lib/types/tiktok-types'
-import { HeatmapCell } from '@/lib/types/common/heatmap-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { TiktokPost, TiktokProfile, Prisma } from '@prisma/client'
 import { uploadRepository } from '@/repositories/upload-repository'
 import { clientService } from './client-service'
 import { logger } from "@/lib/utils"
 import { analyzeHashtagsGeneric } from './utils-service'
+import {ConsistencyMetrics, HeatmapCell} from "@/lib/types/dashboard-types";
 
 export class TiktokService {
 
@@ -275,7 +274,7 @@ export class TiktokService {
     return Math.round(weightedScore * 100)
   }
 
-  calculateConsistencyMetrics(posts: TiktokPost[]): TiktokConsistencyMetrics {
+  calculateConsistencyMetrics(posts: TiktokPost[]): ConsistencyMetrics {
     if (posts.length === 0) {
       return {
         activeDays: 0,

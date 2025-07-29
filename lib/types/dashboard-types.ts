@@ -1,9 +1,41 @@
-import {Client, InstagramPost, InstagramProfile, LinkedinPost, LinkedinProfile, TiktokPost, TiktokProfile, YoutubeVideo, YoutubeProfile} from '@prisma/client'
-import {InstagramHashtagAnalysis, InstagramMetrics, InstagramPostTypeDistribution, InstagramConsistencyMetrics} from "@/lib/types/instagram-types";
-import {TiktokHashtagAnalysis, TiktokMetrics, TiktokConsistencyMetrics} from "@/lib/types/tiktok-types";
-import {LinkedinHashtagAnalysis, LinkedinMetrics, LinkedinConsistencyMetrics} from "@/lib/types/linkedin-types";
-import {YoutubeHashtagAnalysis, YoutubeMetrics, YoutubeConsistencyMetrics} from "@/lib/types/youtube-types";
-import { AvailableDatasources } from './common/enums'
+import {
+  Client,
+  InstagramPost,
+  InstagramProfile,
+  LinkedinPost,
+  LinkedinProfile,
+  TiktokPost,
+  TiktokProfile,
+  YoutubeProfile,
+  YoutubeVideo
+} from '@prisma/client'
+import {
+  InstagramHashtagAnalysis,
+  InstagramMetrics,
+  InstagramPostTypeDistribution
+} from "@/lib/types/instagram-types";
+import { TiktokHashtagAnalysis, TiktokMetrics} from "@/lib/types/tiktok-types";
+import { LinkedinHashtagAnalysis, LinkedinMetrics} from "@/lib/types/linkedin-types";
+import { YoutubeHashtagAnalysis, YoutubeMetrics} from "@/lib/types/youtube-types";
+import {AvailableDatasources} from './common/enums'
+
+export interface HeatmapCell {
+  dayOfWeek: number // 1-7 (Monday to Sunday)
+  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
+  count: number // Generic count field that can represent posts, videos, etc.
+}
+
+export type HeatmapData = HeatmapCell[]
+
+export interface ConsistencyMetrics {
+  activeDays: number
+  inactiveDays: number
+  dailyConsistencyRate: number
+  longestSilence: number
+  longestActiveStreak: number
+  heatmapData: HeatmapCell[]
+  consistencyScore: number // 0-100 composite score
+}
 
 export interface InstagramDashboardData {
   profile: InstagramProfile & {
@@ -13,7 +45,7 @@ export interface InstagramDashboardData {
   postTypes: InstagramPostTypeDistribution[]
   topPosts: InstagramPost[]
   hashtagAnalysis: InstagramHashtagAnalysis[]
-  consistencyMetrics: InstagramConsistencyMetrics
+  consistencyMetrics: ConsistencyMetrics
 }
 
 export interface TiktokDashboardData {
@@ -23,7 +55,7 @@ export interface TiktokDashboardData {
   metrics: TiktokMetrics
   topPosts: TiktokPost[]
   hashtagAnalysis: TiktokHashtagAnalysis[]
-  consistencyMetrics: TiktokConsistencyMetrics
+  consistencyMetrics: ConsistencyMetrics
 }
 
 export interface LinkedinDashboardData {
@@ -33,7 +65,7 @@ export interface LinkedinDashboardData {
   metrics: LinkedinMetrics
   topPosts: LinkedinPost[]
   hashtagAnalysis: LinkedinHashtagAnalysis[]
-  consistencyMetrics: LinkedinConsistencyMetrics
+  consistencyMetrics: ConsistencyMetrics
 }
 
 export interface YoutubeDashboardData {
@@ -43,7 +75,7 @@ export interface YoutubeDashboardData {
   metrics: YoutubeMetrics
   topVideos: YoutubeVideo[]
   hashtagAnalysis: YoutubeHashtagAnalysis[]
-  consistencyMetrics: YoutubeConsistencyMetrics
+  consistencyMetrics: ConsistencyMetrics
 }
 
 // Client with all data relations included

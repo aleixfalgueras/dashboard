@@ -1,5 +1,6 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
-import {HeatmapCell, HeatmapData} from "@/lib/types/common/heatmap-types"
+
+import {HeatmapCell, HeatmapData} from "@/lib/types/dashboard-types";
 
 interface HeatmapComponentProps {
   data: HeatmapData

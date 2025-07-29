@@ -1,5 +1,4 @@
-import { z } from 'zod'
-import { HeatmapCell } from './common/heatmap-types'
+import {z} from 'zod'
 
 // YouTube channel description link schema
 export const YoutubeChannelDescriptionLinkSchema = z.object({
@@ -96,15 +95,4 @@ export interface YoutubeMetrics {
 export interface YoutubeHashtagAnalysis {
   tag: string
   count: number
-}
-
-
-export interface YoutubeConsistencyMetrics {
-  activeDays: number
-  inactiveDays: number
-  dailyConsistencyRate: number
-  longestSilence: number
-  longestActiveStreak: number
-  heatmapData: HeatmapCell[]
-  consistencyScore: number // 0-100 composite score
 }

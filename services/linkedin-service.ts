@@ -4,14 +4,13 @@ import {
   RawLinkedinData,
   LinkedinMetrics,
   LinkedinHashtagAnalysis,
-  LinkedinConsistencyMetrics
 } from '@/lib/types/linkedin-types'
-import { HeatmapCell } from '@/lib/types/common/heatmap-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { LinkedinPost, LinkedinProfile, Prisma } from '@prisma/client'
 import { uploadRepository } from '@/repositories/upload-repository'
 import { clientService } from './client-service'
 import { logger } from "@/lib/utils"
+import {ConsistencyMetrics, HeatmapCell} from "@/lib/types/dashboard-types";
 
 export class LinkedinService {
 
@@ -269,7 +268,7 @@ export class LinkedinService {
     return Math.round(weightedScore * 100)
   }
 
-  calculateConsistencyMetrics(posts: LinkedinPost[]): LinkedinConsistencyMetrics {
+  calculateConsistencyMetrics(posts: LinkedinPost[]): ConsistencyMetrics {
     if (posts.length === 0) {
       return {
         activeDays: 0,

@@ -1,5 +1,4 @@
-import { z } from 'zod'
-import { HeatmapCell } from './common/heatmap-types'
+import {z} from 'zod'
 
 // TikTok author metadata schema
 export const TiktokAuthorMetaSchema = z.object({
@@ -110,15 +109,4 @@ export interface TiktokMetrics {
 export interface TiktokHashtagAnalysis {
   tag: string
   count: number
-}
-
-
-export interface TiktokConsistencyMetrics {
-  activeDays: number
-  inactiveDays: number
-  dailyConsistencyRate: number
-  longestSilence: number
-  longestActiveStreak: number
-  heatmapData: HeatmapCell[]
-  consistencyScore: number // 0-100 composite score
 }

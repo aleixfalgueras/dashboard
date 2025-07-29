@@ -3,16 +3,15 @@ import {
   YoutubeDataSchema,
   RawYoutubeData,
   YoutubeMetrics,
-  YoutubeHashtagAnalysis,
-  YoutubeConsistencyMetrics
+  YoutubeHashtagAnalysis
 } from '@/lib/types/youtube-types'
-import { HeatmapCell } from '@/lib/types/common/heatmap-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { YoutubeVideo, YoutubeProfile, Prisma } from '@prisma/client'
 import { uploadRepository } from '@/repositories/upload-repository'
 import { clientService } from './client-service'
 import { logger } from "@/lib/utils"
 import { analyzeHashtagsGeneric } from './utils-service'
+import {ConsistencyMetrics, HeatmapCell} from "@/lib/types/dashboard-types";
 
 export class YoutubeService {
 
@@ -275,7 +274,7 @@ export class YoutubeService {
     return Math.round(weightedScore * 100)
   }
 
-  calculateConsistencyMetrics(videos: YoutubeVideo[]): YoutubeConsistencyMetrics {
+  calculateConsistencyMetrics(videos: YoutubeVideo[]): ConsistencyMetrics {
     if (videos.length === 0) {
       return {
         activeDays: 0,
