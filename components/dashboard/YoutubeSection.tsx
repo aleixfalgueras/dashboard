@@ -166,7 +166,13 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
             <CardContent>
               <div className="space-y-4">
                 {topVideos.map((video) => (
-                  <div key={video.id} className="space-y-2">
+                  <a 
+                    key={video.id} 
+                    href={video.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="block space-y-2 hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+                  >
                     {video.thumbnailUrl && (
                       <div className="flex gap-3">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -206,7 +212,7 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
                         </div>
                       </div>
                     )}
-                  </div>
+                  </a>
                 ))}
               </div>
             </CardContent>

@@ -141,7 +141,13 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
             <CardContent>
               <div className="space-y-4">
                 {topPosts.map((post) => (
-                  <div key={post.id} className="flex items-center justify-between">
+                  <a 
+                    key={post.id} 
+                    href={post.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+                  >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         {post.mediaType && <span className="text-xs bg-muted px-1 rounded capitalize">{post.mediaType}</span>}
@@ -168,7 +174,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                         {post.commentsCount}
                       </span>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </CardContent>

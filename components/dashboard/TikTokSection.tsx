@@ -146,7 +146,13 @@ export function TikTokSection({data}: { data: TiktokDashboardData }) {
             <CardContent>
               <div className="space-y-4">
                 {topPosts.map((post) => (
-                  <div key={post.id} className="flex items-center justify-between">
+                  <a 
+                    key={post.id} 
+                    href={post.webVideoUrl} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+                  >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         {post.isSlideshow && <span className="text-xs bg-muted px-1 rounded">Slideshow</span>}
@@ -174,7 +180,7 @@ export function TikTokSection({data}: { data: TiktokDashboardData }) {
                         {post.commentCount.toLocaleString()}
                       </span>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </CardContent>
