@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { HeatmapCell } from './common/heatmap-types'
 
 // YouTube channel description link schema
 export const YoutubeChannelDescriptionLinkSchema = z.object({
@@ -97,11 +98,6 @@ export interface YoutubeHashtagAnalysis {
   count: number
 }
 
-export interface YoutubeHeatmapCell {
-  dayOfWeek: number // 1-7 (Monday to Sunday)
-  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
-  videoCount: number
-}
 
 export interface YoutubeConsistencyMetrics {
   activeDays: number
@@ -109,6 +105,6 @@ export interface YoutubeConsistencyMetrics {
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
-  heatmapData: YoutubeHeatmapCell[]
+  heatmapData: HeatmapCell[]
   consistencyScore: number // 0-100 composite score
 }

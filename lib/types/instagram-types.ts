@@ -1,4 +1,5 @@
 import {z} from 'zod'
+import { HeatmapCell } from './common/heatmap-types'
 
 export const InstagramProfileDataSchema = z.array(z.object({
   fullName: z.string(),
@@ -83,11 +84,6 @@ export interface InstagramHashtagAnalysis {
   count: number
 }
 
-export interface InstagramHeatmapCell {
-  dayOfWeek: number // 1-7 (Monday to Sunday)
-  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
-  postCount: number
-}
 
 export interface InstagramConsistencyMetrics {
   activeDays: number
@@ -95,6 +91,6 @@ export interface InstagramConsistencyMetrics {
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
-  heatmapData: InstagramHeatmapCell[]
+  heatmapData: HeatmapCell[]
   consistencyScore: number // 0-100 composite score
 }

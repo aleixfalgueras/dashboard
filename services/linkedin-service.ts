@@ -4,9 +4,9 @@ import {
   RawLinkedinData,
   LinkedinMetrics,
   LinkedinHashtagAnalysis,
-  LinkedinConsistencyMetrics,
-  LinkedinHeatmapCell
+  LinkedinConsistencyMetrics
 } from '@/lib/types/linkedin-types'
+import { HeatmapCell } from '@/lib/types/common/heatmap-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { LinkedinPost, LinkedinProfile, Prisma } from '@prisma/client'
 import { uploadRepository } from '@/repositories/upload-repository'
@@ -207,17 +207,17 @@ export class LinkedinService {
     return Math.max(0, 1 - cv)
   }
 
-  private calculateTimePatternConsistency(heatmapData: LinkedinHeatmapCell[]): number {
-    const nonZeroCells = heatmapData.filter(cell => cell.postCount > 0)
+  private calculateTimePatternConsistency(heatmapData: HeatmapCell[]): number {
+    const nonZeroCells = heatmapData.filter(cell => cell.count > 0)
     if (nonZeroCells.length < 2) return 0.5
     
     // Calculate variance in posting times
-    const totalPosts = nonZeroCells.reduce((sum, cell) => sum + cell.postCount, 0)
+    const totalPosts = nonZeroCells.reduce((sum, cell) => sum + cell.count, 0)
     
     // Calculate entropy-based consistency score
     let entropy = 0
     nonZeroCells.forEach(cell => {
-      const probability = cell.postCount / totalPosts
+      const probability = cell.count / totalPosts
       entropy -= probability * Math.log2(probability)
     })
     
@@ -361,14 +361,14 @@ export class LinkedinService {
     })
 
     // Convert map to array of cells
-    const heatmapData: LinkedinHeatmapCell[] = []
+    const heatmapData: HeatmapCell[] = []
     for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
       for (let hourBlock = 0; hourBlock < 24; hourBlock += 3) {
         const key = `${dayOfWeek}-${hourBlock}`
         heatmapData.push({
           dayOfWeek,
           hourBlock,
-          postCount: heatmapMap.get(key) || 0
+          count: heatmapMap.get(key) || 0
         })
       }
     }

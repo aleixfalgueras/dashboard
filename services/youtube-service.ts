@@ -4,9 +4,9 @@ import {
   RawYoutubeData,
   YoutubeMetrics,
   YoutubeHashtagAnalysis,
-  YoutubeConsistencyMetrics,
-  YoutubeHeatmapCell
+  YoutubeConsistencyMetrics
 } from '@/lib/types/youtube-types'
+import { HeatmapCell } from '@/lib/types/common/heatmap-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { YoutubeVideo, YoutubeProfile, Prisma } from '@prisma/client'
 import { uploadRepository } from '@/repositories/upload-repository'
@@ -213,17 +213,17 @@ export class YoutubeService {
     return Math.max(0, 1 - cv)
   }
 
-  private calculateTimePatternConsistency(heatmapData: YoutubeHeatmapCell[]): number {
-    const nonZeroCells = heatmapData.filter(cell => cell.videoCount > 0)
+  private calculateTimePatternConsistency(heatmapData: HeatmapCell[]): number {
+    const nonZeroCells = heatmapData.filter(cell => cell.count > 0)
     if (nonZeroCells.length < 2) return 0.5
     
     // Calculate variance in posting times
-    const totalVideos = nonZeroCells.reduce((sum, cell) => sum + cell.videoCount, 0)
+    const totalVideos = nonZeroCells.reduce((sum, cell) => sum + cell.count, 0)
     
     // Calculate entropy-based consistency score
     let entropy = 0
     nonZeroCells.forEach(cell => {
-      const probability = cell.videoCount / totalVideos
+      const probability = cell.count / totalVideos
       entropy -= probability * Math.log2(probability)
     })
     
@@ -367,14 +367,14 @@ export class YoutubeService {
     })
 
     // Convert map to array of cells
-    const heatmapData: YoutubeHeatmapCell[] = []
+    const heatmapData: HeatmapCell[] = []
     for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
       for (let hourBlock = 0; hourBlock < 24; hourBlock += 3) {
         const key = `${dayOfWeek}-${hourBlock}`
         heatmapData.push({
           dayOfWeek,
           hourBlock,
-          videoCount: heatmapMap.get(key) || 0
+          count: heatmapMap.get(key) || 0
         })
       }
     }

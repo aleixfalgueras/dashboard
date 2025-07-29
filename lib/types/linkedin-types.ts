@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { HeatmapCell } from './common/heatmap-types'
 
 // LinkedIn author schema
 export const LinkedinAuthorSchema = z.object({
@@ -73,11 +74,6 @@ export interface LinkedinHashtagAnalysis {
   count: number
 }
 
-export interface LinkedinHeatmapCell {
-  dayOfWeek: number // 1-7 (Monday to Sunday)
-  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
-  postCount: number
-}
 
 export interface LinkedinConsistencyMetrics {
   activeDays: number
@@ -85,6 +81,6 @@ export interface LinkedinConsistencyMetrics {
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
-  heatmapData: LinkedinHeatmapCell[]
+  heatmapData: HeatmapCell[]
   consistencyScore: number // 0-100 composite score
 }

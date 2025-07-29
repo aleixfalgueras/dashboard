@@ -1,5 +1,5 @@
 import {YoutubeDashboardData} from "@/lib/types/dashboard-types";
-import {YoutubeConsistencyMetrics} from "@/lib/types/youtube-types";
+import {HeatmapComponent} from "@/components/ui/heatmap";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {BarChart3, Calendar, Eye, Heart, MessageCircle, TrendingUp, Play, HelpCircle, CalendarCheck, CalendarX, AlertCircle, Flame} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -336,7 +336,11 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
               <CardDescription>Video distribution by day and time</CardDescription>
             </CardHeader>
             <CardContent>
-              <PostingHeatmap data={consistencyMetrics.heatmapData} />
+              <HeatmapComponent 
+                data={consistencyMetrics.heatmapData}
+                itemType={{ singular: 'video', plural: 'videos' }}
+                getCountFromCell={(cell) => cell.count}
+              />
             </CardContent>
           </Card>
         </TabsContent>
@@ -346,96 +350,3 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
   )
 }
 
-// Heatmap component for posting consistency
-function PostingHeatmap({ data }: { data: YoutubeConsistencyMetrics['heatmapData'] }) {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-  const hours = ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm']
-  
-  // Find max value for color scaling
-  const maxCount = Math.max(...data.map(cell => cell.videoCount), 1)
-  
-  // Get color intensity based on video count
-  const getColorOpacity = (count: number) => {
-    if (count === 0) return 0
-    return Math.max(0.1, count / maxCount)
-  }
-  
-  return (
-    <TooltipProvider>
-      <div className="w-full overflow-x-auto">
-        <div className="inline-block">
-          {/* Time labels */}
-          <div className="flex mb-1">
-            <div className="w-16"></div> {/* Spacer to match day label width */}
-            <div className="w-1"></div>   {/* Spacer to match gap */}
-            <div className="flex gap-1">
-              {hours.map((hour, i) => (
-                <div key={i} className="w-12 text-center text-xs text-muted-foreground">
-                  {hour}
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Heatmap grid */}
-          <div className="space-y-1">
-            {days.map((day, dayIndex) => (
-              <div key={dayIndex} className="flex items-center gap-1">
-                <div className="w-16 text-xs text-muted-foreground text-right">
-                  {day}
-                </div>
-                <div className="flex gap-1">
-                  {hours.map((_, hourIndex) => {
-                    const cell = data.find(
-                      c => c.dayOfWeek === dayIndex + 1 && c.hourBlock === hourIndex * 3
-                    )
-                    const count = cell?.videoCount || 0
-                    
-                    return (
-                      <Tooltip key={hourIndex}>
-                        <TooltipTrigger asChild>
-                          <div
-                            className="w-12 h-12 rounded-sm border border-border cursor-pointer hover:border-accent transition-colors"
-                            style={{
-                              backgroundColor: count > 0 
-                                ? `hsl(var(--accent) / ${getColorOpacity(count)})`
-                                : 'hsl(var(--muted) / 0.3)'
-                            }}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="text-sm">
-                            {day} {hours[hourIndex]}-{hourIndex === 7 ? '12am' : hours[hourIndex + 1]}
-                          </p>
-                          <p className="text-sm font-medium">
-                            {count} {count === 1 ? 'video' : 'videos'}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    )
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Legend */}
-          <div className="flex items-center justify-center gap-3 mt-3">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm border border-border" style={{ backgroundColor: 'hsl(var(--muted) / 0.3)' }} />
-              <span className="text-xs text-muted-foreground">No videos</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--accent) / 0.3)' }} />
-              <span className="text-xs text-muted-foreground">Few videos</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: 'hsl(var(--accent) / 1)' }} />
-              <span className="text-xs text-muted-foreground">Many videos</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </TooltipProvider>
-  )
-}
