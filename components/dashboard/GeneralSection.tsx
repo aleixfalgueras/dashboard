@@ -48,8 +48,8 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       const monthlyGrowthRate = 0.02;
       const currentTrend = Math.round(currentFollowers * Math.pow(1 + monthlyGrowthRate, index));
       
-      // Dynamic growth forecast: distributed over 6 months starting from current followers
-      const forecastGrowthRate = (growthPercent / 100) / 6; // Monthly rate to reach target total
+      // Dynamic growth forecast: compound growth over 6 months starting from current followers
+      const forecastGrowthRate = Math.pow(1 + (growthPercent / 100), 1/6) - 1; // Monthly compound rate to reach target total
       const forecast = Math.round(currentFollowers * Math.pow(1 + forecastGrowthRate, index));
       
       return {
@@ -64,8 +64,8 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
 
   // Simple SVG Chart Component
   const SimpleLineChart = () => {
-    const width = 600;
-    const height = 250;
+    const width = 720;
+    const height = 300;
     const padding = { top: 20, right: 30, bottom: 40, left: 60 };
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
@@ -107,7 +107,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
 
     return (
       <div 
-        className="relative w-full h-[300px] flex items-center justify-center"
+        className="relative w-full h-[360px] flex items-center justify-center"
         onMouseLeave={() => setHoveredPoint(null)}
       >
         <svg width={width} height={height} className="overflow-visible">
@@ -325,6 +325,16 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
               <CardTitle className="flex items-center gap-2">
                 Follower Growth Forecast
                 <TrendingUp className="h-4 w-4 text-accent" />
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p className="max-w-xs">
+                      Current trend uses 2% monthly compound growth (~12.6% over 6 months). Forecast uses compound growth to reach your target percentage over 6 months. Forecasts below 12.6% will appear below the current trend line.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
               </CardTitle>
               <CardDescription>
                 Current trend vs. {growthPercentage}% growth projection
@@ -335,7 +345,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
               <div className="flex items-center gap-2">
                 <input
                   type="range"
-                  min="5"
+                  min="15"
                   max="50"
                   step="5"
                   value={growthPercentage}
