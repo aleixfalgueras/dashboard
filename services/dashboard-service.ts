@@ -3,7 +3,7 @@ import { instagramService } from './instagram-service'
 import { tiktokService } from './tiktok-service'
 import { linkedinService } from './linkedin-service'
 import { youtubeService } from './youtube-service'
-import { DashboardData, DatasourcesData, InstagramDashboardData, LinkedinDashboardData, TiktokDashboardData, YoutubeDashboardData } from '@/lib/types/dashboard-types'
+import { DashboardData, DatasourcesData, GeneralMetrics, InstagramDashboardData, LinkedinDashboardData, TiktokDashboardData, YoutubeDashboardData } from '@/lib/types/dashboard-types'
 import { AvailableDatasources } from '@/lib/types/common/enums'
 import {logger} from "@/lib/utils";
 
@@ -77,10 +77,13 @@ export class DashboardService {
       return null
     }
 
+    const generalMetrics = this.calculateGeneralMetrics(datasourcesData)
+
     return {
       client: fullClientData,
       datasourcesData: datasourcesData,
-      availableDatasources
+      availableDatasources,
+      generalMetrics
     }
   }
 
@@ -163,6 +166,67 @@ export class DashboardService {
     } catch (error) {
       logger.error('Error processing YouTube data:', error)
       return null
+    }
+  }
+
+  private calculateGeneralMetrics(datasourcesData: DatasourcesData): GeneralMetrics {
+    let totalFollowers = 0
+    let totalViews = 0
+    let totalVideoCount = 0
+    let totalEngagement = 0
+
+    // Instagram followers and video posts
+    if (datasourcesData.instagram) {
+      const { profile } = datasourcesData.instagram
+      totalFollowers += profile.followersCount || 0
+
+      // Only count video posts for views and engagement
+      const videoPosts = profile.posts.filter(post => post.type === "Video")
+      videoPosts.forEach(post => {
+        if (post.videoViewCount && post.videoViewCount > 0) {
+          totalViews += post.videoViewCount
+          totalVideoCount++
+          totalEngagement += (post.likesCount || 0) + (post.commentsCount || 0)
+        }
+      })
+    }
+
+    // TikTok followers and posts (all are videos)
+    if (datasourcesData.tiktok) {
+      const { profile } = datasourcesData.tiktok
+      totalFollowers += profile.following || 0
+
+      profile.posts.forEach(post => {
+        if (post.playCount && post.playCount > 0) {
+          totalViews += post.playCount
+          totalVideoCount++
+          totalEngagement += (post.diggCount || 0) + (post.commentCount || 0) + (post.shareCount || 0)
+        }
+      })
+    }
+
+    // YouTube followers and videos
+    if (datasourcesData.youtube) {
+      const { profile } = datasourcesData.youtube
+      totalFollowers += profile.numberOfSubscribers || 0
+
+      profile.videos.forEach(video => {
+        if (video.viewCount && video.viewCount > 0) {
+          totalViews += video.viewCount
+          totalVideoCount++
+          totalEngagement += (video.likes || 0) + (video.commentsCount || 0)
+        }
+      })
+    }
+
+    const avgViews = totalVideoCount > 0 ? Math.round(totalViews / totalVideoCount) : 0
+    const globalAvgEngagement = totalViews > 0 ? Number((totalEngagement / totalViews * 100).toFixed(2)) : 0
+
+    return {
+      totalFollowers,
+      avgViews,
+      globalAvgEngagement,
+      consistency: 1 // Hardcoded for now as requested
     }
   }
 }

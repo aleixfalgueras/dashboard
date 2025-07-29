@@ -23,16 +23,6 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-red-400 bg-gradient-to-br from-red-50/50 to-transparent dark:from-red-950/20">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reactions</CardTitle>
-            <ThumbsUp className="h-4 w-4 text-red-500"/>
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">{metrics.totalReactions.toLocaleString()}</div>
-          </CardContent>
-        </Card>
-
         <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Comments</CardTitle>
@@ -40,6 +30,16 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{metrics.totalComments.toLocaleString()}</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Reactions</CardTitle>
+            <ThumbsUp className="h-4 w-4 text-purple-500"/>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{metrics.totalReactions.toLocaleString()}</div>
           </CardContent>
         </Card>
 
@@ -80,7 +80,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Heart className="h-4 w-4 text-red-500"/>
+                    <Heart className="h-4 w-4 text-purple-500"/>
                     <span className="font-medium">Love Reactions</span>
                   </div>
                   <span className="text-sm font-medium">{profile.posts.reduce((sum, post) => sum + post.lovesCount, 0).toLocaleString()}</span>

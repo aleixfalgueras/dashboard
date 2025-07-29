@@ -8,6 +8,7 @@ import {InstagramSection} from "@/components/dashboard/InstagramSection";
 import {TikTokSection} from "@/components/dashboard/TikTokSection";
 import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
 import {YoutubeSection} from "@/components/dashboard/YoutubeSection";
+import {GeneralSection} from "@/components/dashboard/GeneralSection";
 import {Logo} from "@/components/ui/logo";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {ExpandableText} from "@/components/ui/expandable-text";
@@ -37,7 +38,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
     )
   }
 
-  const { client, datasourcesData, availableDatasources } = dashboardData
+  const { client, datasourcesData, availableDatasources, generalMetrics } = dashboardData
 
   // Helper functions to render each platform section
   const renderInstagramSection = (isTabbed: boolean = false) => {
@@ -175,6 +176,9 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           </AlertDescription>
         </Alert>
       )}
+
+      {/* General Overview Section */}
+      <GeneralSection metrics={generalMetrics} />
 
       {/* Datasource Sections */}
       {availableDatasources.length > 1 ? (

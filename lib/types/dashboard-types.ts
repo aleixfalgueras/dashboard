@@ -66,9 +66,18 @@ export interface DatasourcesData {
   youtube?: YoutubeDashboardData
 }
 
+// General metrics across all platforms
+export interface GeneralMetrics {
+  totalFollowers: number
+  avgViews: number
+  globalAvgEngagement: number
+  consistency: number
+}
+
 // Dashboard page data
 export interface DashboardData {
   client: FullClientData
   datasourcesData: DatasourcesData
   availableDatasources: AvailableDatasources[]
+  generalMetrics: GeneralMetrics
 }
