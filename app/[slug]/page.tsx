@@ -10,6 +10,7 @@ import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
 import {YoutubeSection} from "@/components/dashboard/YoutubeSection";
 import {Logo} from "@/components/ui/logo";
 import {Alert, AlertDescription} from "@/components/ui/alert";
+import {ExpandableText} from "@/components/ui/expandable-text";
 
 interface DashboardPageProps {
   params: {
@@ -19,6 +20,7 @@ interface DashboardPageProps {
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
   const dashboardData = await dashboardService.getDashboardData(params.slug)
+  const bioTextSize = 140
 
   if (!dashboardData) {
     return (
@@ -36,6 +38,119 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   }
 
   const { client, datasourcesData, availableDatasources } = dashboardData
+
+  // Helper functions to render each platform section
+  const renderInstagramSection = (isTabbed: boolean = false) => {
+    if (!datasourcesData.instagram) return null
+    
+    const content = (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <RiInstagramFill className="h-6 w-6 instagram-gradient-text" />
+            @{datasourcesData.instagram.profile.username}
+          </h2>
+          <div className="space-y-2">
+            <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
+            <ExpandableText 
+              text={datasourcesData.instagram.profile.bio ?? ""}
+              maxLength={bioTextSize}
+            />
+          </div>
+        </div>
+        <InstagramSection data={datasourcesData.instagram} />
+      </div>
+    )
+
+    return isTabbed ? (
+      <TabsContent value={AvailableDatasources.INSTAGRAM}>{content}</TabsContent>
+    ) : content
+  }
+
+  const renderTikTokSection = (isTabbed: boolean = false) => {
+    if (!datasourcesData.tiktok) return null
+    
+    const content = (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <SiTiktok className="h-6 w-6" />
+            @{datasourcesData.tiktok.profile.username}
+          </h2>
+          <div className="space-y-2">
+            <p className="text-muted-foreground">{datasourcesData.tiktok.profile.nickname}</p>
+            <ExpandableText
+              text={datasourcesData.tiktok.profile.signature ?? ""}
+              maxLength={bioTextSize}
+            />
+          </div>
+        </div>
+        <TikTokSection data={datasourcesData.tiktok} />
+      </div>
+    )
+
+    return isTabbed ? (
+      <TabsContent value={AvailableDatasources.TIKTOK}>{content}</TabsContent>
+    ) : content
+  }
+
+  const renderYouTubeSection = (isTabbed: boolean = false) => {
+    if (!datasourcesData.youtube) return null
+    
+    const content = (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <SiYoutube className="h-6 w-6 text-[#FF0000]" />
+            @{datasourcesData.youtube.profile.channelUsername}
+          </h2>
+          <div className="space-y-2">
+            <p className="text-muted-foreground">
+              {datasourcesData.youtube.profile.channelName}
+            </p>
+            <ExpandableText 
+              text={datasourcesData.youtube.profile.channelDescription ?? ""}
+              maxLength={bioTextSize}
+            />
+          </div>
+        </div>
+        <YoutubeSection data={datasourcesData.youtube} />
+      </div>
+    )
+
+    return isTabbed ? (
+      <TabsContent value={AvailableDatasources.YOUTUBE}>{content}</TabsContent>
+    ) : content
+  }
+
+  const renderLinkedInSection = (isTabbed: boolean = false) => {
+    if (!datasourcesData.linkedin) return null
+    
+    const content = (
+      <div className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
+            @{datasourcesData.linkedin.profile.username}
+          </h2>
+          <div className="space-y-2">
+            <p className="text-muted-foreground">
+              {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
+            </p>
+            <ExpandableText
+              text={datasourcesData.linkedin.profile.headline ?? ""}
+              maxLength={bioTextSize}
+            />
+          </div>
+        </div>
+        <LinkedInSection data={datasourcesData.linkedin} />
+      </div>
+    )
+
+    return isTabbed ? (
+      <TabsContent value={AvailableDatasources.LINKEDIN}>{content}</TabsContent>
+    ) : content
+  }
 
   return (
     <div className="container mx-auto py-8 space-y-8">
@@ -91,118 +206,18 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             )}
           </TabsList>
 
-          {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && datasourcesData.instagram && (
-            <TabsContent value={AvailableDatasources.INSTAGRAM}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <RiInstagramFill className="h-6 w-6 instagram-gradient-text" />
-                    @{datasourcesData.instagram.profile.username}
-                  </h2>
-                  <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
-                </div>
-                <InstagramSection data={datasourcesData.instagram} />
-              </div>
-            </TabsContent>
-          )}
-          {availableDatasources.includes(AvailableDatasources.TIKTOK) && datasourcesData.tiktok && (
-            <TabsContent value={AvailableDatasources.TIKTOK}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <SiTiktok className="h-6 w-6" />
-                    @{datasourcesData.tiktok.profile.username}
-                  </h2>
-                  <p className="text-muted-foreground">{datasourcesData.tiktok.profile.nickname}</p>
-                </div>
-                <TikTokSection data={datasourcesData.tiktok} />
-              </div>
-            </TabsContent>
-          )}
-          {availableDatasources.includes(AvailableDatasources.YOUTUBE) && datasourcesData.youtube && (
-            <TabsContent value={AvailableDatasources.YOUTUBE}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <SiYoutube className="h-6 w-6 text-[#FF0000]" />
-                    {datasourcesData.youtube.profile.channelName}
-                  </h2>
-                  <p className="text-muted-foreground">
-                    {datasourcesData.youtube.profile.numberOfSubscribers.toLocaleString()} subscribers • {datasourcesData.youtube.profile.channelTotalVideos} videos
-                  </p>
-                </div>
-                <YoutubeSection data={datasourcesData.youtube} />
-              </div>
-            </TabsContent>
-          )}
-          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
-            <TabsContent value={AvailableDatasources.LINKEDIN}>
-              <div className="space-y-4">
-                <div>
-                  <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
-                    {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
-                  </h2>
-                  <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
-                </div>
-                <LinkedInSection data={datasourcesData.linkedin} />
-              </div>
-            </TabsContent>
-          )}
+          {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && renderInstagramSection(true)}
+          {availableDatasources.includes(AvailableDatasources.TIKTOK) && renderTikTokSection(true)}
+          {availableDatasources.includes(AvailableDatasources.YOUTUBE) && renderYouTubeSection(true)}
+          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && renderLinkedInSection(true)}
         </Tabs>
       ) : (
         // Single datasource view
         <>
-          {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && datasourcesData.instagram && (
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <RiInstagramFill className="h-6 w-6 instagram-gradient-text" />
-                  @{datasourcesData.instagram.profile.username}
-                </h2>
-                <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
-              </div>
-              <InstagramSection data={datasourcesData.instagram} />
-            </div>
-          )}
-          {availableDatasources.includes(AvailableDatasources.TIKTOK) && datasourcesData.tiktok && (
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <SiTiktok className="h-6 w-6" />
-                  @{datasourcesData.tiktok.profile.username}
-                </h2>
-                <p className="text-muted-foreground">{datasourcesData.tiktok.profile.nickname}</p>
-              </div>
-              <TikTokSection data={datasourcesData.tiktok} />
-            </div>
-          )}
-          {availableDatasources.includes(AvailableDatasources.YOUTUBE) && datasourcesData.youtube && (
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <SiYoutube className="h-6 w-6 text-[#FF0000]" />
-                  {datasourcesData.youtube.profile.channelName}
-                </h2>
-                <p className="text-muted-foreground">
-                  {datasourcesData.youtube.profile.numberOfSubscribers.toLocaleString()} subscribers • {datasourcesData.youtube.profile.channelTotalVideos} videos
-                </p>
-              </div>
-              <YoutubeSection data={datasourcesData.youtube} />
-            </div>
-          )}
-          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && datasourcesData.linkedin && (
-            <div className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-bold flex items-center gap-2">
-                  <SiLinkedin className="h-6 w-6 text-[#0077B5]" />
-                  {datasourcesData.linkedin.profile.firstName} {datasourcesData.linkedin.profile.lastName}
-                </h2>
-                <p className="text-muted-foreground">{datasourcesData.linkedin.profile.headline}</p>
-              </div>
-              <LinkedInSection data={datasourcesData.linkedin} />
-            </div>
-          )}
+          {availableDatasources.includes(AvailableDatasources.INSTAGRAM) && renderInstagramSection(false)}
+          {availableDatasources.includes(AvailableDatasources.TIKTOK) && renderTikTokSection(false)}
+          {availableDatasources.includes(AvailableDatasources.YOUTUBE) && renderYouTubeSection(false)}
+          {availableDatasources.includes(AvailableDatasources.LINKEDIN) && renderLinkedInSection(false)}
         </>
       )}
     </div>
