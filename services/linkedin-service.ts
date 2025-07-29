@@ -3,7 +3,8 @@ import {
   LinkedinDataSchema,
   RawLinkedinData,
   LinkedinMetrics,
-  LinkedinHashtagAnalysis
+  LinkedinHashtagAnalysis,
+  LinkedinConsistencyMetrics
 } from '@/lib/types/linkedin-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { LinkedinPost, LinkedinProfile, Prisma } from '@prisma/client'
@@ -174,6 +175,158 @@ export class LinkedinService {
       .sort(([, a], [, b]) => b - a)
       .slice(0, limit)
       .map(([tag, count]) => ({ tag, count }))
+  }
+
+  private calculatePostingFrequencyConsistency(posts: LinkedinPost[]): number {
+    if (posts.length < 7) return 0.5 // Not enough data for weekly analysis
+    
+    // Group posts by week
+    const weeklyPostCounts = new Map<string, number>()
+    
+    posts.forEach(post => {
+      const date = new Date(post.postedAt)
+      // Get Monday of the week as the key (ISO week)
+      const monday = new Date(date)
+      monday.setDate(date.getDate() - (date.getDay() + 6) % 7)
+      const weekKey = monday.toISOString().split('T')[0]
+      
+      weeklyPostCounts.set(weekKey, (weeklyPostCounts.get(weekKey) || 0) + 1)
+    })
+    
+    const counts = Array.from(weeklyPostCounts.values())
+    if (counts.length < 2) return 0.5
+    
+    // Calculate coefficient of variation (CV = std_dev / mean)
+    const mean = counts.reduce((sum, count) => sum + count, 0) / counts.length
+    const variance = counts.reduce((sum, count) => sum + Math.pow(count - mean, 2), 0) / counts.length
+    const stdDev = Math.sqrt(variance)
+    const cv = mean > 0 ? stdDev / mean : 1
+    
+    // Convert CV to 0-1 scale (lower CV = higher consistency)
+    return Math.max(0, 1 - cv)
+  }
+
+  private calculateStreakStability(longestActiveStreak: number, longestSilence: number, totalDays: number): number {
+    if (totalDays === 0) return 0
+    
+    // Ideal scenario: moderate active streaks, minimal silence periods
+    const activeStreakRatio = longestActiveStreak / totalDays
+    const silenceRatio = longestSilence / totalDays
+    
+    // Penalize both very short streaks and very long silences
+    const streakScore = Math.min(1, activeStreakRatio * 2) // Reward longer active streaks up to 50% of total days
+    const silenceScore = Math.max(0, 1 - silenceRatio * 3) // Heavily penalize long silences
+    
+    return (streakScore + silenceScore) / 2
+  }
+
+  private calculateOverallConsistencyScore(
+    frequencyConsistency: number,
+    dailyConsistencyRate: number,
+    streakStability: number
+  ): number {
+    // Weighted combination (adapted for LinkedIn without time pattern analysis)
+    const weights = {
+      frequency: 0.50,
+      dailyRate: 0.30,
+      streakStability: 0.20
+    }
+    
+    const normalizedDailyRate = dailyConsistencyRate / 100 // Convert percentage to 0-1
+    
+    const weightedScore = 
+      frequencyConsistency * weights.frequency +
+      normalizedDailyRate * weights.dailyRate +
+      streakStability * weights.streakStability
+    
+    // Convert to 0-100 scale and round
+    return Math.round(weightedScore * 100)
+  }
+
+  calculateConsistencyMetrics(posts: LinkedinPost[]): LinkedinConsistencyMetrics {
+    if (posts.length === 0) {
+      return {
+        activeDays: 0,
+        inactiveDays: 0,
+        dailyConsistencyRate: 0,
+        longestSilence: 0,
+        longestActiveStreak: 0,
+        consistencyScore: 0
+      }
+    }
+
+    // Sort posts by posted date
+    const sortedPosts = [...posts].sort((a, b) => 
+      new Date(a.postedAt).getTime() - new Date(b.postedAt).getTime()
+    )
+
+    // Get date range
+    const firstPost = new Date(sortedPosts[0].postedAt)
+    const lastPost = new Date(sortedPosts[sortedPosts.length - 1].postedAt)
+    
+    // Calculate total days in range
+    const totalDays = Math.ceil((lastPost.getTime() - firstPost.getTime()) / (1000 * 60 * 60 * 24)) + 1
+
+    // Create a Set of unique days with posts
+    const activeDaysSet = new Set<string>()
+    sortedPosts.forEach(post => {
+      const dateStr = new Date(post.postedAt).toISOString().split('T')[0]
+      activeDaysSet.add(dateStr)
+    })
+
+    const activeDays = activeDaysSet.size
+    const inactiveDays = totalDays - activeDays
+    const dailyConsistencyRate = (activeDays / totalDays) * 100
+
+    // Calculate streaks
+    const allDays = []
+    const currentDate = new Date(firstPost)
+    while (currentDate <= lastPost) {
+      const dateStr = currentDate.toISOString().split('T')[0]
+      allDays.push({
+        date: dateStr,
+        hasPost: activeDaysSet.has(dateStr)
+      })
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+
+    // Find longest silence (consecutive days without posts)
+    let longestSilence = 0
+    let currentSilence = 0
+    
+    // Find longest active streak (consecutive days with posts)
+    let longestActiveStreak = 0
+    let currentActiveStreak = 0
+
+    allDays.forEach(day => {
+      if (day.hasPost) {
+        currentActiveStreak++
+        longestActiveStreak = Math.max(longestActiveStreak, currentActiveStreak)
+        currentSilence = 0
+      } else {
+        currentSilence++
+        longestSilence = Math.max(longestSilence, currentSilence)
+        currentActiveStreak = 0
+      }
+    })
+
+    // Calculate consistency score components
+    const frequencyConsistency = this.calculatePostingFrequencyConsistency(posts)
+    const streakStability = this.calculateStreakStability(longestActiveStreak, longestSilence, totalDays)
+    const consistencyScore = this.calculateOverallConsistencyScore(
+      frequencyConsistency,
+      dailyConsistencyRate,
+      streakStability
+    )
+
+    return {
+      activeDays,
+      inactiveDays,
+      dailyConsistencyRate: Number(dailyConsistencyRate.toFixed(2)),
+      longestSilence,
+      longestActiveStreak,
+      consistencyScore
+    }
   }
 
   async deleteLinkedinProfileByClientId(clientId: string): Promise<LinkedinProfile | null> {

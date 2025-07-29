@@ -1,12 +1,12 @@
 import {LinkedinDashboardData} from "@/lib/types/dashboard-types";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Heart, MessageCircle, Share2, ThumbsUp} from "lucide-react";
+import {BarChart3, Calendar, Heart, MessageCircle, Share2, ThumbsUp, TrendingUp, HelpCircle, CalendarCheck, CalendarX, AlertCircle, Flame} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {TooltipProvider} from "@/components/ui/tooltip";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
 
 export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
-  const {profile, metrics, topPosts, hashtagAnalysis} = data
+  const {profile, metrics, topPosts, hashtagAnalysis, consistencyMetrics} = data
 
   return (
     <TooltipProvider>
@@ -61,6 +61,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
           <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
           <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Content Analysis</TabsTrigger>
+          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Consistency</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -199,6 +200,91 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                 ) : (
                   <p className="text-sm text-muted-foreground">No hashtags found</p>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="consistency" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Consistency Metrics</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CalendarCheck className="h-4 w-4 text-green-500"/>
+                    <span className="font-medium">Active Days</span>
+                  </div>
+                  <span className="text-sm font-medium">{consistencyMetrics.activeDays}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CalendarX className="h-4 w-4 text-red-500"/>
+                    <span className="font-medium">Inactive Days</span>
+                  </div>
+                  <span className="text-sm font-medium">{consistencyMetrics.inactiveDays}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-blue-500"/>
+                    <span className="font-medium">Daily Consistency Rate</span>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-xs">
+                          Active Days ÷ Total Days × 100%
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  <span className="text-sm font-medium">{consistencyMetrics.dailyConsistencyRate}%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="h-4 w-4 text-orange-500"/>
+                    <span className="font-medium">Longest Silence</span>
+                  </div>
+                  <span className="text-sm font-medium">{consistencyMetrics.longestSilence} {consistencyMetrics.longestSilence === 1 ? 'day' : 'days'}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Flame className="h-4 w-4 text-accent"/>
+                    <span className="font-medium">Longest Active Streak</span>
+                  </div>
+                  <span className="text-sm font-medium">{consistencyMetrics.longestActiveStreak} {consistencyMetrics.longestActiveStreak === 1 ? 'day' : 'days'}</span>
+                </div>
+                <div className="pt-4 border-t">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-green-500"/>
+                      <span className="font-medium">Consistency Score</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">
+                            Composite score (0-100) based on posting frequency consistency (50%), 
+                            daily activity rate (30%), and streak stability (20%)
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium">{consistencyMetrics.consistencyScore}/100</span>
+                      <div className="w-16 h-2 bg-secondary rounded-full">
+                        <div
+                          className="h-2 rounded-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500"
+                          style={{ width: `${consistencyMetrics.consistencyScore}%` }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>

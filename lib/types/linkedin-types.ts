@@ -72,3 +72,12 @@ export interface LinkedinHashtagAnalysis {
   tag: string
   count: number
 }
+
+export interface LinkedinConsistencyMetrics {
+  activeDays: number
+  inactiveDays: number
+  dailyConsistencyRate: number
+  longestSilence: number
+  longestActiveStreak: number
+  consistencyScore: number // 0-100 composite score
+}

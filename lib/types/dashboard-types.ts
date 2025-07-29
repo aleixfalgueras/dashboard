@@ -1,7 +1,7 @@
 import {Client, InstagramPost, InstagramProfile, LinkedinPost, LinkedinProfile, TiktokPost, TiktokProfile, YoutubeVideo, YoutubeProfile} from '@prisma/client'
 import {InstagramHashtagAnalysis, InstagramMetrics, InstagramPostTypeDistribution, InstagramConsistencyMetrics} from "@/lib/types/instagram-types";
 import {TiktokHashtagAnalysis, TiktokMetrics, TiktokConsistencyMetrics} from "@/lib/types/tiktok-types";
-import {LinkedinHashtagAnalysis, LinkedinMetrics} from "@/lib/types/linkedin-types";
+import {LinkedinHashtagAnalysis, LinkedinMetrics, LinkedinConsistencyMetrics} from "@/lib/types/linkedin-types";
 import {YoutubeHashtagAnalysis, YoutubeMetrics, YoutubeConsistencyMetrics} from "@/lib/types/youtube-types";
 import { AvailableDatasources } from './common/enums'
 
@@ -33,6 +33,7 @@ export interface LinkedinDashboardData {
   metrics: LinkedinMetrics
   topPosts: LinkedinPost[]
   hashtagAnalysis: LinkedinHashtagAnalysis[]
+  consistencyMetrics: LinkedinConsistencyMetrics
 }
 
 export interface YoutubeDashboardData {

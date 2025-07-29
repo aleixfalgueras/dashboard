@@ -140,12 +140,14 @@ export class DashboardService {
       const metrics = linkedinService.calculateLinkedinMetrics(profile.posts)
       const topPosts = linkedinService.getTopPosts(profile.posts, 6)
       const hashtagAnalysis = linkedinService.analyzeHashtags(profile.posts, 10)
+      const consistencyMetrics = linkedinService.calculateConsistencyMetrics(profile.posts)
 
       return {
         profile,
         metrics,
         topPosts,
-        hashtagAnalysis
+        hashtagAnalysis,
+        consistencyMetrics
       }
     } catch (error) {
       logger.error('Error processing LinkedIn data:', error)
