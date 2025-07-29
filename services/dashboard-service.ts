@@ -183,8 +183,8 @@ export class DashboardService {
       // Only count video posts for views and engagement
       const videoPosts = profile.posts.filter(post => post.type === "Video")
       videoPosts.forEach(post => {
-        if (post.videoViewCount && post.videoViewCount > 0) {
-          totalViews += post.videoViewCount
+        if (post.videoPlayCount && post.videoPlayCount > 0) {
+          totalViews += post.videoPlayCount
           totalVideoCount++
           totalEngagement += (post.likesCount || 0) + (post.commentsCount || 0)
         }
