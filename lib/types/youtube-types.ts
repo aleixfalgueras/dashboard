@@ -96,3 +96,12 @@ export interface YoutubeHashtagAnalysis {
   tag: string
   count: number
 }
+
+export interface YoutubeConsistencyMetrics {
+  activeDays: number
+  inactiveDays: number
+  dailyConsistencyRate: number
+  longestSilence: number
+  longestActiveStreak: number
+  consistencyScore: number // 0-100 composite score
+}

@@ -2,7 +2,7 @@ import {Client, InstagramPost, InstagramProfile, LinkedinPost, LinkedinProfile, 
 import {InstagramHashtagAnalysis, InstagramMetrics, InstagramPostTypeDistribution, InstagramConsistencyMetrics} from "@/lib/types/instagram-types";
 import {TiktokHashtagAnalysis, TiktokMetrics, TiktokConsistencyMetrics} from "@/lib/types/tiktok-types";
 import {LinkedinHashtagAnalysis, LinkedinMetrics} from "@/lib/types/linkedin-types";
-import {YoutubeHashtagAnalysis, YoutubeMetrics} from "@/lib/types/youtube-types";
+import {YoutubeHashtagAnalysis, YoutubeMetrics, YoutubeConsistencyMetrics} from "@/lib/types/youtube-types";
 import { AvailableDatasources } from './common/enums'
 
 export interface InstagramDashboardData {
@@ -42,6 +42,7 @@ export interface YoutubeDashboardData {
   metrics: YoutubeMetrics
   topVideos: YoutubeVideo[]
   hashtagAnalysis: YoutubeHashtagAnalysis[]
+  consistencyMetrics: YoutubeConsistencyMetrics
 }
 
 // Client with all data relations included

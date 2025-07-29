@@ -160,12 +160,14 @@ export class DashboardService {
       const metrics = youtubeService.calculateYoutubeMetrics(profile.videos)
       const topVideos = youtubeService.getTopVideos(profile.videos, 6)
       const hashtagAnalysis = youtubeService.analyzeHashtags(profile.videos, 10)
+      const consistencyMetrics = youtubeService.calculateConsistencyMetrics(profile.videos)
 
       return {
         profile,
         metrics,
         topVideos,
-        hashtagAnalysis
+        hashtagAnalysis,
+        consistencyMetrics
       }
     } catch (error) {
       logger.error('Error processing YouTube data:', error)
