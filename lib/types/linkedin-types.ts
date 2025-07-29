@@ -73,11 +73,18 @@ export interface LinkedinHashtagAnalysis {
   count: number
 }
 
+export interface LinkedinHeatmapCell {
+  dayOfWeek: number // 1-7 (Monday to Sunday)
+  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
+  postCount: number
+}
+
 export interface LinkedinConsistencyMetrics {
   activeDays: number
   inactiveDays: number
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
+  heatmapData: LinkedinHeatmapCell[]
   consistencyScore: number // 0-100 composite score
 }
