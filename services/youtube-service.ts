@@ -4,7 +4,8 @@ import {
   RawYoutubeData,
   YoutubeMetrics,
   YoutubeHashtagAnalysis,
-  YoutubeConsistencyMetrics
+  YoutubeConsistencyMetrics,
+  YoutubeHeatmapCell
 } from '@/lib/types/youtube-types'
 import { UploadRequestDto } from '@/lib/types/common/upload-types'
 import { YoutubeVideo, YoutubeProfile, Prisma } from '@prisma/client'
@@ -212,6 +213,28 @@ export class YoutubeService {
     return Math.max(0, 1 - cv)
   }
 
+  private calculateTimePatternConsistency(heatmapData: YoutubeHeatmapCell[]): number {
+    const nonZeroCells = heatmapData.filter(cell => cell.videoCount > 0)
+    if (nonZeroCells.length < 2) return 0.5
+    
+    // Calculate variance in posting times
+    const totalVideos = nonZeroCells.reduce((sum, cell) => sum + cell.videoCount, 0)
+    
+    // Calculate entropy-based consistency score
+    let entropy = 0
+    nonZeroCells.forEach(cell => {
+      const probability = cell.videoCount / totalVideos
+      entropy -= probability * Math.log2(probability)
+    })
+    
+    // Normalize entropy (max entropy for 7 days × 8 time blocks = 56 cells)
+    const maxEntropy = Math.log2(56)
+    const normalizedEntropy = entropy / maxEntropy
+    
+    // Lower entropy = more consistent (concentrated posting times)
+    return Math.max(0, 1 - normalizedEntropy)
+  }
+
   private calculateStreakStability(longestActiveStreak: number, longestSilence: number, totalDays: number): number {
     if (totalDays === 0) return 0
     
@@ -228,20 +251,23 @@ export class YoutubeService {
 
   private calculateOverallConsistencyScore(
     frequencyConsistency: number,
+    timePatternConsistency: number,
     dailyConsistencyRate: number,
     streakStability: number
   ): number {
-    // Weighted combination (adjusted weights since no time pattern consistency for YouTube)
+    // Weighted combination (restored original weights with time pattern consistency)
     const weights = {
-      frequency: 0.50,      // Increased from 0.40
-      dailyRate: 0.30,      // Increased from 0.20  
-      streakStability: 0.20 // Increased from 0.15
+      frequency: 0.40,
+      timePattern: 0.25,
+      dailyRate: 0.20,
+      streakStability: 0.15
     }
     
     const normalizedDailyRate = dailyConsistencyRate / 100 // Convert percentage to 0-1
     
     const weightedScore = 
       frequencyConsistency * weights.frequency +
+      timePatternConsistency * weights.timePattern +
       normalizedDailyRate * weights.dailyRate +
       streakStability * weights.streakStability
     
@@ -257,6 +283,7 @@ export class YoutubeService {
         dailyConsistencyRate: 0,
         longestSilence: 0,
         longestActiveStreak: 0,
+        heatmapData: [],
         consistencyScore: 0
       }
     }
@@ -316,11 +343,49 @@ export class YoutubeService {
       }
     })
 
+    // Calculate heatmap data
+    const heatmapMap = new Map<string, number>()
+    
+    // Initialize all cells with 0
+    for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+      for (let hour = 0; hour < 24; hour += 3) {
+        const key = `${dayOfWeek}-${hour}`
+        heatmapMap.set(key, 0)
+      }
+    }
+
+    // Count videos for each day/hour combination
+    videos.forEach(video => {
+      const date = new Date(video.publishedAt)
+      // getDay() returns 0 for Sunday, we want 1-7 with Monday as 1
+      const dayOfWeek = date.getDay() === 0 ? 7 : date.getDay()
+      const hour = date.getHours()
+      const hourBlock = Math.floor(hour / 3) * 3
+      const key = `${dayOfWeek}-${hourBlock}`
+      
+      heatmapMap.set(key, (heatmapMap.get(key) || 0) + 1)
+    })
+
+    // Convert map to array of cells
+    const heatmapData: YoutubeHeatmapCell[] = []
+    for (let dayOfWeek = 1; dayOfWeek <= 7; dayOfWeek++) {
+      for (let hourBlock = 0; hourBlock < 24; hourBlock += 3) {
+        const key = `${dayOfWeek}-${hourBlock}`
+        heatmapData.push({
+          dayOfWeek,
+          hourBlock,
+          videoCount: heatmapMap.get(key) || 0
+        })
+      }
+    }
+
     // Calculate consistency score components
     const frequencyConsistency = this.calculatePostingFrequencyConsistency(videos)
+    const timePatternConsistency = this.calculateTimePatternConsistency(heatmapData)
     const streakStability = this.calculateStreakStability(longestActiveStreak, longestSilence, totalDays)
     const consistencyScore = this.calculateOverallConsistencyScore(
       frequencyConsistency,
+      timePatternConsistency,
       dailyConsistencyRate,
       streakStability
     )
@@ -331,6 +396,7 @@ export class YoutubeService {
       dailyConsistencyRate: Number(dailyConsistencyRate.toFixed(2)),
       longestSilence,
       longestActiveStreak,
+      heatmapData,
       consistencyScore
     }
   }

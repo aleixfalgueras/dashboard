@@ -97,11 +97,18 @@ export interface YoutubeHashtagAnalysis {
   count: number
 }
 
+export interface YoutubeHeatmapCell {
+  dayOfWeek: number // 1-7 (Monday to Sunday)
+  hourBlock: number // 0, 3, 6, 9, 12, 15, 18, 21
+  videoCount: number
+}
+
 export interface YoutubeConsistencyMetrics {
   activeDays: number
   inactiveDays: number
   dailyConsistencyRate: number
   longestSilence: number
   longestActiveStreak: number
+  heatmapData: YoutubeHeatmapCell[]
   consistencyScore: number // 0-100 composite score
 }
