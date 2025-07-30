@@ -2,14 +2,9 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { UserRole } from '@prisma/client'
 import { authOptions } from '@/lib/auth'
-import {logger} from "@/lib/utils";
 
 export default async function Home() {
   const session = await getServerSession(authOptions)
-
-  logger.info(process.env.NEXTAUTH_SECRET)
-  logger.info(process.env.NEXTAUTH_URL)
-  logger.info(session)
   
   if (!session) {
     redirect('/login')
