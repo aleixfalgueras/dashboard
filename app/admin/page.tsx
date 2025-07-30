@@ -26,6 +26,7 @@ import {format, parse} from 'date-fns'
 import {Logo} from '@/components/ui/logo'
 import {ThemeToggle} from '@/components/theme-toggle'
 import {LogoutButton} from '@/components/auth/logout-button'
+import {UserManagement} from '@/components/admin/user-management'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -588,6 +589,9 @@ export default function AdminPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* User Management */}
+        <UserManagement clients={clients} />
       </div>
       </div>
 
