@@ -40,7 +40,8 @@ export function UserManagement({ clients }: UserManagementProps) {
     role: UserRole.CLIENT as UserRole,
     clientId: ''
   })
-  const [showPassword, setShowPassword] = useState(false)
+  const [showCreatePassword, setShowCreatePassword] = useState(false)
+  const [showResetPassword, setShowResetPassword] = useState(false)
   const [creatingUser, setCreatingUser] = useState(false)
   const [updatingUser, setUpdatingUser] = useState(false)
   const [userToDelete, setUserToDelete] = useState<string | null>(null)
@@ -207,102 +208,107 @@ export function UserManagement({ clients }: UserManagementProps) {
             <div className="border rounded-lg p-4 space-y-4">
               <h4 className="font-medium">{editingUser ? 'Edit User' : 'Create New User'}</h4>
               
-              <div className="space-y-2">
-                <Label htmlFor="user-email">Email</Label>
-                <Input
-                  id="user-email"
-                  type="email"
-                  value={userFormData.email}
-                  onChange={(e) => setUserFormData({...userFormData, email: e.target.value})}
-                  placeholder="Enter email"
-                  disabled={creatingUser || updatingUser}
-                />
-              </div>
-
-              {!editingUser && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="user-password">Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="user-password"
-                      type={showPassword ? "text" : "password"}
-                      value={userFormData.password}
-                      onChange={(e) => setUserFormData({...userFormData, password: e.target.value})}
-                      placeholder="Enter password"
-                      disabled={creatingUser}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                      onClick={() => setShowPassword(!showPassword)}
-                      disabled={creatingUser}
-                    >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
+                  <Label htmlFor="user-email">Email</Label>
+                  <Input
+                    id="user-email"
+                    type="email"
+                    value={userFormData.email}
+                    onChange={(e) => setUserFormData({...userFormData, email: e.target.value})}
+                    placeholder="Enter email"
+                    disabled={creatingUser || updatingUser}
+                  />
                 </div>
-              )}
 
-              <div className="space-y-2">
-                <Label htmlFor="user-role">Role</Label>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-between h-10"
-                      disabled={creatingUser || updatingUser}
-                    >
-                      {userFormData.role}
-                      <ChevronDown className="h-4 w-4 opacity-50" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-full">
-                    <DropdownMenuItem onClick={() => setUserFormData({...userFormData, role: UserRole.ADMIN})}>
-                      {UserRole.ADMIN}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setUserFormData({...userFormData, role: UserRole.CLIENT})}>
-                      {UserRole.CLIENT}
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {!editingUser && (
+                  <div className="space-y-2">
+                    <Label htmlFor="user-password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="user-password"
+                        type={showCreatePassword ? "text" : "password"}
+                        value={userFormData.password}
+                        onChange={(e) => setUserFormData({...userFormData, password: e.target.value})}
+                        placeholder="Enter password"
+                        disabled={creatingUser}
+                        className="pr-12"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                        onClick={() => setShowCreatePassword(!showCreatePassword)}
+                        disabled={creatingUser}
+                      >
+                        {showCreatePassword ? (
+                          <EyeOff className="h-4 w-4" />
+                        ) : (
+                          <Eye className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              {userFormData.role === UserRole.CLIENT && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {userFormData.role === UserRole.CLIENT && (
+                  <div className="space-y-2">
+                    <Label htmlFor="user-client">Assigned Client</Label>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-between h-10"
+                          disabled={creatingUser || updatingUser || clients.length === 0}
+                        >
+                          {userFormData.clientId 
+                            ? clients.find(c => c.id === userFormData.clientId)?.name || 'Select a client'
+                            : 'Select a client'
+                          }
+                          <ChevronDown className="h-4 w-4 opacity-50" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-full" style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}>
+                        {clients.map((client) => (
+                          <DropdownMenuItem
+                            key={client.id}
+                            onClick={() => setUserFormData({...userFormData, clientId: client.id})}
+                          >
+                            {client.name}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                )}
+
                 <div className="space-y-2">
-                  <Label htmlFor="user-client">Assigned Client</Label>
+                  <Label htmlFor="user-role">Role</Label>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="outline"
                         className="w-full justify-between h-10"
-                        disabled={creatingUser || updatingUser || clients.length === 0}
+                        disabled={creatingUser || updatingUser}
                       >
-                        {userFormData.clientId 
-                          ? clients.find(c => c.id === userFormData.clientId)?.name || 'Select a client'
-                          : 'Select a client'
-                        }
+                        {userFormData.role}
                         <ChevronDown className="h-4 w-4 opacity-50" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-full">
-                      {clients.map((client) => (
-                        <DropdownMenuItem
-                          key={client.id}
-                          onClick={() => setUserFormData({...userFormData, clientId: client.id})}
-                        >
-                          {client.name}
-                        </DropdownMenuItem>
-                      ))}
+                    <DropdownMenuContent className="w-full" style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}>
+                      <DropdownMenuItem onClick={() => setUserFormData({...userFormData, role: UserRole.ADMIN})}>
+                        {UserRole.ADMIN}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setUserFormData({...userFormData, role: UserRole.CLIENT})}>
+                        {UserRole.CLIENT}
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-              )}
+              </div>
 
               <div className="flex gap-2">
                 <Button
@@ -331,7 +337,7 @@ export function UserManagement({ clients }: UserManagementProps) {
                       role: UserRole.CLIENT,
                       clientId: ''
                     })
-                    setShowPassword(false)
+                    setShowCreatePassword(false)
                   }}
                   disabled={creatingUser || updatingUser}
                 >
@@ -458,19 +464,20 @@ export function UserManagement({ clients }: UserManagementProps) {
               <div className="relative">
                 <Input
                   id="new-password"
-                  type={showPassword ? "text" : "password"}
+                  type={showResetPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Enter new password"
+                  className="pr-12"
                 />
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() => setShowResetPassword(!showResetPassword)}
                 >
-                  {showPassword ? (
+                  {showResetPassword ? (
                     <EyeOff className="h-4 w-4" />
                   ) : (
                     <Eye className="h-4 w-4" />
