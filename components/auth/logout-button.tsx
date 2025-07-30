@@ -18,7 +18,7 @@ export function LogoutButton({
   showText = true 
 }: LogoutButtonProps) {
   const handleLogout = () => {
-    signOut({ callbackUrl: '/login' })
+    void signOut({ callbackUrl: '/login' })
   }
 
   return (
