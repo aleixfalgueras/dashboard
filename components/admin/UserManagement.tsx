@@ -1,38 +1,30 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { useToast } from '@/hooks/use-toast'
-import { ChevronDown, Loader2, Trash2, User, Eye, EyeOff, Key, Settings } from 'lucide-react'
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { getUsers, createUser, updateUser, updateUserPassword, deleteUser } from '@/app/actions/user-management-action'
-import { UserRole } from '@prisma/client'
-import { logger } from '@/lib/utils'
+import {useEffect, useState} from 'react'
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
+import {Button} from '@/components/ui/button'
+import {Input} from '@/components/ui/input'
+import {Label} from '@/components/ui/label'
+import {useToast} from '@/hooks/use-toast'
+import {ChevronDown, Eye, EyeOff, Key, Loader2, Settings, Trash2, User as UserIcon} from 'lucide-react'
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger} from '@/components/ui/dropdown-menu'
+import {createUser, deleteUser, getUsers, updateUser, updateUserPassword} from '@/app/actions/user-management-action'
+import {Client, UserRole} from '@prisma/client'
+import {logger} from '@/lib/utils'
 
-interface UserWithClient {
-  id: string
-  email: string
-  role: UserRole
-  clientId: string | null
-  createdAt: Date
-  client: {
-    id: string
-    name: string
-    slug: string
-  } | null
-}
-
-interface Client {
-  id: string
-  name: string
-  slug: string
-}
+import {UserWithClient} from "@/lib/types/user-types";
 
 interface UserManagementProps {
   clients: Client[]
@@ -59,7 +51,7 @@ export function UserManagement({ clients }: UserManagementProps) {
 
   // Load users on component mount
   useEffect(() => {
-    loadUsers()
+    void loadUsers()
   }, [])
 
   const loadUsers = async () => {
@@ -206,7 +198,7 @@ export function UserManagement({ clients }: UserManagementProps) {
               size="sm"
               disabled={creatingUser || updatingUser}
             >
-              <User className="mr-2 h-4 w-4" />
+              <UserIcon className="mr-2 h-4 w-4" />
               New User
             </Button>
           </div>
