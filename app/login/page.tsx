@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react'
 import { signIn } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,7 +15,6 @@ export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,7 +35,7 @@ export default function LoginPage() {
       const result = await signIn('credentials', {
         email,
         password,
-        redirect: false
+        callbackUrl: '/'
       })
 
       if (result?.error) {
@@ -46,11 +44,8 @@ export default function LoginPage() {
           description: 'Invalid email or password',
           variant: 'destructive'
         })
-      } else {
-        // Redirect will be handled by NextAuth callbacks
-        router.push('/')
-        router.refresh()
       }
+      // NextAuth will handle the redirect automatically
     } catch {
       toast({
         title: 'Login error',
