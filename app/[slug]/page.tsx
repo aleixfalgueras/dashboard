@@ -27,7 +27,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   if (!dashboardData) {
     return (
       <div className="max-w-7xl mx-auto px-10 py-10 space-y-8flex items-center justify-center min-h-[60vh]">
-        <Card className="w-full max-w-md text-center">
+        <Card className="w-full items-center justify-center text-center">
           <CardHeader>
             <CardTitle>No Data Available</CardTitle>
             <CardDescription>

@@ -39,6 +39,13 @@ const nextConfig = {
         hostname: '*.linkedin.com',
       }
     ]
+  },
+  // Configure larger request body limits for Server Actions
+  experimental: {
+    serverActions: {
+      // Increase body size limit to 10MB (from default 1MB)
+      bodySizeLimit: '10mb',
+    },
   }
 };
 

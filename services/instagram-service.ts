@@ -85,8 +85,26 @@ export class InstagramService {
 
   async processInstagramPostsUpload(uploadRequestDto: UploadRequestDto): Promise<void> {
     try {
-      // Parse and validate the JSON data
-      const parsedData = JSON.parse(uploadRequestDto.jsonData)
+      logger.info(`Processing Instagram posts upload for file: ${uploadRequestDto.fileName}`)
+      logger.info(`JSON data length: ${uploadRequestDto.jsonData.length} characters`)
+      
+      // Parse and validate the JSON data with enhanced error handling
+      let parsedData
+      try {
+        parsedData = JSON.parse(uploadRequestDto.jsonData)
+        logger.info(`JSON parsing successful, data type: ${Array.isArray(parsedData) ? 'array with ' + parsedData.length + ' items' : typeof parsedData}`)
+      } catch (parseError) {
+        logger.error('JSON parsing failed in Instagram service:', {
+          error: parseError instanceof Error ? parseError.message : 'Unknown parse error',
+          fileName: uploadRequestDto.fileName,
+          jsonLength: uploadRequestDto.jsonData.length,
+          errorPosition: parseError instanceof SyntaxError ? (parseError as any).pos : 'unknown',
+          contextAroundError: parseError instanceof SyntaxError && (parseError as any).pos ? 
+            uploadRequestDto.jsonData.slice(Math.max(0, (parseError as any).pos - 50), (parseError as any).pos + 50) : 'unavailable'
+        })
+        throw new Error(`Instagram JSON parsing failed: ${parseError instanceof Error ? parseError.message : 'Unknown error'}`)
+      }
+      
       const validatedData = InstagramDataSchema.parse(parsedData)
 
       // Get the client by ID

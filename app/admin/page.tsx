@@ -115,7 +115,8 @@ export default function AdminPage() {
   const getDataSourceFromFilename = (filename: string): DataSource | null => {
     const lowerFilename = filename.toLowerCase()
     
-    if (lowerFilename.includes('instagramprofile')) {
+    if (lowerFilename.includes('instagramprofile') || lowerFilename.includes('instagram_profiel') ||
+      lowerFilename.includes('instagram_profile') || lowerFilename.includes('instagramprofiel')) {
       return DataSource.INSTAGRAM_PROFILE
     }
     if (lowerFilename.includes('instagram')) {
@@ -287,14 +288,66 @@ export default function AdminPage() {
 
     try {
       const fileContent = await uploadedFile.text()
-      const jsonData = JSON.parse(fileContent)
+      
+      // Add file size validation
+      if (fileContent.length > 10 * 1024 * 1024) { // 10MB limit
+        toast({
+          title: 'File too large',
+          description: 'Please upload files smaller than 10MB.',
+          variant: 'destructive'
+        })
+        return
+      }
+
+      // Normalize data for consistent checksum calculation
+      const normalizeForChecksum = (str: string) => {
+        return str.replace(/\r\n/g, '\n').trim()
+      }
+
+      // Calculate simple checksum for integrity validation
+      const calculateChecksum = (str: string) => {
+        let hash = 0
+        for (let i = 0; i < str.length; i++) {
+          const char = str.charCodeAt(i)
+          hash = ((hash << 5) - hash) + char
+          hash = hash & hash // Convert to 32bit integer
+        }
+        return hash.toString(16)
+      }
+
+      const normalizedContent = normalizeForChecksum(fileContent)
+      const clientChecksum = calculateChecksum(normalizedContent)
+
+      // Pre-upload validation and integrity check
+      logger.info(`Client-side upload details:
+        - File name: ${uploadedFile.name}
+        - File size: ${uploadedFile.size} bytes
+        - Content length: ${fileContent.length} characters
+        - Checksum: ${clientChecksum}
+        - First 100 chars: ${fileContent.slice(0, 100)}
+        - Last 100 chars: ${fileContent.slice(-100)}`)
+
+      // Test JSON parsing on client side for immediate feedback
+      try {
+        JSON.parse(normalizedContent);
+        logger.info('Client-side JSON validation passed')
+      } catch (clientJsonError) {
+        logger.error('Client-side JSON validation failed:', clientJsonError)
+        toast({
+          title: 'Invalid JSON file',
+          description: `JSON parsing error: ${clientJsonError instanceof Error ? clientJsonError.message : 'Unknown error'}`,
+          variant: 'destructive'
+        })
+        return
+      }
 
       const formData = new FormData()
       formData.append('clientId', selectedClientId)
       formData.append('dataSource', selectedDataSource)
-      formData.append('jsonData', JSON.stringify(jsonData))
+      formData.append('jsonData', normalizedContent) // Send normalized content
       formData.append('fileName', uploadedFile.name)
       formData.append('overwriteData', overwriteData.toString())
+      formData.append('checksum', clientChecksum) // Add integrity check
 
       const result = await uploadDataSource(formData)
 
