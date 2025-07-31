@@ -26,7 +26,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
   if (!dashboardData) {
     return (
-      <div className="container mx-auto py-8 flex items-center justify-center min-h-[60vh]">
+      <div className="max-w-7xl mx-auto px-10 py-10 space-y-8flex items-center justify-center min-h-[60vh]">
         <Card className="w-full max-w-md text-center">
           <CardHeader>
             <CardTitle>No Data Available</CardTitle>
@@ -152,7 +152,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-10 py-10 space-y-8">
       {/* Header */}
       <div className="space-y-1">
         <div className="flex items-center justify-between">

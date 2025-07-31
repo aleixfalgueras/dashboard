@@ -4,7 +4,7 @@ import { Logo } from '@/components/ui/logo'
 
 export default function DashboardLoading() {
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-10 py-10 space-y-8">
       {/* Header Skeleton */}
       <div className="space-y-1">
         <div className="flex items-center justify-between">
