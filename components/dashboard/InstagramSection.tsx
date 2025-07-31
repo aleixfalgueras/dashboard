@@ -10,6 +10,7 @@ import {
   Image as ImageIcon,
   MessageCircle,
   TrendingUp,
+  Users,
   Video
 } from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
@@ -88,13 +89,22 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          {/* Post Type Distribution */}
+          {/* Account Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>Content Type Distribution</CardTitle>
+              <CardTitle>Account Overview</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
+                {/* Followers Count */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-pink-500"/>
+                    <span className="font-medium">Followers</span>
+                  </div>
+                  <span className="text-sm font-medium">{profile.followersCount.toLocaleString()}</span>
+                </div>
+                
                 {postTypes.map((type) => (
                   <div key={type.type} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">

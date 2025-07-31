@@ -2,7 +2,7 @@ import {YoutubeDashboardData} from "@/lib/types/dashboard-types";
 import {HeatmapComponent} from "@/components/ui/heatmap";
 import {ConsistencyMetricsComponent} from "@/components/ui/consistency-metrics";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Eye, Heart, MessageCircle, TrendingUp, Play, HelpCircle} from "lucide-react";
+import {BarChart3, Calendar, Eye, Heart, MessageCircle, TrendingUp, Play, HelpCircle, Users} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
@@ -88,6 +88,13 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-red-500"/>
+                    <span className="font-medium">Subscribers</span>
+                  </div>
+                  <span className="text-sm font-medium">{profile.numberOfSubscribers.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
                     <Eye className="h-4 w-4"/>
                     <span className="font-medium">Avg. Views per Video</span>
                   </div>
@@ -106,13 +113,6 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
                     <span className="font-medium">Avg. Comments per Video</span>
                   </div>
                   <span className="text-sm font-medium">{metrics.avgCommentsPerVideo.toFixed(0).toLocaleString()}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4 text-green-500"/>
-                    <span className="font-medium">Subscribers</span>
-                  </div>
-                  <span className="text-sm font-medium">{profile.numberOfSubscribers.toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>

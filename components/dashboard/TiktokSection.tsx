@@ -2,7 +2,7 @@ import {TiktokDashboardData} from "@/lib/types/dashboard-types";
 import {HeatmapComponent} from "@/components/ui/heatmap";
 import {ConsistencyMetricsComponent} from "@/components/ui/consistency-metrics";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
-import {BarChart3, Calendar, Heart, Play, Share2, MessageCircle, TrendingUp, HelpCircle} from "lucide-react";
+import {BarChart3, Calendar, Heart, Play, Share2, MessageCircle, TrendingUp, HelpCircle, Users, UserPlus, UserCheck} from "lucide-react";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
@@ -79,13 +79,37 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          {/* Engagement Metrics */}
+          {/* Account Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>Engagement Metrics</CardTitle>
+              <CardTitle>Account Overview</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
+                {/* Account Metrics */}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-4 w-4 text-pink-500"/>
+                    <span className="font-medium">Fans</span>
+                  </div>
+                  <span className="text-sm font-medium">{profile.fans.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <UserPlus className="h-4 w-4 text-blue-500"/>
+                    <span className="font-medium">Following</span>
+                  </div>
+                  <span className="text-sm font-medium">{profile.following.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="h-4 w-4 text-green-500"/>
+                    <span className="font-medium">Friends</span>
+                  </div>
+                  <span className="text-sm font-medium">{profile.friends.toLocaleString()}</span>
+                </div>
+                
+                {/* Engagement Metrics */}
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Share2 className="h-4 w-4"/>
