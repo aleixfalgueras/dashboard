@@ -27,6 +27,13 @@
   .accent-gradient-subtle {
     background: linear-gradient(135deg, hsl(var(--accent) / 0.1) 0%, hsl(var(--accent) / 0.05) 100%);
   }
+
+  /* Shimmer animation for skeleton loading */
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 
 
@@ -95,5 +102,16 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+  }
+  
+  /* Disable browser's built-in password toggle to prevent overlap with custom toggle */
+  input[type="password"]::-ms-reveal,
+  input[type="password"]::-ms-clear {
+    display: none;
+  }
+  
+  input[type="password"]::-webkit-credentials-auto-fill-button,
+  input[type="password"]::-webkit-strong-password-auto-fill-button {
+    display: none !important;
   }
 }

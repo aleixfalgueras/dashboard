@@ -8,23 +8,37 @@ import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
 import {Checkbox} from '@/components/ui/checkbox'
 import {useToast} from '@/hooks/use-toast'
-import {ArrowRight, ChevronDown, FileJson, Loader2, Plus, Trash2, Upload, Eraser} from 'lucide-react'
-import {SiInstagram, SiTiktok, SiLinkedin, SiYoutube} from 'react-icons/si'
+import {ChevronDown, Eraser, FileJson, Loader2, Plus, Settings, Trash2, Upload} from 'lucide-react'
+import {SiInstagram, SiLinkedin, SiTiktok, SiYoutube} from 'react-icons/si'
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from '@/components/ui/tooltip'
-import {AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle} from '@/components/ui/alert-dialog'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from '@/components/ui/alert-dialog'
 import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
 import {uploadDataSource} from '@/app/actions/upload-action'
 import {useClientManagement} from '@/hooks/use-client-management'
-import {DataSource, AvailableDatasources} from '@/lib/types/common/enums'
-import Link from 'next/link'
+import {AvailableDatasources, DataSource} from '@/lib/types/common/enums'
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from '@/components/ui/dropdown-menu'
 import {logger} from "@/lib/utils";
-import {cleanClientData, cleanAllClientData, updateClientStatsDataStartDate} from '@/app/actions/client-management-action';
+import {
+  cleanAllClientData,
+  cleanClientData,
+  updateClientStatsDataStartDate
+} from '@/app/actions/client-management-action';
 import {DatePicker} from '@/components/ui/date-picker'
-import {Settings} from 'lucide-react'
 import {format, parse} from 'date-fns'
 import {Logo} from '@/components/ui/logo'
 import {ThemeToggle} from '@/components/theme-toggle'
+import {LogoutButton} from '@/components/auth/logout-button'
+import {UserManagement} from '@/components/admin/UserManagement'
+import {ViewDashboardButton} from '@/components/admin/ViewDashboardButton'
 
 export default function AdminPage() {
   const [selectedClientId, setSelectedClientId] = useState<string>('')
@@ -315,7 +329,10 @@ export default function AdminPage() {
           <Logo size="lg" />
           <h1 className="text-4xl font-bold mb-2 text-accent">Dico De Rooij Dashboards</h1>
         </div>
-        <ThemeToggle />
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <LogoutButton />
+        </div>
       </div>
 
       <div className="space-y-6">
@@ -519,18 +536,10 @@ export default function AdminPage() {
                         <p className="text-sm text-muted-foreground">Created {new Date(client.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex gap-2">
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Link href={`/${client.slug}`}>
-                              <Button variant="outline" size="sm">
-                                <ArrowRight className="h-4 w-4" />
-                              </Button>
-                            </Link>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>View dashboard</p>
-                          </TooltipContent>
-                        </Tooltip>
+                        <ViewDashboardButton 
+                          clientSlug={client.slug}
+                          disabled={uploading || creating || cleaning || configuringDashboard}
+                        />
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
@@ -584,6 +593,9 @@ export default function AdminPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* User Management */}
+        <UserManagement clients={clients} />
       </div>
       </div>
 

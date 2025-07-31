@@ -27,6 +27,7 @@ model Client {
   linkedinProfile  LinkedinProfile?
   youtubeProfile   YoutubeProfile?
   uploads          Upload[]
+  users            User[]
 
   @@index([slug])
 }
@@ -267,4 +268,24 @@ model YoutubeVideo {
 
   @@index([profileId])
   @@index([publishedAt])
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      UserRole @default(CLIENT)
+  clientId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  client Client? @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@index([email])
+  @@index([clientId])
+}
+
+enum UserRole {
+  ADMIN
+  CLIENT
 }

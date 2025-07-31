@@ -108,7 +108,13 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
             <CardContent>
               <div className="space-y-4">
                 {profile.posts.slice(0, 5).map((post) => (
-                  <div key={post.id} className="flex items-center justify-between">
+                  <a 
+                    key={post.id} 
+                    href={post.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+                  >
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">
                         {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
@@ -128,7 +134,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                         {post.commentsCount}
                       </span>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </CardContent>
