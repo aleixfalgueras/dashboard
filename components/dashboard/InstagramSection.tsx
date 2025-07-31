@@ -83,7 +83,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
         <TabsList>
           <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
           <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
-          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Content Analysis</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Hashtags</TabsTrigger>
           <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Consistency</TabsTrigger>
         </TabsList>
 
@@ -99,7 +99,9 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                   <div key={type.type} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {type.type === 'Image' ? <ImageIcon className="h-4 w-4"/> : <Video className="h-4 w-4"/>}
-                      <span className="font-medium">{type.type}</span>
+                      <span className="font-medium">
+                        {type.type === "Video" ? "Reels" : type.type === "Sidecar" ? "Carrusel" : "Regular posts"}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">{type.count} posts</span>

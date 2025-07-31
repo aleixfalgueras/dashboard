@@ -10,7 +10,6 @@ import {LinkedInSection} from "@/components/dashboard/LinkedInSection";
 import {YoutubeSection} from "@/components/dashboard/YoutubeSection";
 import {GeneralSection} from "@/components/dashboard/GeneralSection";
 import {Logo} from "@/components/ui/logo";
-import {Alert, AlertDescription} from "@/components/ui/alert";
 import {ExpandableText} from "@/components/ui/expandable-text";
 import {ThemeToggle} from "@/components/theme-toggle";
 import {LogoutButton} from '@/components/auth/logout-button';
@@ -55,10 +54,7 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
           </h2>
           <div className="space-y-2">
             <p className="text-muted-foreground">{datasourcesData.instagram.profile.fullName}</p>
-            <ExpandableText 
-              text={datasourcesData.instagram.profile.bio ?? ""}
-              maxLength={bioTextSize}
-            />
+            <p className="text-muted-foreground">{datasourcesData.instagram.profile.bio ?? ""}</p>
           </div>
         </div>
         <InstagramSection data={datasourcesData.instagram} />
@@ -169,21 +165,15 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <LogoutButton />
           </div>
         </div>
-        <p className="text-muted-foreground">Analytics Dashboard</p>
+        <p className="text-muted-foreground">
+          Your personalized social media dashboard
+          {client.statsDataStartDate && ` - Showing analytics data from ${new Date(client.statsDataStartDate).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })} onwards.`}
+        </p>
       </div>
-
-      {/* Stats Data Start Date Message */}
-      {client.statsDataStartDate && (
-        <Alert>
-          <AlertDescription>
-            Showing analytics data from {new Date(client.statsDataStartDate).toLocaleDateString('en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })} onwards.
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* General Overview Section */}
       <GeneralSection metrics={generalMetrics} />

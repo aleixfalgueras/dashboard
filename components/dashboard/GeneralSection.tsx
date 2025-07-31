@@ -248,7 +248,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold">Overview</h2>
-        <p className="text-muted-foreground">Cross-platform analytics summary</p>
+        <p className="text-muted-foreground">Social media statistics, this is where you are right now</p>
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -323,7 +323,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                Follower Growth Forecast
+                Your followers growth forecast
                 <TrendingUp className="h-4 w-4 text-accent" />
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -337,7 +337,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
                 </Tooltip>
               </CardTitle>
               <CardDescription>
-                Current trend vs. {growthPercentage}% growth projection
+                Current trend vs. our avg. customers growth
               </CardDescription>
             </div>
             <div className="flex items-center gap-3">
