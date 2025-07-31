@@ -127,7 +127,13 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
             <CardContent>
               <div className="space-y-4">
                 {profile.videos.slice(0, 5).map((video) => (
-                  <div key={video.id} className="flex items-center justify-between">
+                  <a 
+                    key={video.id} 
+                    href={video.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between hover:bg-accent/50 rounded-lg p-2 -m-2 transition-colors cursor-pointer"
+                  >
                     <div className="space-y-1 flex-1">
                       <p className="text-sm font-medium leading-none">
                         {video.title.substring(0, 60)}...
@@ -153,7 +159,7 @@ export function YoutubeSection({data}: { data: YoutubeDashboardData }) {
                         {video.likes}
                       </span>
                     </div>
-                  </div>
+                  </a>
                 ))}
               </div>
             </CardContent>
