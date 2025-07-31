@@ -27,6 +27,13 @@
   .accent-gradient-subtle {
     background: linear-gradient(135deg, hsl(var(--accent) / 0.1) 0%, hsl(var(--accent) / 0.05) 100%);
   }
+
+  /* Shimmer animation for skeleton loading */
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
 }
 
 
