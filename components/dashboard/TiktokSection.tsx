@@ -1,3 +1,5 @@
+'use client'
+
 import {TiktokDashboardData} from "@/lib/types/dashboard-types";
 import {HeatmapComponent} from "@/components/ui/heatmap";
 import {ConsistencyMetricsComponent} from "@/components/ui/consistency-metrics";
@@ -6,9 +8,19 @@ import {BarChart3, Calendar, Heart, Play, Share2, MessageCircle, TrendingUp, Hel
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
+import { useTranslations } from "@/lib/translations/context";
 
 export function TiktokSection({data}: { data: TiktokDashboardData }) {
   const {profile, metrics, topPosts, hashtagAnalysis, consistencyMetrics} = data
+  const tContent = useTranslations('content')
+  const tTabs = useTranslations('tabs')
+  const tCardTitles = useTranslations('cardTitles')
+  const tSectionTitles = useTranslations('sectionTitles')
+  const tDescriptions = useTranslations('descriptions')
+  const tLabels = useTranslations('labels')
+  const tUnits = useTranslations('units')
+  const tTooltips = useTranslations('tooltips')
+  const tStatus = useTranslations('status')
 
   return (
     <TooltipProvider>
@@ -17,7 +29,7 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-accent accent-gradient-subtle">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalPosts')}</CardTitle>
             <BarChart3 className="h-4 w-4 text-accent"/>
           </CardHeader>
           <CardContent>
@@ -27,7 +39,7 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
 
         <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Plays</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalPlays')}</CardTitle>
             <Play className="h-4 w-4 text-blue-500"/>
           </CardHeader>
           <CardContent>
@@ -37,7 +49,7 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
 
         <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Diggs</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalDiggs')}</CardTitle>
             <Heart className="h-4 w-4 text-purple-500"/>
           </CardHeader>
           <CardContent>
@@ -48,14 +60,14 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
         <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="flex items-center gap-1">
-              <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+              <CardTitle className="text-sm font-medium">{tCardTitles('avgEngagement')}</CardTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
-                    Calculated as average of (Diggs + Comments + Shares + Collects) ÷ Plays per post
+                    {tTooltips('tiktokEngagementCalc')}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -64,7 +76,7 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">{(metrics.avgEngagementPerPost * 100).toFixed(2)}%</div>
-            <p className="text-xs text-muted-foreground">per post</p>
+            <p className="text-xs text-muted-foreground">{tUnits('perPost')}</p>
           </CardContent>
         </Card>
       </div>
@@ -72,17 +84,17 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
       {/* Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
-          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
-          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Hashtags</TabsTrigger>
-          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Consistency</TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('overview')}</TabsTrigger>
+          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('topPosts')}</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('hashtags')}</TabsTrigger>
+          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('consistency')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           {/* Account Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Overview</CardTitle>
+              <CardTitle>{tSectionTitles('accountOverview')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -90,21 +102,21 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-pink-500"/>
-                    <span className="font-medium">Fans</span>
+                    <span className="font-medium">{tLabels('fans')}</span>
                   </div>
                   <span className="text-sm font-medium">{profile.fans.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <UserPlus className="h-4 w-4 text-blue-500"/>
-                    <span className="font-medium">Following</span>
+                    <span className="font-medium">{tLabels('following')}</span>
                   </div>
                   <span className="text-sm font-medium">{profile.following.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <UserCheck className="h-4 w-4 text-green-500"/>
-                    <span className="font-medium">Friends</span>
+                    <span className="font-medium">{tLabels('friends')}</span>
                   </div>
                   <span className="text-sm font-medium">{profile.friends.toLocaleString()}</span>
                 </div>
@@ -113,14 +125,14 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Share2 className="h-4 w-4"/>
-                    <span className="font-medium">Total Shares</span>
+                    <span className="font-medium">{tCardTitles('totalShares')}</span>
                   </div>
                   <span className="text-sm font-medium">{metrics.totalShares.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <MessageCircle className="h-4 w-4"/>
-                    <span className="font-medium">Total Comments</span>
+                    <span className="font-medium">{tCardTitles('totalComments')}</span>
                   </div>
                   <span className="text-sm font-medium">{metrics.totalComments.toLocaleString()}</span>
                 </div>
@@ -131,8 +143,8 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
           {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Posts</CardTitle>
-              <CardDescription>Latest content performance</CardDescription>
+              <CardTitle>{tSectionTitles('recentPosts')}</CardTitle>
+              <CardDescription>{tDescriptions('latestContentPerformance')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -146,7 +158,7 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
                   >
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
+                        {post.text ? post.text.substring(0, 50) + '...' : tContent('noCaption')}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         <Calendar className="inline h-3 w-3 mr-1"/>
@@ -173,8 +185,8 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
         <TabsContent value="posts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Top Performing Posts</CardTitle>
-              <CardDescription>Posts with highest engagement</CardDescription>
+              <CardTitle>{tSectionTitles('topPerformingPosts')}</CardTitle>
+              <CardDescription>{tDescriptions('postsWithHighestEngagement')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -188,10 +200,10 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        {post.isSlideshow && <span className="text-xs bg-muted px-1 rounded">Slideshow</span>}
-                        {post.isPinned && <span className="text-xs bg-accent px-1 rounded text-accent-foreground">Pinned</span>}
+                        {post.isSlideshow && <span className="text-xs bg-muted px-1 rounded">{tStatus('slideshow')}</span>}
+                        {post.isPinned && <span className="text-xs bg-accent px-1 rounded text-accent-foreground">{tStatus('pinned')}</span>}
                         <p className="text-sm font-medium leading-none">
-                          {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
+                          {post.text ? post.text.substring(0, 50) + '...' : tContent('noCaption')}
                         </p>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -223,8 +235,8 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
         <TabsContent value="content" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Hashtag Analysis</CardTitle>
-              <CardDescription>Most used hashtags</CardDescription>
+              <CardTitle>{tSectionTitles('hashtagAnalysis')}</CardTitle>
+              <CardDescription>{tDescriptions('mostUsedHashtags')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -232,11 +244,11 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
                   hashtagAnalysis.map(({tag, count}) => (
                     <div key={tag} className="flex justify-between">
                       <span className="text-sm">#{tag}</span>
-                      <span className="text-sm text-muted-foreground">{count} posts</span>
+                      <span className="text-sm text-muted-foreground">{count} {tUnits('posts')}</span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No hashtags found</p>
+                  <p className="text-sm text-muted-foreground">{tContent('noHashtags')}</p>
                 )}
               </div>
             </CardContent>
@@ -246,7 +258,7 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
         <TabsContent value="consistency" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Consistency Metrics</CardTitle>
+              <CardTitle>{tSectionTitles('consistencyMetrics')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ConsistencyMetricsComponent data={consistencyMetrics} />
@@ -256,13 +268,13 @@ export function TiktokSection({data}: { data: TiktokDashboardData }) {
           {/* Posting Heatmap */}
           <Card>
             <CardHeader>
-              <CardTitle>Consistency Heatmap</CardTitle>
-              <CardDescription>Posts distribution by day and time</CardDescription>
+              <CardTitle>{tSectionTitles('consistencyHeatmap')}</CardTitle>
+              <CardDescription>{tDescriptions('postsDistribution')}</CardDescription>
             </CardHeader>
             <CardContent>
               <HeatmapComponent 
                 data={consistencyMetrics.heatmapData}
-                itemType={{ singular: 'post', plural: 'posts' }}
+                itemType={{ singular: tUnits('perPost').replace('per ', ''), plural: tUnits('posts') }}
                 getCountFromCell={(cell) => cell.count}
               />
             </CardContent>

@@ -1,3 +1,5 @@
+'use client'
+
 import {LinkedinDashboardData} from "@/lib/types/dashboard-types";
 import {HeatmapComponent} from "@/components/ui/heatmap";
 import {ConsistencyMetricsComponent} from "@/components/ui/consistency-metrics";
@@ -6,9 +8,17 @@ import {BarChart3, Calendar, Heart, MessageCircle, Share2, ThumbsUp} from "lucid
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {TooltipProvider} from "@/components/ui/tooltip";
 import {format} from "date-fns";
+import { useTranslations } from "@/lib/translations/context";
 
 export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
   const {profile, metrics, topPosts, hashtagAnalysis, consistencyMetrics} = data
+  const tContent = useTranslations('content')
+  const tTabs = useTranslations('tabs')
+  const tCardTitles = useTranslations('cardTitles')
+  const tSectionTitles = useTranslations('sectionTitles')
+  const tDescriptions = useTranslations('descriptions')
+  const tLabels = useTranslations('labels')
+  const tUnits = useTranslations('units')
 
   return (
     <TooltipProvider>
@@ -17,7 +27,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-accent accent-gradient-subtle">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalPosts')}</CardTitle>
             <BarChart3 className="h-4 w-4 text-accent"/>
           </CardHeader>
           <CardContent>
@@ -27,7 +37,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
 
         <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Comments</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalComments')}</CardTitle>
             <MessageCircle className="h-4 w-4 text-blue-500"/>
           </CardHeader>
           <CardContent>
@@ -37,7 +47,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
 
         <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Reactions</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalReactions')}</CardTitle>
             <ThumbsUp className="h-4 w-4 text-purple-500"/>
           </CardHeader>
           <CardContent>
@@ -47,12 +57,12 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
 
         <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Reposts</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('avgReposts')}</CardTitle>
             <Share2 className="h-4 w-4 text-green-500"/>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">{metrics.avgRepostsPerPost.toFixed(1)}</div>
-            <p className="text-xs text-muted-foreground">per post</p>
+            <p className="text-xs text-muted-foreground">{tUnits('perPost')}</p>
           </CardContent>
         </Card>
       </div>
@@ -60,38 +70,38 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
       {/* Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
-          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
-          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Hashtags</TabsTrigger>
-          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Consistency</TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('overview')}</TabsTrigger>
+          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('topPosts')}</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('hashtags')}</TabsTrigger>
+          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('consistency')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           {/* Engagement Metrics */}
           <Card>
             <CardHeader>
-              <CardTitle>Engagement Metrics</CardTitle>
+              <CardTitle>{tSectionTitles('engagementMetrics')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Share2 className="h-4 w-4"/>
-                    <span className="font-medium">Total Reposts</span>
+                    <span className="font-medium">{tLabels('totalReposts')}</span>
                   </div>
                   <span className="text-sm font-medium">{metrics.totalReposts.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Heart className="h-4 w-4 text-purple-500"/>
-                    <span className="font-medium">Love Reactions</span>
+                    <span className="font-medium">{tLabels('loveReactions')}</span>
                   </div>
                   <span className="text-sm font-medium">{profile.posts.reduce((sum, post) => sum + post.lovesCount, 0).toLocaleString()}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <ThumbsUp className="h-4 w-4 text-blue-500"/>
-                    <span className="font-medium">Support Reactions</span>
+                    <span className="font-medium">{tLabels('supportReactions')}</span>
                   </div>
                   <span className="text-sm font-medium">{profile.posts.reduce((sum, post) => sum + post.supportsCount, 0).toLocaleString()}</span>
                 </div>
@@ -102,8 +112,8 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Posts</CardTitle>
-              <CardDescription>Latest content performance</CardDescription>
+              <CardTitle>{tSectionTitles('recentPosts')}</CardTitle>
+              <CardDescription>{tDescriptions('latestContentPerformance')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -117,7 +127,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                   >
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
+                        {post.text ? post.text.substring(0, 50) + '...' : tContent('noCaption')}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         <Calendar className="inline h-3 w-3 mr-1"/>
@@ -144,8 +154,8 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
         <TabsContent value="posts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Top Performing Posts</CardTitle>
-              <CardDescription>Posts with highest engagement</CardDescription>
+              <CardTitle>{tSectionTitles('topPerformingPosts')}</CardTitle>
+              <CardDescription>{tDescriptions('postsWithHighestEngagement')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -161,7 +171,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                       <div className="flex items-center gap-2">
                         {post.mediaType && <span className="text-xs bg-muted px-1 rounded capitalize">{post.mediaType}</span>}
                         <p className="text-sm font-medium leading-none">
-                          {post.text ? post.text.substring(0, 50) + '...' : 'No caption'}
+                          {post.text ? post.text.substring(0, 50) + '...' : tContent('noCaption')}
                         </p>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -193,8 +203,8 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
         <TabsContent value="content" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Hashtag Analysis</CardTitle>
-              <CardDescription>Most used hashtags</CardDescription>
+              <CardTitle>{tSectionTitles('hashtagAnalysis')}</CardTitle>
+              <CardDescription>{tDescriptions('mostUsedHashtags')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -202,11 +212,11 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
                   hashtagAnalysis.map(({tag, count}) => (
                     <div key={tag} className="flex justify-between">
                       <span className="text-sm">#{tag}</span>
-                      <span className="text-sm text-muted-foreground">{count} posts</span>
+                      <span className="text-sm text-muted-foreground">{count} {tUnits('posts')}</span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No hashtags found</p>
+                  <p className="text-sm text-muted-foreground">{tContent('noHashtags')}</p>
                 )}
               </div>
             </CardContent>
@@ -216,7 +226,7 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
         <TabsContent value="consistency" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Consistency Metrics</CardTitle>
+              <CardTitle>{tSectionTitles('consistencyMetrics')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ConsistencyMetricsComponent data={consistencyMetrics} />
@@ -226,13 +236,13 @@ export function LinkedInSection({data}: { data: LinkedinDashboardData }) {
           {/* Posting Heatmap */}
           <Card>
             <CardHeader>
-              <CardTitle>Consistency Heatmap</CardTitle>
-              <CardDescription>Posts distribution by day and time</CardDescription>
+              <CardTitle>{tSectionTitles('consistencyHeatmap')}</CardTitle>
+              <CardDescription>{tDescriptions('postsDistribution')}</CardDescription>
             </CardHeader>
             <CardContent>
               <HeatmapComponent 
                 data={consistencyMetrics.heatmapData}
-                itemType={{ singular: 'post', plural: 'posts' }}
+                itemType={{ singular: tUnits('perPost').replace('per ', ''), plural: tUnits('posts') }}
                 getCountFromCell={(cell) => cell.count}
               />
             </CardContent>

@@ -2,12 +2,14 @@
 
 import {Moon, Sun} from 'lucide-react'
 import {useTheme} from 'next-themes'
+import {useTranslations} from '@/lib/translations/context'
 import {Button} from '@/components/ui/button'
 import {useEffect, useState} from 'react'
 
 export function ThemeToggle() {
   const { theme, setTheme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const t = useTranslations('ui')
 
   // useEffect only runs on the client, so now we can safely show the UI
   useEffect(() => {
@@ -34,7 +36,7 @@ export function ThemeToggle() {
       ) : (
         <Moon className="w-4 h-4" />
       )}
-      <span className="sr-only">Toggle theme</span>
+      <span className="sr-only">{t('toggleTheme')}</span>
     </Button>
   )
 } 

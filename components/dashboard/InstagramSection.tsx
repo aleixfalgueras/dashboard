@@ -1,3 +1,5 @@
+'use client'
+
 import {InstagramDashboardData} from "@/lib/types/dashboard-types";
 import {HeatmapComponent} from "@/components/ui/heatmap";
 import {ConsistencyMetricsComponent} from "@/components/ui/consistency-metrics";
@@ -16,9 +18,19 @@ import {
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 import {format} from "date-fns";
+import { useTranslations } from "@/lib/translations/context";
 
 export function InstagramSection({data}: { data: InstagramDashboardData }) {
   const {profile, metrics, postTypes, topPosts, hashtagAnalysis, consistencyMetrics} = data
+  const tContent = useTranslations('content')
+  const tPostTypes = useTranslations('postTypes')
+  const tTabs = useTranslations('tabs')
+  const tCardTitles = useTranslations('cardTitles')
+  const tSectionTitles = useTranslations('sectionTitles')
+  const tDescriptions = useTranslations('descriptions')
+  const tUnits = useTranslations('units')
+  const tTooltips = useTranslations('tooltips')
+  const tLabels = useTranslations('labels')
 
   return (
     <TooltipProvider>
@@ -27,7 +39,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-accent accent-gradient-subtle">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Posts</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalPosts')}</CardTitle>
             <BarChart3 className="h-4 w-4 text-accent"/>
           </CardHeader>
           <CardContent>
@@ -37,7 +49,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
 
         <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Comments</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalComments')}</CardTitle>
             <MessageCircle className="h-4 w-4 text-blue-500"/>
           </CardHeader>
           <CardContent>
@@ -47,7 +59,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
 
         <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
+            <CardTitle className="text-sm font-medium">{tCardTitles('totalLikes')}</CardTitle>
             <Heart className="h-4 w-4 text-purple-500"/>
           </CardHeader>
           <CardContent>
@@ -58,14 +70,14 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
         <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="flex items-center gap-1">
-              <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+              <CardTitle className="text-sm font-medium">{tCardTitles('avgEngagement')}</CardTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
-                    Calculated as average of (Likes + Comments) ÷ Video Views for video posts only
+                    {tTooltips('instagramEngagementCalc')}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -74,7 +86,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">{(metrics.avgEngagementPerPost * 100).toFixed(2)}%</div>
-            <p className="text-xs text-muted-foreground">per video post</p>
+            <p className="text-xs text-muted-foreground">{tUnits('perVideoPost')}</p>
           </CardContent>
         </Card>
       </div>
@@ -82,17 +94,17 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
       {/* Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
-          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Overview</TabsTrigger>
-          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Top Posts</TabsTrigger>
-          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Hashtags</TabsTrigger>
-          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">Consistency</TabsTrigger>
+          <TabsTrigger value="overview" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('overview')}</TabsTrigger>
+          <TabsTrigger value="posts" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('topPosts')}</TabsTrigger>
+          <TabsTrigger value="content" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('hashtags')}</TabsTrigger>
+          <TabsTrigger value="consistency" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground">{tTabs('consistency')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
           {/* Account Overview */}
           <Card>
             <CardHeader>
-              <CardTitle>Account Overview</CardTitle>
+              <CardTitle>{tSectionTitles('accountOverview')}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -100,7 +112,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-pink-500"/>
-                    <span className="font-medium">Followers</span>
+                    <span className="font-medium">{tLabels('followers')}</span>
                   </div>
                   <span className="text-sm font-medium">{profile.followersCount.toLocaleString()}</span>
                 </div>
@@ -110,11 +122,11 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                     <div className="flex items-center gap-2">
                       {type.type === 'Image' ? <ImageIcon className="h-4 w-4"/> : <Video className="h-4 w-4"/>}
                       <span className="font-medium">
-                        {type.type === "Video" ? "Reels" : type.type === "Sidecar" ? "Carrusel" : "Regular posts"}
+                        {type.type === "Video" ? tPostTypes('reels') : type.type === "Sidecar" ? tPostTypes('carousel') : tPostTypes('regularPosts')}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">{type.count} posts</span>
+                      <span className="text-sm text-muted-foreground">{type.count} {tUnits('posts')}</span>
                       <div className="w-32 bg-secondary rounded-full h-2">
                         <div
                           className="instagram-gradient h-2 rounded-full"
@@ -132,8 +144,8 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
           {/* Recent Activity */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Posts</CardTitle>
-              <CardDescription>Latest content performance</CardDescription>
+              <CardTitle>{tSectionTitles('recentPosts')}</CardTitle>
+              <CardDescription>{tDescriptions('latestContentPerformance')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -147,7 +159,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                   >
                     <div className="space-y-1">
                       <p className="text-sm font-medium leading-none">
-                        {post.caption ? post.caption.substring(0, 50) + '...' : 'No caption'}
+                        {post.caption ? post.caption.substring(0, 50) + '...' : tContent('noCaption')}
                       </p>
                       <p className="text-sm text-muted-foreground">
                         <Calendar className="inline h-3 w-3 mr-1"/>
@@ -174,8 +186,8 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
         <TabsContent value="posts" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Top Performing Posts</CardTitle>
-              <CardDescription>Posts with highest engagement</CardDescription>
+              <CardTitle>{tSectionTitles('topPerformingPosts')}</CardTitle>
+              <CardDescription>{tDescriptions('postsWithHighestEngagement')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -191,7 +203,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                       <div className="flex items-center gap-2">
                         {post.type === 'Image' ? <ImageIcon className="h-3 w-3 text-muted-foreground"/> : <Video className="h-3 w-3 text-muted-foreground"/>}
                         <p className="text-sm font-medium leading-none">
-                          {post.caption ? post.caption.substring(0, 50) + '...' : 'No caption'}
+                          {post.caption ? post.caption.substring(0, 50) + '...' : tContent('noCaption')}
                         </p>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -219,8 +231,8 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
         <TabsContent value="content" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Hashtag Analysis</CardTitle>
-              <CardDescription>Most used hashtags</CardDescription>
+              <CardTitle>{tSectionTitles('hashtagAnalysis')}</CardTitle>
+              <CardDescription>{tDescriptions('mostUsedHashtags')}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-2">
@@ -228,11 +240,11 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                   hashtagAnalysis.map(({tag, count}) => (
                     <div key={tag} className="flex justify-between">
                       <span className="text-sm">#{tag}</span>
-                      <span className="text-sm text-muted-foreground">{count} posts</span>
+                      <span className="text-sm text-muted-foreground">{count} {tUnits('posts')}</span>
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground">No hashtags found</p>
+                  <p className="text-sm text-muted-foreground">{tContent('noHashtags')}</p>
                 )}
               </div>
             </CardContent>
@@ -242,7 +254,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
         <TabsContent value="consistency" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Consistency Metrics</CardTitle>
+              <CardTitle>{tSectionTitles('consistencyMetrics')}</CardTitle>
             </CardHeader>
             <CardContent>
               <ConsistencyMetricsComponent data={consistencyMetrics} />
@@ -252,13 +264,13 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
           {/* Posting Heatmap */}
           <Card>
             <CardHeader>
-              <CardTitle>Consistency Heatmap</CardTitle>
-              <CardDescription>Posts distribution by day and time</CardDescription>
+              <CardTitle>{tSectionTitles('consistencyHeatmap')}</CardTitle>
+              <CardDescription>{tDescriptions('postsDistribution')}</CardDescription>
             </CardHeader>
             <CardContent>
               <HeatmapComponent 
                 data={consistencyMetrics.heatmapData}
-                itemType={{ singular: 'post', plural: 'posts' }}
+                itemType={{ singular: tUnits('perPost').replace('per ', ''), plural: tUnits('posts') }}
                 getCountFromCell={(cell) => cell.count}
               />
             </CardContent>

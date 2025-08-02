@@ -1,4 +1,5 @@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { useTranslations } from "@/lib/translations/context"
 
 import {HeatmapCell, HeatmapData} from "@/lib/types/dashboard-types";
 
@@ -12,9 +13,10 @@ interface HeatmapComponentProps {
 }
 
 export function HeatmapComponent({ data, itemType, getCountFromCell }: HeatmapComponentProps) {
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  const tHeatmap = useTranslations('heatmap')
+  const days = [tHeatmap('days.mon'), tHeatmap('days.tue'), tHeatmap('days.wed'), tHeatmap('days.thu'), tHeatmap('days.fri'), tHeatmap('days.sat'), tHeatmap('days.sun')]
   const hours = ['12am', '3am', '6am', '9am', '12pm', '3pm', '6pm', '9pm']
-  
+
   // Find max value for color scaling
   const maxCount = Math.max(...data.map(cell => getCountFromCell(cell)), 1)
   

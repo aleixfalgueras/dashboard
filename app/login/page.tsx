@@ -10,20 +10,23 @@ import { useToast } from '@/hooks/use-toast'
 import { Loader2 } from 'lucide-react'
 import { Logo } from '@/components/ui/logo'
 import { ThemeToggle } from '@/components/theme-toggle'
+import { LanguageSwitcher } from '@/components/language-switcher'
+import { useTranslations } from '@/lib/translations/context'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
+  const t = useTranslations('auth')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!email || !password) {
       toast({
-        title: 'Missing credentials',
-        description: 'Please enter both email and password',
+        title: t('missingCredentials'),
+        description: t('pleaseEnterBoth'),
         variant: 'destructive'
       })
       return
@@ -40,16 +43,16 @@ export default function LoginPage() {
 
       if (result?.error) {
         toast({
-          title: 'Login failed',
-          description: 'Invalid email or password',
+          title: t('loginFailed'),
+          description: t('invalidCredentials'),
           variant: 'destructive'
         })
       }
       // NextAuth will handle the redirect automatically
     } catch {
       toast({
-        title: 'Login error',
-        description: 'An unexpected error occurred',
+        title: t('loginError'),
+        description: t('unexpectedError'),
         variant: 'destructive'
       })
     } finally {
@@ -59,7 +62,8 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-4 flex items-center gap-2">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
       
@@ -69,18 +73,18 @@ export default function LoginPage() {
             <Logo size="lg" />
           </div>
           <div className="text-center">
-            <CardTitle className="text-2xl">Welcome back</CardTitle>
-            <CardDescription>Sign in to access your dashboard</CardDescription>
+            <CardTitle className="text-2xl">{t('welcomeBack')}</CardTitle>
+            <CardDescription>{t('signInToAccess')}</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder={t('enterEmail')}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={isLoading}
@@ -89,11 +93,11 @@ export default function LoginPage() {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t('password')}</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Enter your password"
+                placeholder={t('enterPassword')}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
@@ -109,10 +113,10 @@ export default function LoginPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Signing in...
+                  {t('signingIn')}
                 </>
               ) : (
-                'Sign in'
+                t('signIn')
               )}
             </Button>
           </form>

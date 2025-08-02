@@ -4,12 +4,15 @@ import { useState, useEffect } from 'react'
 import { Client } from '@prisma/client'
 import { createClient, getAllClients, deleteClient } from '@/app/actions/client-management-action'
 import { useToast } from '@/hooks/use-toast'
+import { useTranslations } from '@/lib/translations/context'
 import {logger} from "@/lib/utils";
 
 export function useClientManagement() {
   const [clients, setClients] = useState<Client[]>([])
   const [creating, setCreating] = useState(false)
   const { toast } = useToast()
+  const t = useTranslations('toasts')
+  const tValidation = useTranslations('validation')
 
   useEffect(() => {
     void loadClients()
@@ -23,8 +26,8 @@ export function useClientManagement() {
     } catch (error) {
       logger.error('Error loading clients:', error)
       toast({
-        title: 'Error',
-        description: 'Failed to load clients',
+        title: t('loadClientsError'),
+        description: t('loadClientsError'),
         variant: 'destructive'
       })
     }
@@ -33,8 +36,8 @@ export function useClientManagement() {
   const handleCreateClient = async (name: string) => {
     if (!name.trim()) {
       toast({
-        title: 'Missing information',
-        description: 'Please provide a client name.',
+        title: t('createClientError'),
+        description: tValidation('clientNameRequired'),
         variant: 'destructive'
       })
       return { success: false }
@@ -53,7 +56,7 @@ export function useClientManagement() {
       }
 
       toast({
-        title: 'Client created',
+        title: t('clientCreatedSuccess'),
         description: `Client "${result.data?.name}" created successfully`
       })
 
@@ -62,8 +65,8 @@ export function useClientManagement() {
     } catch (error) {
       logger.error('Create client error:', error)
       toast({
-        title: 'Create failed',
-        description: error instanceof Error ? error.message : 'Failed to create client',
+        title: t('createClientError'),
+        description: error instanceof Error ? error.message : t('createClientError'),
         variant: 'destructive'
       })
       return { success: false }
@@ -81,8 +84,8 @@ export function useClientManagement() {
       }
 
       toast({
-        title: 'Client deleted',
-        description: 'Client deleted successfully'
+        title: t('clientDeleteSuccess'),
+        description: t('clientDeleteSuccess')
       })
 
       await loadClients()
@@ -90,8 +93,8 @@ export function useClientManagement() {
     } catch (error) {
       logger.error('Delete client error:', error)
       toast({
-        title: 'Delete failed',
-        description: error instanceof Error ? error.message : 'Failed to delete client',
+        title: t('deleteClientError'),
+        description: error instanceof Error ? error.message : t('deleteClientError'),
         variant: 'destructive'
       })
       return { success: false }
