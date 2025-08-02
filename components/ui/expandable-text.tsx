@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useTranslations } from "@/lib/translations/context"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -16,6 +17,7 @@ export function ExpandableText({
   className 
 }: ExpandableTextProps) {
   const [isExpanded, setIsExpanded] = React.useState(false)
+  const t = useTranslations('ui')
   
   if (!text) return null
   
@@ -35,7 +37,7 @@ export function ExpandableText({
             onClick={() => setIsExpanded(!isExpanded)}
             className="h-auto p-0 text-sm text-primary hover:bg-transparent hover:underline inline"
           >
-            {isExpanded ? " Show less" : "Show more"}
+            {isExpanded ? ` ${t('showLess')}` : t('showMore')}
           </Button>
         </>
       )}

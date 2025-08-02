@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Users, Eye, TrendingUp, Target, HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useState, useEffect } from "react";
+import { useTranslations } from '@/lib/translations/context';
 
 interface GeneralSectionProps {
   metrics: GeneralMetrics;
@@ -17,6 +18,8 @@ interface TooltipData {
 }
 
 export function GeneralSection({ metrics }: GeneralSectionProps) {
+  const t = useTranslations('general');
+  const tCharts = useTranslations('charts');
   const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; data: TooltipData } | null>(null);
   const [growthPercentage, setGrowthPercentage] = useState(15);
   
@@ -191,7 +194,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
                   onMouseEnter={(e) => setHoveredPoint({
                     x: e.clientX + 15,
                     y: e.clientY - 50,
-                    data: { month: d.month, value: d.current, type: 'Current Trend' }
+                    data: { month: d.month, value: d.current, type: tCharts('currentTrend') }
                   })}
                   onMouseLeave={() => setHoveredPoint(null)}
                 />
@@ -205,7 +208,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
                   onMouseEnter={(e) => setHoveredPoint({
                     x: e.clientX + 15,
                     y: e.clientY - 50,
-                    data: { month: d.month, value: d.forecast, type: `${growthPercentage}% Growth Forecast` }
+                    data: { month: d.month, value: d.forecast, type: `${growthPercentage}% ${t('growthForecast')}` }
                   })}
                   onMouseLeave={() => setHoveredPoint(null)}
                 />
@@ -218,11 +221,11 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
         <div className="absolute top-4 right-4 flex flex-col gap-2 text-xs">
           <div className="flex items-center gap-2">
             <div className="w-4 h-0.5 bg-foreground"></div>
-            <span>Current Trend</span>
+            <span>{t('currentTrend')}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-0.5 bg-accent" style={{ backgroundImage: 'repeating-linear-gradient(to right, hsl(var(--accent)) 0, hsl(var(--accent)) 3px, transparent 3px, transparent 6px)' }}></div>
-            <span>{growthPercentage}% Growth Forecast</span>
+            <span>{growthPercentage}% {t('growthForecast')}</span>
           </div>
         </div>
 
@@ -247,35 +250,35 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
     <TooltipProvider>
       <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold">Overview</h2>
-        <p className="text-muted-foreground">Social media statistics, this is where you are right now</p>
+        <h2 className="text-2xl font-bold">{t('overview')}</h2>
+        <p className="text-muted-foreground">{t('socialMediaStatsDescription')}</p>
       </div>
       
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-accent accent-gradient-subtle">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Followers</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('totalFollowers')}</CardTitle>
             <Users className="h-4 w-4 text-accent" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-accent">
               {metrics.totalFollowers.toLocaleString()}
             </div>
-            <CardDescription>Across all platforms</CardDescription>
+            <CardDescription>{t('acrossAllPlatforms')}</CardDescription>
           </CardContent>
         </Card>
 
         <Card className="border-l-4 border-l-blue-400 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="flex items-center gap-1">
-              <CardTitle className="text-sm font-medium">Avg. Engagement</CardTitle>
+              <CardTitle className="text-sm font-medium">{t('avgEngagement')}</CardTitle>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
                 </TooltipTrigger>
                 <TooltipContent>
                   <p className="max-w-xs">
-                    Calculated as (Likes + Comments + Shares) ÷ Views across all video posts
+                    {t('engagementTooltip')}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -286,33 +289,33 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
               {metrics.globalAvgEngagement}%
             </div>
-            <CardDescription>Video posts only</CardDescription>
+            <CardDescription>{t('videoPostsOnly')}</CardDescription>
           </CardContent>
         </Card>
 
         <Card className="border-l-4 border-l-purple-400 bg-gradient-to-br from-purple-50/50 to-transparent dark:from-purple-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Views</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('avgViews')}</CardTitle>
             <Eye className="h-4 w-4 text-purple-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
               {metrics.avgViews.toLocaleString()}
             </div>
-            <CardDescription>Per video post</CardDescription>
+            <CardDescription>{t('perVideoPost')}</CardDescription>
           </CardContent>
         </Card>
 
         <Card className="border-l-4 border-l-green-400 bg-gradient-to-br from-green-50/50 to-transparent dark:from-green-950/20">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg. Consistency Score</CardTitle>
+            <CardTitle className="text-sm font-medium">{t('avgConsistencyScore')}</CardTitle>
             <Target className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
               {metrics.avgConsistencyScore}%
             </div>
-            <CardDescription>Across all platforms</CardDescription>
+            <CardDescription>{t('acrossAllPlatforms')}</CardDescription>
           </CardContent>
         </Card>
       </div>
@@ -323,7 +326,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                Your followers growth forecast
+                {t('followersGrowthForecast')}
                 <TrendingUp className="h-4 w-4 text-accent" />
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -331,17 +334,17 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
                   </TooltipTrigger>
                   <TooltipContent>
                     <p className="max-w-xs">
-                      Current trend uses 2% monthly compound growth (~12.6% over 6 months). Forecast uses compound growth to reach your target percentage over 6 months. Forecasts below 12.6% will appear below the current trend line.
+                      {t('forecastTooltip')}
                     </p>
                   </TooltipContent>
                 </Tooltip>
               </CardTitle>
               <CardDescription>
-                Current trend vs. our avg. customers growth
+                {t('currentTrendVsCustomers')}
               </CardDescription>
             </div>
             <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground">Growth:</span>
+              <span className="text-sm text-muted-foreground">{t('growth')}:</span>
               <div className="flex items-center gap-2">
                 <input
                   type="range"

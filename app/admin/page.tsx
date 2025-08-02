@@ -1,6 +1,7 @@
 'use client'
 
 import {useCallback, useState} from 'react'
+import { useTranslations } from '@/lib/translations/context'
 import {useDropzone} from 'react-dropzone'
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
 import {Button} from '@/components/ui/button'
@@ -39,8 +40,10 @@ import {ThemeToggle} from '@/components/theme-toggle'
 import {LogoutButton} from '@/components/auth/logout-button'
 import {UserManagement} from '@/components/admin/UserManagement'
 import {ViewDashboardButton} from '@/components/admin/ViewDashboardButton'
+import {LanguageSwitcher} from '@/components/language-switcher'
 
 export default function AdminPage() {
+  const t = useTranslations('admin')
   const [selectedClientId, setSelectedClientId] = useState<string>('')
   const [selectedDataSource, setSelectedDataSource] = useState<DataSource>(DataSource.INSTAGRAM_POSTS)
   const [overwriteData, setOverwriteData] = useState(true)
@@ -90,7 +93,7 @@ export default function AdminPage() {
       default:
         return {
           icon: <SiInstagram className="mr-2 h-4 w-4" />,
-          label: 'Not Found'
+          label: t('notFound')
         }
     }
   }
@@ -137,13 +140,13 @@ export default function AdminPage() {
 
   const getSelectedClientDisplay = () => {
     if (clients.length === 0) {
-      return "No clients available"
+      return t('noClientsAvailable')
     }
     if (!selectedClientId) {
-      return "Select a client"
+      return t('selectClient')
     }
     const selectedClient = clients.find(client => client.id === selectedClientId)
-    return selectedClient?.name || "Select a client"
+    return selectedClient?.name || t('selectClient')
   }
 
   const handleCreateClient = async () => {
@@ -188,20 +191,20 @@ export default function AdminPage() {
       
       if (result.success) {
         toast({
-          title: 'Data cleaned successfully',
+          title: t('dataCleanedSuccess'),
           description: selectedCleanDataSource === AvailableDatasources.ALL 
-            ? 'All data has been removed for this client.'
-            : `${selectedCleanDataSource} data has been removed for this client.`
+            ? t('allDataRemoved')
+            : `${selectedCleanDataSource} ${t('dataRemovedForClient')}`
         })
         handleCloseCleanDataDialog()
       } else {
-        throw new Error(result.error || 'Failed to clean data')
+        throw new Error(result.error || t('failedToCleanData'))
       }
     } catch (error) {
       logger.error('Clean data error:', error)
       toast({
-        title: 'Failed to clean data',
-        description: error instanceof Error ? error.message : 'An error occurred while cleaning data',
+        title: t('failedToCleanData'),
+        description: error instanceof Error ? error.message : t('serverErrors.errorCleaningData'),
         variant: 'destructive'
       })
     } finally {
@@ -232,21 +235,21 @@ export default function AdminPage() {
       
       if (result.success) {
         toast({
-          title: 'Configuration updated',
+          title: t('configurationUpdated'),
           description: selectedStartDate 
-            ? `Stats will be calculated from ${selectedStartDate}`
-            : 'Stats data start date has been cleared'
+            ? `${t('statsWillBeCalculatedFrom')} ${selectedStartDate}`
+            : t('statsDateCleared')
         })
         await loadClients()
         handleCloseConfigureDialog()
       } else {
-        throw new Error(result.error || 'Failed to update configuration')
+        throw new Error(result.error || t('failedToUpdateConfig'))
       }
     } catch (error) {
       logger.error('Configure dashboard error:', error)
       toast({
-        title: 'Failed to update configuration',
-        description: error instanceof Error ? error.message : 'An error occurred while updating configuration',
+        title: t('failedToUpdateConfig'),
+        description: error instanceof Error ? error.message : t('serverErrors.errorUpdatingConfiguration'),
         variant: 'destructive'
       })
     } finally {
@@ -277,8 +280,8 @@ export default function AdminPage() {
   const handleUpload = async () => {
     if (!uploadedFile || !selectedClientId || !selectedDataSource) {
       toast({
-        title: 'Missing information',
-        description: 'Please select a data source, client, and provide a JSON file.',
+        title: t('missingInformation'),
+        description: t('selectDataSourceClient'),
         variant: 'destructive'
       })
       return
@@ -292,8 +295,8 @@ export default function AdminPage() {
       // Add file size validation
       if (fileContent.length > 10 * 1024 * 1024) { // 10MB limit
         toast({
-          title: 'File too large',
-          description: 'Please upload files smaller than 10MB.',
+          title: t('fileTooLarge'),
+          description: t('uploadSmallerFile'),
           variant: 'destructive'
         })
         return
@@ -334,8 +337,8 @@ export default function AdminPage() {
       } catch (clientJsonError) {
         logger.error('Client-side JSON validation failed:', clientJsonError)
         toast({
-          title: 'Invalid JSON file',
-          description: `JSON parsing error: ${clientJsonError instanceof Error ? clientJsonError.message : 'Unknown error'}`,
+          title: t('invalidJsonFile'),
+          description: `${t('jsonParsingError')} ${clientJsonError instanceof Error ? clientJsonError.message : 'Unknown error'}`,
           variant: 'destructive'
         })
         return
@@ -356,8 +359,8 @@ export default function AdminPage() {
       }
 
       toast({
-        title: 'Upload successful',
-        description: `${selectedDataSource} data propagated successfully`
+        title: t('uploadSuccessful'),
+        description: `${selectedDataSource} ${t('dataPropagatedSuccessfully')}`
       })
 
       // Reset upload file
@@ -365,8 +368,8 @@ export default function AdminPage() {
     } catch (error) {
       logger.error('Upload error:', error)
       toast({
-        title: 'Upload failed',
-        description: error instanceof Error ? error.message : 'Failed to process the file',
+        title: t('uploadFailed'),
+        description: error instanceof Error ? error.message : t('failedToProcessFile'),
         variant: 'destructive'
       })
     } finally {
@@ -380,9 +383,10 @@ export default function AdminPage() {
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Logo size="lg" />
-          <h1 className="text-4xl font-bold mb-2 text-accent">Dico De Rooij Dashboards</h1>
+          <h1 className="text-4xl font-bold mb-2 text-accent">{t('mainTitle')}</h1>
         </div>
         <div className="flex items-center gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <LogoutButton />
         </div>
@@ -392,12 +396,12 @@ export default function AdminPage() {
         {/* Upload Data */}
         <Card>
           <CardHeader>
-            <CardTitle>Upload Data</CardTitle>
+            <CardTitle>{t('uploadData')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex gap-4">
               <div className="flex-1 space-y-2">
-                <Label htmlFor="client-select">Select Client</Label>
+                <Label htmlFor="client-select">{t('selectClient')}</Label>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -428,7 +432,7 @@ export default function AdminPage() {
               </div>
 
               <div className="flex-1 space-y-2">
-                <Label htmlFor="data-source-select">Data Source</Label>
+                <Label htmlFor="data-source-select">{t('dataSource')}</Label>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -472,7 +476,7 @@ export default function AdminPage() {
                 htmlFor="overwrite-data"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                Overwrite existing data
+                {t('overwriteExistingData')}
               </Label>
             </div>
 
@@ -495,7 +499,7 @@ export default function AdminPage() {
                 <div className="space-y-2">
                   <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    {isDragActive ? 'Drop the file here' : 'Drag & drop a JSON file here, or click to select'}
+                    {isDragActive ? t('dropFileHere') : t('dragDropInstruction')}
                   </p>
                 </div>
               )}
@@ -509,10 +513,10 @@ export default function AdminPage() {
               {uploading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing...
+                  {t('processing')}
                 </>
               ) : (
-                'Upload Data'
+                t('uploadData')
               )}
             </Button>
           </CardContent>
@@ -521,11 +525,11 @@ export default function AdminPage() {
         {/* Client Management */}
         <Card>
           <CardHeader>
-            <CardTitle>Client Management</CardTitle>
+            <CardTitle>{t('clientManagement')}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-medium">Existing Clients</h3>
+              <h3 className="font-medium">{t('existingClients')}</h3>
               <Button
                 onClick={() => setShowCreateForm(true)}
                 variant="outline"
@@ -533,19 +537,19 @@ export default function AdminPage() {
                 disabled={creating || uploading}
               >
                 <Plus className="mr-2 h-4 w-4" />
-                New Client
+                {t('createClient')}
               </Button>
             </div>
 
             {showCreateForm && (
               <div className="border rounded-lg p-4 space-y-3">
-                <Label htmlFor="new-client-name">Client Name</Label>
+                <Label htmlFor="new-client-name">{t('client')}</Label>
                 <div className="flex gap-2">
                   <Input
                     id="new-client-name"
                     value={newClientName}
                     onChange={(e) => setNewClientName(e.target.value)}
-                    placeholder="Enter client name"
+                    placeholder={t('enterClientName')}
                     disabled={creating}
                   />
                   <Button
@@ -555,10 +559,10 @@ export default function AdminPage() {
                     {creating ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating...
+                        {t('creating')}
                       </>
                     ) : (
-                      'Create'
+                      t('create')
                     )}
                   </Button>
                   <Button
@@ -569,7 +573,7 @@ export default function AdminPage() {
                     }}
                     disabled={creating}
                   >
-                    Cancel
+                    {t('cancel')}
                   </Button>
                 </div>
               </div>
@@ -577,7 +581,7 @@ export default function AdminPage() {
 
             <div className="space-y-2">
               {clients.length === 0 ? (
-                <p className="text-sm text-muted-foreground">No clients found. Create one to get started.</p>
+                <p className="text-sm text-muted-foreground">{t('noClientsFound')}</p>
               ) : (
                 <div className="grid gap-2">
                   {clients.map((client) => (
@@ -586,7 +590,7 @@ export default function AdminPage() {
                         <h4 className="font-medium">
                           {client.name} <span className="text-sm text-muted-foreground font-normal">({client.slug})</span>
                         </h4>
-                        <p className="text-sm text-muted-foreground">Created {new Date(client.createdAt).toLocaleDateString()}</p>
+                        <p className="text-sm text-muted-foreground">{t('createdOn')} {new Date(client.createdAt).toLocaleDateString()}</p>
                       </div>
                       <div className="flex gap-2">
                         <ViewDashboardButton 
@@ -605,7 +609,7 @@ export default function AdminPage() {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Configure dashboard</p>
+                            <p>{t('tooltips.configureDashboard')}</p>
                           </TooltipContent>
                         </Tooltip>
                         <Tooltip>
@@ -620,7 +624,7 @@ export default function AdminPage() {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Clean data</p>
+                            <p>{t('tooltips.cleanData')}</p>
                           </TooltipContent>
                         </Tooltip>
                         <Tooltip>
@@ -635,7 +639,7 @@ export default function AdminPage() {
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>Delete client</p>
+                            <p>{t('tooltips.deleteClient')}</p>
                           </TooltipContent>
                         </Tooltip>
                       </div>
@@ -655,15 +659,15 @@ export default function AdminPage() {
       <Dialog open={showCleanDataDialog} onOpenChange={handleCloseCleanDataDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Clean Data</DialogTitle>
+            <DialogTitle>{t('cleanData')}</DialogTitle>
             <DialogDescription>
-              Select the data source you want to clean for this client. Choose &quot;All Data&quot; to remove all platform data at once. This action cannot be undone.
+              {t('selectDataSourceToClean')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Select Data Source</Label>
+              <Label>{t('selectDataSource')}</Label>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -678,7 +682,7 @@ export default function AdminPage() {
                           {selectedCleanDataSource}
                         </>
                       ) : (
-                        'Select data source'
+                        t('selectDataSource')
                       )}
                     </div>
                     <ChevronDown className="h-4 w-4 opacity-50" />
@@ -707,7 +711,7 @@ export default function AdminPage() {
               onClick={handleCloseCleanDataDialog}
               disabled={cleaning}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleCleanData}
@@ -717,10 +721,10 @@ export default function AdminPage() {
               {cleaning ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Cleaning...
+                  {t('cleaning')}
                 </>
               ) : (
-                'Clean Data'
+                t('cleanData')
               )}
             </Button>
           </DialogFooter>
@@ -730,19 +734,19 @@ export default function AdminPage() {
       <Dialog open={showConfigureDialog} onOpenChange={handleCloseConfigureDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Configure Dashboard</DialogTitle>
+            <DialogTitle>{t('configureDashboard')}</DialogTitle>
             <DialogDescription>
-              Set the start date for statistics calculations. Only data created after this date will be included in dashboard metrics.
+              {t('configureDescription')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Stats Data Start Date</Label>
+              <Label>{t('statsDataStartDate')}</Label>
               <DatePicker
                 value={selectedStartDate}
                 onChange={setSelectedStartDate}
-                placeholder="Pick a date"
+                placeholder={t('pickDate')}
                 disabled={configuringDashboard}
               />
               {selectedStartDate && (
@@ -752,7 +756,7 @@ export default function AdminPage() {
                   onClick={() => setSelectedStartDate('')}
                   className="text-xs text-muted-foreground"
                 >
-                  Clear date
+                  {t('clearDate')}
                 </Button>
               )}
             </div>
@@ -764,7 +768,7 @@ export default function AdminPage() {
               onClick={handleCloseConfigureDialog}
               disabled={configuringDashboard}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleUpdateStatsDataStartDate}
@@ -774,10 +778,10 @@ export default function AdminPage() {
               {configuringDashboard ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Updating...
+                  {t('updating')}
                 </>
               ) : (
-                'Update Configuration'
+                t('updateConfiguration')
               )}
             </Button>
           </DialogFooter>
@@ -787,18 +791,18 @@ export default function AdminPage() {
       <AlertDialog open={!!clientToDelete} onOpenChange={() => setClientToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Client</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteClient')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this client? This action cannot be undone and will remove all associated data.
+              {t('confirmDeleteClient')} {t('deleteClientAction')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => clientToDelete && handleDeleteClient(clientToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

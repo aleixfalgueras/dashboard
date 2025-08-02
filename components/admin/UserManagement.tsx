@@ -1,6 +1,7 @@
 'use client'
 
 import {useEffect, useState} from 'react'
+import { useTranslations } from '@/lib/translations/context'
 import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card'
 import {Button} from '@/components/ui/button'
 import {Input} from '@/components/ui/input'
@@ -31,6 +32,8 @@ interface UserManagementProps {
 }
 
 export function UserManagement({ clients }: UserManagementProps) {
+  const t = useTranslations('admin')
+  const tToasts = useTranslations('toasts')
   const [users, setUsers] = useState<UserWithClient[]>([])
   const [showUserForm, setShowUserForm] = useState(false)
   const [editingUser, setEditingUser] = useState<UserWithClient | null>(null)
@@ -68,8 +71,8 @@ export function UserManagement({ clients }: UserManagementProps) {
       const result = await createUser(userFormData)
       if (result.success) {
         toast({
-          title: 'User created successfully',
-          description: `User ${userFormData.email} has been created`
+          title: tToasts('userCreatedSuccess'),
+          description: `${userFormData.email} ${t('userCreatedDescription')}`
         })
         setShowUserForm(false)
         setUserFormData({
@@ -80,13 +83,13 @@ export function UserManagement({ clients }: UserManagementProps) {
         })
         await loadUsers()
       } else {
-        throw new Error(result.error || 'Failed to create user')
+        throw new Error(result.error || t('errorCreatingUser'))
       }
     } catch (error) {
       logger.error('Create user error:', error)
       toast({
-        title: 'Failed to create user',
-        description: error instanceof Error ? error.message : 'An error occurred while creating user',
+        title: tToasts('createUserError'),
+        description: error instanceof Error ? error.message : t('errorCreatingUser'),
         variant: 'destructive'
       })
     } finally {
@@ -107,8 +110,8 @@ export function UserManagement({ clients }: UserManagementProps) {
       
       if (result.success) {
         toast({
-          title: 'User updated successfully',
-          description: `User ${userFormData.email} has been updated`
+          title: tToasts('userUpdateSuccess'),
+          description: `${userFormData.email} ${t('userUpdatedDescription')}`
         })
         setEditingUser(null)
         setUserFormData({
@@ -119,13 +122,13 @@ export function UserManagement({ clients }: UserManagementProps) {
         })
         await loadUsers()
       } else {
-        throw new Error(result.error || 'Failed to update user')
+        throw new Error(result.error || t('errorUpdatingUser'))
       }
     } catch (error) {
       logger.error('Update user error:', error)
       toast({
-        title: 'Failed to update user',
-        description: error instanceof Error ? error.message : 'An error occurred while updating user',
+        title: tToasts('updateUserError'),
+        description: error instanceof Error ? error.message : t('errorUpdatingUser'),
         variant: 'destructive'
       })
     } finally {
@@ -137,13 +140,13 @@ export function UserManagement({ clients }: UserManagementProps) {
     const result = await deleteUser(userId)
     if (result.success) {
       toast({
-        title: 'User deleted successfully'
+        title: tToasts('userDeleteSuccess')
       })
       await loadUsers()
     } else {
       toast({
-        title: 'Failed to delete user',
-        description: result.error || 'An error occurred',
+        title: tToasts('deleteUserError'),
+        description: result.error || t('errorOccurred'),
         variant: 'destructive'
       })
     }
@@ -157,18 +160,18 @@ export function UserManagement({ clients }: UserManagementProps) {
       const result = await updateUserPassword(passwordUserId, newPassword)
       if (result.success) {
         toast({
-          title: 'Password updated successfully'
+          title: tToasts('passwordUpdateSuccess')
         })
         setShowPasswordDialog(false)
         setNewPassword('')
         setPasswordUserId(null)
       } else {
-        throw new Error(result.error || 'Failed to update password')
+        throw new Error(result.error || t('errorOccurred'))
       }
     } catch (error) {
       toast({
-        title: 'Failed to update password',
-        description: error instanceof Error ? error.message : 'An error occurred',
+        title: tToasts('updatePasswordError'),
+        description: error instanceof Error ? error.message : t('errorOccurred'),
         variant: 'destructive'
       })
     }
@@ -188,11 +191,11 @@ export function UserManagement({ clients }: UserManagementProps) {
     <>
       <Card>
         <CardHeader>
-          <CardTitle>User Management</CardTitle>
+          <CardTitle>{t('userManagement')}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="font-medium">Registered Users</h3>
+            <h3 className="font-medium">{t('users')}</h3>
             <Button
               onClick={() => setShowUserForm(true)}
               variant="outline"
@@ -200,37 +203,37 @@ export function UserManagement({ clients }: UserManagementProps) {
               disabled={creatingUser || updatingUser}
             >
               <UserIcon className="mr-2 h-4 w-4" />
-              New User
+              {t('createUser')}
             </Button>
           </div>
 
           {(showUserForm || editingUser) && (
             <div className="border rounded-lg p-4 space-y-4">
-              <h4 className="font-medium">{editingUser ? 'Edit User' : 'Create New User'}</h4>
+              <h4 className="font-medium">{editingUser ? t('editUser') : t('createUser')}</h4>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="user-email">Email</Label>
+                  <Label htmlFor="user-email">{t('email')}</Label>
                   <Input
                     id="user-email"
                     type="email"
                     value={userFormData.email}
                     onChange={(e) => setUserFormData({...userFormData, email: e.target.value})}
-                    placeholder="Enter email"
+                    placeholder={t('enterEmail')}
                     disabled={creatingUser || updatingUser}
                   />
                 </div>
 
                 {!editingUser && (
                   <div className="space-y-2">
-                    <Label htmlFor="user-password">Password</Label>
+                    <Label htmlFor="user-password">{t('password')}</Label>
                     <div className="relative">
                       <Input
                         id="user-password"
                         type={showCreatePassword ? "text" : "password"}
                         value={userFormData.password}
                         onChange={(e) => setUserFormData({...userFormData, password: e.target.value})}
-                        placeholder="Enter password"
+                        placeholder={t('enterPassword')}
                         disabled={creatingUser}
                         className="pr-12"
                       />
@@ -256,7 +259,7 @@ export function UserManagement({ clients }: UserManagementProps) {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {userFormData.role === UserRole.CLIENT && (
                   <div className="space-y-2">
-                    <Label htmlFor="user-client">Assigned Client</Label>
+                    <Label htmlFor="user-client">{t('client')}</Label>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
@@ -265,8 +268,8 @@ export function UserManagement({ clients }: UserManagementProps) {
                           disabled={creatingUser || updatingUser || clients.length === 0}
                         >
                           {userFormData.clientId 
-                            ? clients.find(c => c.id === userFormData.clientId)?.name || 'Select a client'
-                            : 'Select a client'
+                            ? clients.find(c => c.id === userFormData.clientId)?.name || t('selectClient')
+                            : t('selectClient')
                           }
                           <ChevronDown className="h-4 w-4 opacity-50" />
                         </Button>
@@ -286,7 +289,7 @@ export function UserManagement({ clients }: UserManagementProps) {
                 )}
 
                 <div className="space-y-2">
-                  <Label htmlFor="user-role">Role</Label>
+                  <Label htmlFor="user-role">{t('role')}</Label>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -320,10 +323,10 @@ export function UserManagement({ clients }: UserManagementProps) {
                   {creatingUser || updatingUser ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {editingUser ? 'Updating...' : 'Creating...'}
+                      {editingUser ? t('updating') : t('creating')}
                     </>
                   ) : (
-                    editingUser ? 'Update' : 'Create'
+                    editingUser ? t('update') : t('create')
                   )}
                 </Button>
                 <Button
@@ -341,7 +344,7 @@ export function UserManagement({ clients }: UserManagementProps) {
                   }}
                   disabled={creatingUser || updatingUser}
                 >
-                  Cancel
+                  {t('cancel')}
                 </Button>
               </div>
             </div>
@@ -349,17 +352,17 @@ export function UserManagement({ clients }: UserManagementProps) {
 
           <div className="space-y-2">
             {users.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No users found.</p>
+              <p className="text-sm text-muted-foreground">{t('noUsers')}</p>
             ) : (
               <div className="rounded-md border">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b bg-muted/50">
-                      <th className="text-left p-2 font-medium">Email</th>
-                      <th className="text-left p-2 font-medium">Role</th>
-                      <th className="text-left p-2 font-medium">Client</th>
-                      <th className="text-left p-2 font-medium">Created</th>
-                      <th className="text-left p-2 font-medium">Actions</th>
+                      <th className="text-left p-2 font-medium">{t('email')}</th>
+                      <th className="text-left p-2 font-medium">{t('role')}</th>
+                      <th className="text-left p-2 font-medium">{t('client')}</th>
+                      <th className="text-left p-2 font-medium">{t('created')}</th>
+                      <th className="text-left p-2 font-medium">{t('actions')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -395,7 +398,7 @@ export function UserManagement({ clients }: UserManagementProps) {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Edit user</p>
+                                <p>{t('editUser')}</p>
                               </TooltipContent>
                             </Tooltip>
                             <Tooltip>
@@ -413,7 +416,7 @@ export function UserManagement({ clients }: UserManagementProps) {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Reset password</p>
+                                <p>{t('resetPassword')}</p>
                               </TooltipContent>
                             </Tooltip>
                             <Tooltip>
@@ -428,7 +431,7 @@ export function UserManagement({ clients }: UserManagementProps) {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                <p>Delete user</p>
+                                <p>{t('deleteUser')}</p>
                               </TooltipContent>
                             </Tooltip>
                           </div>
@@ -452,22 +455,22 @@ export function UserManagement({ clients }: UserManagementProps) {
       }}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Reset Password</DialogTitle>
+            <DialogTitle>{t('resetPassword')}</DialogTitle>
             <DialogDescription>
-              Enter a new password for this user. They will need to use this password to log in.
+              {t('enterNewPasswordDescription')}
             </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="new-password">New Password</Label>
+              <Label htmlFor="new-password">{t('newPassword')}</Label>
               <div className="relative">
                 <Input
                   id="new-password"
                   type={showResetPassword ? "text" : "password"}
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
+                  placeholder={t('enterNewPassword')}
                   className="pr-12"
                 />
                 <Button
@@ -496,14 +499,14 @@ export function UserManagement({ clients }: UserManagementProps) {
                 setPasswordUserId(null)
               }}
             >
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               onClick={handleUpdatePassword}
               disabled={!newPassword || newPassword.length < 6}
               className="bg-accent hover:bg-accent/90"
             >
-              Update Password
+              {t('updatePassword')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -512,18 +515,18 @@ export function UserManagement({ clients }: UserManagementProps) {
       <AlertDialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
+            <AlertDialogTitle>{t('deleteUser')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this user? They will no longer be able to access the system.
+              {t('confirmDeleteUser')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => userToDelete && handleDeleteUser(userToDelete)}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              Delete
+              {t('delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

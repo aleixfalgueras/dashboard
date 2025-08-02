@@ -1,6 +1,7 @@
 'use client'
 
 import { signOut } from 'next-auth/react'
+import { useTranslations } from '@/lib/translations/context'
 import { Button } from '@/components/ui/button'
 import { LogOut } from 'lucide-react'
 
@@ -17,6 +18,8 @@ export function LogoutButton({
   showIcon = true,
   showText = true 
 }: LogoutButtonProps) {
+  const t = useTranslations('auth')
+  
   const handleLogout = () => {
     void signOut({ callbackUrl: '/login' })
   }
@@ -28,7 +31,7 @@ export function LogoutButton({
       size={size}
     >
       {showIcon && <LogOut className={showText ? "mr-2 h-4 w-4" : "h-4 w-4"} />}
-      {showText && 'Logout'}
+      {showText && t('logout')}
     </Button>
   )
 }

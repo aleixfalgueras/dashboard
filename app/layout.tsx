@@ -5,6 +5,7 @@ import "./globals.css";
 import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
+import { TranslationProvider } from "@/lib/translations/context";
 
 const redHatDisplay = Red_Hat_Display({
   subsets: ["latin"],
@@ -39,20 +40,22 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
-}: Readonly<{
+                                     children,
+                                   }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${redHatDisplay.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider>
-          {children}
-          <Toaster />
-        </ThemeProvider>
-      </body>
+    <body
+      className={`${redHatDisplay.variable} ${geistSans.variable} ${geistMono.variable} antialiased`}
+    >
+    <ThemeProvider>
+      <TranslationProvider>
+        {children}
+        <Toaster />
+      </TranslationProvider>
+    </ThemeProvider>
+    </body>
     </html>
   );
 }
