@@ -178,14 +178,16 @@
     "bestPerforming": "Best Performing Platform",
     "needsAttention": "Needs Attention",
     "overview": "Overview",
-    "socialMediaStatsDescription": "Social media statistics, this is where you are right now",
+    "socialMediaStatsDescription": "Social media statistics across all your platforms",
     "acrossAllPlatforms": "Across all platforms",
     "avgEngagement": "Avg. Engagement",
     "engagementTooltip": "Calculated as (Likes + Comments + Shares) ÷ Views across all video posts",
     "videoPostsOnly": "Video posts only",
     "avgViews": "Avg. Views",
+    "avgViewsTooltip": "Calculated from video views across Instagram (video posts), TikTok (all posts), and YouTube (all videos)",
     "perVideoPost": "Per video post",
     "avgConsistencyScore": "Avg. Consistency Score",
+    "avgConsistencyScoreTooltip": "Calculated as the average of all consistency scores from platforms with available data",
     "followersGrowthForecast": "Your followers growth forecast",
     "currentTrendVsCustomers": "Current trend vs. our avg. customers growth",
     "growth": "Growth",
@@ -429,7 +431,7 @@
   },
   "postTypes": {
     "reels": "Reels",
-    "carousel": "Carousel",
+    "carrousel": "Carrousel",
     "regularPosts": "Regular posts"
   },
   "tabs": {
@@ -474,7 +476,7 @@
     "postsWithHighestEngagement": "Posts with highest engagement",
     "mostUsedHashtags": "Most used hashtags",
     "videoDistribution": "Video distribution by day and time",
-    "postsDistribution": "Posts distribution by day and time"
+    "postsDistribution": "Posting activity heatmap showing frequency by day of week and 3-hour time blocks"
   },
   "labels": {
     "subscribers": "Subscribers",

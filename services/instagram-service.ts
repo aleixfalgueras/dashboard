@@ -263,6 +263,31 @@ export class InstagramService {
     return analyzeHashtagsGeneric(posts, limit)
   }
 
+  /**
+   * Calculates posting frequency consistency based on week-to-week posting patterns.
+   * 
+   * This method analyzes how consistently a user posts across different weeks by:
+   * 1. Grouping posts by ISO weeks (Monday-to-Sunday)
+   * 2. Calculating the coefficient of variation (CV) of weekly post counts
+   * 3. Converting CV to a 0-1 consistency score (lower CV = higher consistency)
+   * 
+   * @param posts Array of Instagram posts to analyze
+   * @returns Consistency score from 0 to 1, where:
+   *   - 1.0 = Perfect consistency (same number of posts every week)
+   *   - 0.5 = Default for insufficient data (<7 posts or <2 weeks)
+   *   - 0.0 = Very inconsistent posting pattern
+   * 
+   * @example
+   * // User posts 3 times every week = high consistency (~1.0)
+   * // User posts 10 times one week, 0 the next = low consistency (~0.0)
+   * 
+   * @algorithm
+   * - Uses ISO week standard where Monday is the first day of the week
+   * - Employs coefficient of variation: CV = standard_deviation / mean
+   * - Transforms CV using: consistency = max(0, 1 - CV)
+   * - Week identification uses complex date math: (date.getDay() + 6) % 7
+   *   to convert Sunday=0 standard to Monday=0 for ISO weeks
+   */
   private calculatePostingFrequencyConsistency(posts: InstagramPost[]): number {
     if (posts.length < 7) return 0.5 // Not enough data for weekly analysis
     

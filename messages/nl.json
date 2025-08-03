@@ -177,14 +177,16 @@
     "bestPerforming": "Best presterende platform",
     "needsAttention": "Aandacht vereist",
     "overview": "Overzicht",
-    "socialMediaStatsDescription": "Social media statistieken, dit is waar je nu staat",
+    "socialMediaStatsDescription": "Social media statistieken over al uw platforms",
     "acrossAllPlatforms": "Over alle platforms",
     "avgEngagement": "Gem. Betrokkenheid",
     "engagementTooltip": "Berekend als (Likes + Reacties + Delingen) ÷ Weergaven over alle videoposts",
     "videoPostsOnly": "Alleen videoposts",
     "avgViews": "Gem. Weergaven",
+    "avgViewsTooltip": "Berekend van video weergaven over Instagram (videoposts), TikTok (alle posts), en YouTube (alle video's)",
     "perVideoPost": "Per videopost",
     "avgConsistencyScore": "Gem. Consistentiescore",
+    "avgConsistencyScoreTooltip": "Berekend als het gemiddelde van alle consistentie scores van platforms met beschikbare data",
     "followersGrowthForecast": "Prognose volgers groei",
     "currentTrendVsCustomers": "Huidige trend vs. onze gem. klanten groei",
     "growth": "Groei",
@@ -429,7 +431,7 @@
   },
   "postTypes": {
     "reels": "Reels",
-    "carousel": "Carrousel",
+    "carrousel": "Carrousel",
     "regularPosts": "Gewone berichten"
   },
   "tabs": {
@@ -474,7 +476,7 @@
     "postsWithHighestEngagement": "Berichten met hoogste betrokkenheid",
     "mostUsedHashtags": "Meest gebruikte hashtags",
     "videoDistribution": "Video verdeling per dag en tijd",
-    "postsDistribution": "Berichten verdeling per dag en tijd"
+    "postsDistribution": "Posting activiteit heatmap met frequentie per weekdag en 3-uurs tijdblokken"
   },
   "labels": {
     "subscribers": "Abonnees",

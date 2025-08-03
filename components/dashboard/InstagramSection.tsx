@@ -122,7 +122,7 @@ export function InstagramSection({data}: { data: InstagramDashboardData }) {
                     <div className="flex items-center gap-2">
                       {type.type === 'Image' ? <ImageIcon className="h-4 w-4"/> : <Video className="h-4 w-4"/>}
                       <span className="font-medium">
-                        {type.type === "Video" ? tPostTypes('reels') : type.type === "Sidecar" ? tPostTypes('carousel') : tPostTypes('regularPosts')}
+                        {type.type === "Video" ? tPostTypes('reels') : type.type === "Sidecar" ? tPostTypes('carrousel') : tPostTypes('regularPosts')}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
