@@ -78,10 +78,10 @@ export class YoutubeService {
           channelBannerUrl: firstVideo.channelBannerUrl,
           channelLocation: firstVideo.channelLocation,
           channelJoinedDate: firstVideo.channelJoinedDate,
-          numberOfSubscribers: firstVideo.numberOfSubscribers,
-          channelTotalVideos: firstVideo.channelTotalVideos,
-          channelTotalViews: firstVideo.channelTotalViews,
-          isChannelVerified: firstVideo.isChannelVerified
+          numberOfSubscribers: firstVideo.numberOfSubscribers ?? 0,
+          channelTotalVideos: firstVideo.channelTotalVideos ?? 0,
+          channelTotalViews: firstVideo.channelTotalViews ?? 0,
+          isChannelVerified: firstVideo.isChannelVerified ?? false
         })
       }
       return existingProfile.id
@@ -101,10 +101,10 @@ export class YoutubeService {
       channelBannerUrl: firstVideo.channelBannerUrl,
       channelLocation: firstVideo.channelLocation,
       channelJoinedDate: firstVideo.channelJoinedDate,
-      numberOfSubscribers: firstVideo.numberOfSubscribers,
-      channelTotalVideos: firstVideo.channelTotalVideos,
-      channelTotalViews: firstVideo.channelTotalViews,
-      isChannelVerified: firstVideo.isChannelVerified
+      numberOfSubscribers: firstVideo.numberOfSubscribers ?? 0,
+      channelTotalVideos: firstVideo.channelTotalVideos ?? 0,
+      channelTotalViews: firstVideo.channelTotalViews ?? 0,
+      isChannelVerified: firstVideo.isChannelVerified ?? false
     })
 
     logger.info(`YouTube profile created successfully: ${profile.id}`)
@@ -125,15 +125,15 @@ export class YoutubeService {
       thumbnailUrl: video.thumbnailUrl,
       viewCount: video.viewCount,
       likes: video.likes,
-      commentsCount: video.commentsCount,
+      commentsCount: video.commentsCount ?? 0,
       publishedAt: new Date(video.date),
       duration: video.duration,
       text: video.text,
       location: video.location,
-      hashtags: video.hashtags,
-      isAgeRestricted: video.isAgeRestricted,
-      isMonetized: video.isMonetized,
-      isMembersOnly: video.isMembersOnly
+      hashtags: video.hashtags ?? [],
+      isAgeRestricted: video.isAgeRestricted ?? false,
+      isMonetized: video.isMonetized ?? false,
+      isMembersOnly: video.isMembersOnly ?? false
     }))
 
     await youtubeRepository.createManyYoutubeVideos(videosToCreate)

@@ -2,34 +2,34 @@ import {z} from 'zod'
 
 // YouTube channel description link schema
 export const YoutubeChannelDescriptionLinkSchema = z.object({
-  text: z.string(),
-  url: z.string()
+  text: z.string().nullable().optional(),
+  url: z.string().nullable().optional()
 })
 
 // YouTube channel about info schema
 export const YoutubeAboutChannelInfoSchema = z.object({
-  channelDescription: z.string(),
-  channelJoinedDate: z.string(),
+  channelDescription: z.string().nullable().optional(),
+  channelJoinedDate: z.string().nullable().optional(),
   channelDescriptionLinks: z.array(YoutubeChannelDescriptionLinkSchema),
-  channelLocation: z.string(),
-  channelUsername: z.string(),
-  channelAvatarUrl: z.string(),
-  channelBannerUrl: z.string(),
-  channelTotalVideos: z.number(),
-  channelTotalViews: z.number(),
-  numberOfSubscribers: z.number(),
-  isChannelVerified: z.boolean(),
-  channelName: z.string(),
-  channelUrl: z.string(),
-  channelId: z.string(),
-  inputChannelUrl: z.string(),
-  isAgeRestricted: z.boolean()
+  channelLocation: z.string().nullable().optional(),
+  channelUsername: z.string().nullable().optional(),
+  channelAvatarUrl: z.string().nullable().optional(),
+  channelBannerUrl: z.string().nullable().optional(),
+  channelTotalVideos: z.number().nullable().optional().default(0),
+  channelTotalViews: z.number().nullable().optional().default(0),
+  numberOfSubscribers: z.number().nullable().optional().default(0),
+  isChannelVerified: z.boolean().nullable().optional(),
+  channelName: z.string().nullable().optional(),
+  channelUrl: z.string().nullable().optional(),
+  channelId: z.string().nullable().optional(),
+  inputChannelUrl: z.string().nullable().optional(),
+  isAgeRestricted: z.boolean().nullable().optional()
 })
 
 // YouTube description link schema
 export const YoutubeDescriptionLinkSchema = z.object({
-  url: z.string(),
-  text: z.string()
+  url: z.string().nullable().optional(),
+  text: z.string().nullable().optional()
 })
 
 // YouTube video schema
@@ -38,42 +38,42 @@ export const YoutubeVideoSchema = z.object({
   type: z.string(),
   id: z.string(),
   url: z.string(),
-  thumbnailUrl: z.string().optional(),
+  thumbnailUrl: z.string().nullable().optional(),
   viewCount: z.number(),
   date: z.string(),
   likes: z.number(),
-  location: z.string().nullable(),
+  location: z.string().nullable().optional(),
   channelName: z.string(),
   channelUrl: z.string(),
   channelId: z.string(),
-  channelUsername: z.string().optional(),
+  channelUsername: z.string().nullable().optional(),
   channelDescription: z.string(),
   channelJoinedDate: z.string(),
   channelDescriptionLinks: z.array(YoutubeChannelDescriptionLinkSchema),
-  channelLocation: z.string().optional(),
-  channelAvatarUrl: z.string(),
-  channelBannerUrl: z.string(),
-  channelTotalVideos: z.number(),
-  channelTotalViews: z.number(),
-  numberOfSubscribers: z.number(),
-  isChannelVerified: z.boolean(),
-  inputChannelUrl: z.string(),
-  isAgeRestricted: z.boolean(),
+  channelLocation: z.string().nullable().optional(),
+  channelAvatarUrl: z.string().nullable().optional(),
+  channelBannerUrl: z.string().nullable().optional(),
+  channelTotalVideos: z.number().nullable().optional().default(0),
+  channelTotalViews: z.number().nullable().optional().default(0),
+  numberOfSubscribers: z.number().nullable().optional().default(0),
+  isChannelVerified: z.boolean().nullable().optional(),
+  inputChannelUrl: z.string().nullable().optional(),
+  isAgeRestricted: z.boolean().nullable().optional(),
   aboutChannelInfo: YoutubeAboutChannelInfoSchema.optional(),
-  duration: z.string().optional(),
-  commentsCount: z.number(),
-  text: z.string().optional(),
+  duration: z.string().nullable().optional(),
+  commentsCount: z.number().nullable().optional().default(0),
+  text: z.string().nullable().optional(),
   descriptionLinks: z.array(YoutubeDescriptionLinkSchema).optional(),
-  subtitles: z.any().nullable(),
-  order: z.number(),
-  commentsTurnedOff: z.boolean(),
-  fromYTUrl: z.string(),
-  isMonetized: z.boolean().nullable(),
-  hashtags: z.array(z.string()),
-  formats: z.array(z.any()),
-  isMembersOnly: z.boolean(),
-  input: z.string(),
-  fromChannelListPage: z.string()
+  subtitles: z.any().nullable().optional(),
+  order: z.number().nullable().optional(),
+  commentsTurnedOff: z.boolean().nullable().optional(),
+  fromYTUrl: z.string().nullable().optional(),
+  isMonetized: z.boolean().nullable().optional(),
+  hashtags: z.array(z.string()).nullable().optional(),
+  formats: z.array(z.any()).nullable().optional(),
+  isMembersOnly: z.boolean().nullable().optional(),
+  input: z.string().nullable().optional(),
+  fromChannelListPage: z.string().nullable().optional()
 })
 
 export const YoutubeDataSchema = z.array(YoutubeVideoSchema)

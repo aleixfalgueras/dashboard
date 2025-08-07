@@ -69,16 +69,16 @@ export class TiktokService {
 
       if (firstPost) {
         await tiktokRepository.updateTiktokProfile(existingProfile.id, {
-          username: firstPost.authorMeta.name,
+          username: firstPost.authorMeta.name ?? "",
           nickname: firstPost.authorMeta.nickName,
           signature: firstPost.authorMeta.signature,
-          verified: firstPost.authorMeta.verified,
-          fans: firstPost.authorMeta.fans,
-          following: firstPost.authorMeta.following,
-          friends: firstPost.authorMeta.friends,
-          heart: firstPost.authorMeta.heart,
-          video: firstPost.authorMeta.video,
-          digg: firstPost.authorMeta.digg
+          verified: firstPost.authorMeta.verified ?? false,
+          fans: firstPost.authorMeta.fans ?? 0,
+          following: firstPost.authorMeta.following ?? 0,
+          friends: firstPost.authorMeta.friends ?? 0,
+          heart: firstPost.authorMeta.heart ?? 0,
+          video: firstPost.authorMeta.video ?? 0,
+          digg: firstPost.authorMeta.digg ?? 0
         })
       }
       return existingProfile.id
@@ -89,16 +89,16 @@ export class TiktokService {
 
     const profile = await tiktokRepository.createTiktokProfile({
       client: { connect: { id: clientId } },
-      username: firstPost.authorMeta.name,
+      username: firstPost.authorMeta.name ?? "",
       nickname: firstPost.authorMeta.nickName,
       signature: firstPost.authorMeta.signature,
-      verified: firstPost.authorMeta.verified,
-      fans: firstPost.authorMeta.fans,
-      following: firstPost.authorMeta.following,
-      friends: firstPost.authorMeta.friends,
-      heart: firstPost.authorMeta.heart,
-      video: firstPost.authorMeta.video,
-      digg: firstPost.authorMeta.digg
+      verified: firstPost.authorMeta.verified ?? false,
+      fans: firstPost.authorMeta.fans ?? 0,
+      following: firstPost.authorMeta.following ?? 0,
+      friends: firstPost.authorMeta.friends ?? 0,
+      heart: firstPost.authorMeta.heart ?? 0,
+      video: firstPost.authorMeta.video ?? 0,
+      digg: firstPost.authorMeta.digg ?? 0,
     })
 
     logger.info(`TikTok profile created successfully: ${profile.id}`)
@@ -115,22 +115,22 @@ export class TiktokService {
       postId: post.id,
       text: post.text,
       textLanguage: post.textLanguage,
-      createTime: new Date(post.createTimeISO),
-      isAd: post.isAd,
-      webVideoUrl: post.webVideoUrl,
-      diggCount: post.diggCount,
-      shareCount: post.shareCount,
-      playCount: post.playCount,
-      collectCount: post.collectCount,
-      commentCount: post.commentCount,
-      isSlideshow: post.isSlideshow,
-      isPinned: post.isPinned,
-      isSponsored: post.isSponsored,
+      createTime: new Date(post.createTimeISO ?? ""),
+      isAd: post.isAd ?? false,
+      webVideoUrl: post.webVideoUrl ?? "",
+      diggCount: post.diggCount ?? 0,
+      shareCount: post.shareCount ?? 0,
+      playCount: post.playCount ?? 0,
+      collectCount: post.collectCount ?? 0,
+      commentCount: post.commentCount ?? 0,
+      isSlideshow: post.isSlideshow ?? false,
+      isPinned: post.isPinned ?? false,
+      isSponsored: post.isSponsored ?? false,
       hashtags: post.hashtags.map(h => h.name),
       mentions: post.mentions,
       musicName: post.musicMeta.musicName,
       musicAuthor: post.musicMeta.musicAuthor,
-      musicOriginal: post.musicMeta.musicOriginal,
+      musicOriginal: post.musicMeta.musicOriginal ?? undefined,
       videoDuration: post.videoMeta.duration,
       videoHeight: post.videoMeta.height,
       videoWidth: post.videoMeta.width,
