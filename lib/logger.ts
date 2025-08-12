@@ -11,6 +11,10 @@ const formatTimestamp = (): string => {
 }
 
 export const logger = {
+  debug: (...args: unknown[]) => {
+    console.debug(formatTimestamp(), ...args)
+  },
+
   info: (...args: unknown[]) => {
     console.info(formatTimestamp(), ...args)
   },

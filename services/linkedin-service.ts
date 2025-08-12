@@ -20,6 +20,9 @@ export class LinkedinService {
       const parsedData = JSON.parse(uploadRequestDto.jsonData)
       const validatedData = LinkedinDataSchema.parse(parsedData)
 
+      // Discard "quote" and "reposts" linkedin posts
+      const regularPosts = await this.getRegularPosts(validatedData)
+
       // Get the client by ID
       const client = await clientService.getClientById(uploadRequestDto.clientId)
       if (!client) {
@@ -34,11 +37,11 @@ export class LinkedinService {
       // Find existing LinkedIn profile or create new one
       const profileId = await this.getLinkedinProfileIdOrCreateFromData(
         client.id,
-        validatedData
+        regularPosts
       )
 
       // Create posts
-      await this.createLinkedinPostsFromData(profileId, validatedData)
+      await this.createLinkedinPostsFromData(profileId, regularPosts)
 
       // Store upload metadata
       await uploadRepository.create({
@@ -50,6 +53,13 @@ export class LinkedinService {
       logger.error('LinkedIn upload processing error:', error)
       throw error
     }
+  }
+
+  async getRegularPosts(validatedLinkedinData: RawLinkedinData) {
+    const notRegularPosts = validatedLinkedinData.filter(_ => _.post_type != "regular")
+    logger.debug(`Not regular posts discarted: ${notRegularPosts.length}`)
+
+    return validatedLinkedinData.filter(_ => _.post_type == "regular")
   }
 
   async getLinkedinProfileIdOrCreateFromData(

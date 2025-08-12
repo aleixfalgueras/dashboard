@@ -15,12 +15,12 @@ datasource db {
 }
 
 model Client {
-  id                String    @id @default(cuid())
-  name              String
-  slug              String    @unique
+  id                 String    @id @default(cuid())
+  name               String
+  slug               String    @unique
   statsDataStartDate DateTime?
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
   instagramProfile InstagramProfile?
   tiktokProfile    TiktokProfile?
@@ -134,35 +134,35 @@ model TiktokProfile {
 }
 
 model TiktokPost {
-  id               String   @id @default(cuid())
-  profileId        String
-  postId           String   @unique
-  text             String?
-  textLanguage     String?
-  createTime       DateTime
-  isAd             Boolean  @default(false)
-  webVideoUrl      String
-  diggCount        Int      @default(0)
-  shareCount       Int      @default(0)
-  playCount        Int      @default(0)
-  collectCount     Int      @default(0)
-  commentCount     Int      @default(0)
-  isSlideshow      Boolean  @default(false)
-  isPinned         Boolean  @default(false)
-  isSponsored      Boolean  @default(false)
-  hashtags         String[]
-  mentions         String[]
-  musicName        String?
-  musicAuthor      String?
-  musicOriginal    Boolean  @default(false)
-  videoDuration    Int?
-  videoHeight      Int?
-  videoWidth       Int?
-  videoCoverUrl    String?
-  videoDefinition  String?
-  videoFormat      String?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  id              String   @id @default(cuid())
+  profileId       String
+  postId          String   @unique
+  text            String?
+  textLanguage    String?
+  createTime      DateTime
+  isAd            Boolean  @default(false)
+  webVideoUrl     String
+  diggCount       Int      @default(0)
+  shareCount      Int      @default(0)
+  playCount       Int      @default(0)
+  collectCount    Int      @default(0)
+  commentCount    Int      @default(0)
+  isSlideshow     Boolean  @default(false)
+  isPinned        Boolean  @default(false)
+  isSponsored     Boolean  @default(false)
+  hashtags        String[]
+  mentions        String[]
+  musicName       String?
+  musicAuthor     String?
+  musicOriginal   Boolean  @default(false)
+  videoDuration   Int?
+  videoHeight     Int?
+  videoWidth      Int?
+  videoCoverUrl   String?
+  videoDefinition String?
+  videoFormat     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   profile TiktokProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
@@ -187,29 +187,29 @@ model LinkedinProfile {
 }
 
 model LinkedinPost {
-  id                String   @id @default(cuid())
-  profileId         String
-  urn               String   @unique
-  fullUrn           String
-  postType          String
-  text              String?
-  url               String
-  postedAt          DateTime
-  totalReactions    Int      @default(0)
-  likesCount        Int      @default(0)
-  supportsCount     Int      @default(0)
-  lovesCount        Int      @default(0)
-  insightsCount     Int      @default(0)
-  celebratesCount   Int      @default(0)
-  commentsCount     Int      @default(0)
-  repostsCount      Int      @default(0)
-  mediaType         String?
-  mediaUrl          String?
-  mediaThumbnail    String?
-  imageUrls         String[]
-  paginationToken   String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id              String   @id @default(cuid())
+  profileId       String
+  urn             String   @unique
+  fullUrn         String
+  postType        String // regular, quote, repost
+  text            String?
+  url             String
+  postedAt        DateTime
+  totalReactions  Int      @default(0)
+  likesCount      Int      @default(0)
+  supportsCount   Int      @default(0)
+  lovesCount      Int      @default(0)
+  insightsCount   Int      @default(0)
+  celebratesCount Int      @default(0)
+  commentsCount   Int      @default(0)
+  repostsCount    Int      @default(0)
+  mediaType       String?
+  mediaUrl        String?
+  mediaThumbnail  String?
+  imageUrls       String[]
+  paginationToken String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   profile LinkedinProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
@@ -218,23 +218,23 @@ model LinkedinPost {
 }
 
 model YoutubeProfile {
-  id                    String   @id @default(cuid())
-  clientId              String   @unique
-  channelId             String
-  channelName           String
-  channelUsername       String?
-  channelUrl            String
-  channelDescription    String?
-  channelAvatarUrl      String?
-  channelBannerUrl      String?
-  channelLocation       String?
-  channelJoinedDate     String?
-  numberOfSubscribers   Int      @default(0)
-  channelTotalVideos    Int      @default(0)
-  channelTotalViews     Int      @default(0)
-  isChannelVerified     Boolean  @default(false)
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  clientId            String   @unique
+  channelId           String
+  channelName         String
+  channelUsername     String?
+  channelUrl          String
+  channelDescription  String?
+  channelAvatarUrl    String?
+  channelBannerUrl    String?
+  channelLocation     String?
+  channelJoinedDate   String?
+  numberOfSubscribers Int      @default(0)
+  channelTotalVideos  Int      @default(0)
+  channelTotalViews   Int      @default(0)
+  isChannelVerified   Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
   client Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
   videos YoutubeVideo[]
@@ -243,26 +243,26 @@ model YoutubeProfile {
 }
 
 model YoutubeVideo {
-  id             String   @id @default(cuid())
-  profileId      String
-  videoId        String   @unique
-  title          String
-  type           String
-  url            String
-  thumbnailUrl   String?
-  viewCount      Int      @default(0)
-  likes          Int      @default(0)
-  commentsCount  Int      @default(0)
-  publishedAt    DateTime
-  duration       String?
-  text           String?
-  location       String?
-  hashtags       String[]
+  id              String   @id @default(cuid())
+  profileId       String
+  videoId         String   @unique
+  title           String
+  type            String
+  url             String
+  thumbnailUrl    String?
+  viewCount       Int      @default(0)
+  likes           Int      @default(0)
+  commentsCount   Int      @default(0)
+  publishedAt     DateTime
+  duration        String?
+  text            String?
+  location        String?
+  hashtags        String[]
   isAgeRestricted Boolean  @default(false)
-  isMonetized    Boolean?
-  isMembersOnly  Boolean  @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isMonetized     Boolean?
+  isMembersOnly   Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   profile YoutubeProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
