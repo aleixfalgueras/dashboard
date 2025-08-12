@@ -188,11 +188,11 @@
     "perVideoPost": "Per video post",
     "avgConsistencyScore": "Avg. Consistency Score",
     "avgConsistencyScoreTooltip": "Calculated as the average of all consistency scores from platforms with available data",
-    "followersGrowthForecast": "Your followers growth forecast",
+    "followersGrowthForecast": "Your IG followers growth forecast",
     "currentTrendVsCustomers": "Current trend vs. our avg. customers growth",
     "growth": "Growth",
     "growthForecast": "Growth Forecast",
-    "forecastTooltip": "Current trend uses 2% monthly compound growth (~12.6% over 6 months). Forecast uses compound growth to reach your target percentage over 6 months. Forecasts below 12.6% will appear below the current trend line."
+    "forecastTooltip": "Current trend uses 2% monthly compound growth (~12.6% over 6 months)."
   },
   "youtube": {
     "title": "YouTube Analytics",

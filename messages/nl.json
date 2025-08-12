@@ -187,12 +187,12 @@
     "perVideoPost": "Per videopost",
     "avgConsistencyScore": "Gem. Consistentiescore",
     "avgConsistencyScoreTooltip": "Berekend als het gemiddelde van alle consistentie scores van platforms met beschikbare data",
-    "followersGrowthForecast": "Prognose volgers groei",
+    "followersGrowthForecast": "Prognose IG volgers groei",
     "currentTrendVsCustomers": "Huidige trend vs. onze gem. klanten groei",
     "growth": "Groei",
     "growthForecast": "Groeiprognose",
     "currentTrend": "Huidige Trend",
-    "forecastTooltip": "Huidige trend gebruikt 2% maandelijkse samengestelde groei (~12,6% over 6 maanden). Prognose gebruikt samengestelde groei om je doelpercentage over 6 maanden te bereiken. Prognoses onder 12,6% verschijnen onder de huidige trendlijn."
+    "forecastTooltip": "Huidige trend gebruikt 2% maandelijkse samengestelde groei (~12,6% over 6 maanden)."
   },
   "youtube": {
     "title": "YouTube Analytics",

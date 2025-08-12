@@ -1,5 +1,5 @@
 import {dashboardService} from '@/services/dashboard-service'
-import {DashboardContent} from '../../components/dashboard/DashboardContent'
+import {DashboardContent} from '@/components/dashboard/DashboardContent'
 
 interface DashboardPageProps {
   params: {

@@ -1,6 +1,6 @@
 'use client'
 
-import { GeneralMetrics } from "@/lib/types/dashboard-types";
+import { GeneralMetrics, DatasourcesData } from "@/lib/types/dashboard-types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Eye, TrendingUp, Target, HelpCircle } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -9,6 +9,7 @@ import { useTranslations } from '@/lib/translations/context';
 
 interface GeneralSectionProps {
   metrics: GeneralMetrics;
+  datasourcesData: DatasourcesData;
 }
 
 interface TooltipData {
@@ -17,11 +18,11 @@ interface TooltipData {
   type: string;
 }
 
-export function GeneralSection({ metrics }: GeneralSectionProps) {
+export function GeneralSection({ metrics, datasourcesData }: GeneralSectionProps) {
   const t = useTranslations('general');
   const tCharts = useTranslations('charts');
   const [hoveredPoint, setHoveredPoint] = useState<{ x: number; y: number; data: TooltipData } | null>(null);
-  const [growthPercentage, setGrowthPercentage] = useState(15);
+  const growthPercentage = 66; // Fixed growth percentage (66% total increase over 6 months)
   
   // Auto-hide tooltip after delay
   useEffect(() => {
@@ -34,9 +35,9 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
     }
   }, [hoveredPoint]);
 
-  // Generate chart data for follower growth forecast
+  // Generate chart data for Instagram follower growth forecast
   const generateChartData = (growthPercent: number) => {
-    const currentFollowers = metrics.totalFollowers;
+    const currentFollowers = datasourcesData.instagram?.profile.followersCount || 0;
     const today = new Date();
     
     // Generate next 6 months starting from current month
@@ -51,8 +52,8 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       const monthlyGrowthRate = 0.02;
       const currentTrend = Math.round(currentFollowers * Math.pow(1 + monthlyGrowthRate, index));
       
-      // Dynamic growth forecast: compound growth over 6 months starting from current followers
-      const forecastGrowthRate = Math.pow(1 + (growthPercent / 100), 1/6) - 1; // Monthly compound rate to reach target total
+      // Dynamic growth forecast: compound growth over 5 months (index 0 is starting point)
+      const forecastGrowthRate = Math.pow(1 + (growthPercent / 100), 1/5) - 1; // Monthly compound rate to reach target total
       const forecast = Math.round(currentFollowers * Math.pow(1 + forecastGrowthRate, index));
       
       return {
@@ -64,6 +65,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
   };
 
   const chartData = generateChartData(growthPercentage);
+  const hasInstagramData = !!datasourcesData.instagram?.profile.followersCount;
 
   // Simple SVG Chart Component
   const SimpleLineChart = () => {
@@ -208,7 +210,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
                   onMouseEnter={(e) => setHoveredPoint({
                     x: e.clientX + 15,
                     y: e.clientY - 50,
-                    data: { month: d.month, value: d.forecast, type: `${growthPercentage}% ${t('growthForecast')}` }
+                    data: { month: d.month, value: d.forecast, type: `66% ${t('growthForecast')}` }
                   })}
                   onMouseLeave={() => setHoveredPoint(null)}
                 />
@@ -225,7 +227,7 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-0.5 bg-accent" style={{ backgroundImage: 'repeating-linear-gradient(to right, hsl(var(--accent)) 0, hsl(var(--accent)) 3px, transparent 3px, transparent 6px)' }}></div>
-            <span>{growthPercentage}% {t('growthForecast')}</span>
+            <span>66% {t('growthForecast')}</span>
           </div>
         </div>
 
@@ -347,45 +349,32 @@ export function GeneralSection({ metrics }: GeneralSectionProps) {
       {/* Follower Growth Forecast Chart */}
       <Card className="col-span-full border-l-4 border-l-accent">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="flex items-center gap-2">
-                {t('followersGrowthForecast')}
-                <TrendingUp className="h-4 w-4 text-accent" />
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p className="max-w-xs">
-                      {t('forecastTooltip')}
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </CardTitle>
-              <CardDescription>
-                {t('currentTrendVsCustomers')}
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-sm text-muted-foreground">{t('growth')}:</span>
-              <div className="flex items-center gap-2">
-                <input
-                  type="range"
-                  min="15"
-                  max="50"
-                  step="5"
-                  value={growthPercentage}
-                  onChange={(e) => setGrowthPercentage(Number(e.target.value))}
-                  className="w-24 h-2 bg-muted rounded-lg appearance-none cursor-pointer"
-                />
-                <span className="text-sm font-medium text-accent min-w-[3rem]">{growthPercentage}%</span>
-              </div>
-            </div>
-          </div>
+          <CardTitle className="flex items-center gap-2">
+            {t('followersGrowthForecast')}
+            <TrendingUp className="h-4 w-4 text-accent" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <HelpCircle className="h-3 w-3 text-muted-foreground hover:text-foreground cursor-help" />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">
+                  {t('forecastTooltip')}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </CardTitle>
+          <CardDescription>
+            {t('currentTrendVsCustomers')}
+          </CardDescription>
         </CardHeader>
         <CardContent>
-          <SimpleLineChart />
+          {hasInstagramData ? (
+            <SimpleLineChart />
+          ) : (
+            <div className="flex items-center justify-center h-[360px] text-muted-foreground">
+              <p>{t('noInstagramDataAvailable')}</p>
+            </div>
+          )}
         </CardContent>
       </Card>
       </div>

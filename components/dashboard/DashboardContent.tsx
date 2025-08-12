@@ -180,7 +180,7 @@ export function DashboardContent({ dashboardData }: DashboardContentProps) {
       </div>
 
       {/* General Overview Section */}
-      <GeneralSection metrics={generalMetrics} />
+      <GeneralSection metrics={generalMetrics} datasourcesData={datasourcesData} />
 
       {/* Datasource Sections */}
       {availableDatasources.length > 1 ? (
