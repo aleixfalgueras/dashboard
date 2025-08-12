@@ -57,7 +57,7 @@ export class LinkedinService {
 
   async getRegularPosts(validatedLinkedinData: RawLinkedinData) {
     const notRegularPosts = validatedLinkedinData.filter(_ => _.post_type != "regular")
-    logger.debug(`Not regular posts discarted: ${notRegularPosts.length}`)
+    logger.info(`Not regular posts discarted: ${notRegularPosts.length}`)
 
     return validatedLinkedinData.filter(_ => _.post_type == "regular")
   }
