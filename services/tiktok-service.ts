@@ -294,10 +294,10 @@ export class TiktokService {
 
     // Get date range
     const firstPost = new Date(sortedPosts[0].createTime)
-    const lastPost = new Date(sortedPosts[sortedPosts.length - 1].createTime)
+    const currentDate = new Date()
     
-    // Calculate total days in range
-    const totalDays = Math.ceil((lastPost.getTime() - firstPost.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    // Calculate total days from first post to current date
+    const totalDays = Math.ceil((currentDate.getTime() - firstPost.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
     // Create a Set of unique days with posts
     const activeDaysSet = new Set<string>()
@@ -312,14 +312,14 @@ export class TiktokService {
 
     // Calculate streaks
     const allDays = []
-    const currentDate = new Date(firstPost)
-    while (currentDate <= lastPost) {
-      const dateStr = currentDate.toISOString().split('T')[0]
+    const iterDate = new Date(firstPost)
+    while (iterDate <= currentDate) {
+      const dateStr = iterDate.toISOString().split('T')[0]
       allDays.push({
         date: dateStr,
         hasPost: activeDaysSet.has(dateStr)
       })
-      currentDate.setDate(currentDate.getDate() + 1)
+      iterDate.setDate(iterDate.getDate() + 1)
     }
 
     // Find longest silence (consecutive days without posts)

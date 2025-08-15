@@ -294,10 +294,10 @@ export class YoutubeService {
 
     // Get date range
     const firstVideo = new Date(sortedVideos[0].publishedAt)
-    const lastVideo = new Date(sortedVideos[sortedVideos.length - 1].publishedAt)
+    const currentDate = new Date()
     
-    // Calculate total days in range
-    const totalDays = Math.ceil((lastVideo.getTime() - firstVideo.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    // Calculate total days from first video to current date
+    const totalDays = Math.ceil((currentDate.getTime() - firstVideo.getTime()) / (1000 * 60 * 60 * 24)) + 1
 
     // Create a Set of unique days with videos
     const activeDaysSet = new Set<string>()
@@ -312,14 +312,14 @@ export class YoutubeService {
 
     // Calculate streaks
     const allDays = []
-    const currentDate = new Date(firstVideo)
-    while (currentDate <= lastVideo) {
-      const dateStr = currentDate.toISOString().split('T')[0]
+    const iterDate = new Date(firstVideo)
+    while (iterDate <= currentDate) {
+      const dateStr = iterDate.toISOString().split('T')[0]
       allDays.push({
         date: dateStr,
         hasVideo: activeDaysSet.has(dateStr)
       })
-      currentDate.setDate(currentDate.getDate() + 1)
+      iterDate.setDate(iterDate.getDate() + 1)
     }
 
     // Find longest silence (consecutive days without videos)
