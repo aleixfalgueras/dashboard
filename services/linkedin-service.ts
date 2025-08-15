@@ -188,7 +188,7 @@ export class LinkedinService {
   }
 
   private calculatePostingFrequencyConsistency(posts: LinkedinPost[]): number {
-    if (posts.length < 7) return 0.5 // Not enough data for weekly analysis
+    if (posts.length < 7) return 0.25 // Not enough data for weekly analysis
     
     // Group posts by week
     const weeklyPostCounts = new Map<string, number>()
@@ -260,10 +260,10 @@ export class LinkedinService {
   ): number {
     // Weighted combination (restored original 4-component weighting)
     const weights = {
-      frequency: 0.40,
+      frequency: 0.25,
       timePattern: 0.25,
-      dailyRate: 0.20,
-      streakStability: 0.15
+      dailyRate: 0.25,
+      streakStability: 0.25
     }
     
     const normalizedDailyRate = dailyConsistencyRate / 100 // Convert percentage to 0-1

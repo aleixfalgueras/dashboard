@@ -302,7 +302,7 @@
     "day": "day",
     "days": "days",
     "consistencyScore": "Consistency Score",
-    "consistencyScoreTooltip": "Composite score (0-100) based on posting frequency consistency (40%), time pattern regularity (25%), daily activity rate (20%), and streak stability (15%)"
+    "consistencyScoreTooltip": "Composite score (0-100) based on posting frequency consistency, time pattern regularity, daily activity rate, and streak stability (25% each)"
   },
   "ui": {
     "loading": "Loading...",

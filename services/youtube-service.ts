@@ -254,12 +254,12 @@ export class YoutubeService {
     dailyConsistencyRate: number,
     streakStability: number
   ): number {
-    // Weighted combination (restored original weights with time pattern consistency)
+    // Weighted combination
     const weights = {
-      frequency: 0.40,
+      frequency: 0.25,
       timePattern: 0.25,
-      dailyRate: 0.20,
-      streakStability: 0.15
+      dailyRate: 0.25,
+      streakStability: 0.25
     }
     
     const normalizedDailyRate = dailyConsistencyRate / 100 // Convert percentage to 0-1

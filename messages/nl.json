@@ -302,7 +302,7 @@
     "day": "dag",
     "days": "dagen",
     "consistencyScore": "Consistentie Score",
-    "consistencyScoreTooltip": "Samengestelde score (0-100) gebaseerd op posting frequentie consistentie (40%), tijd patroon regelmaat (25%), dagelijkse activiteit ratio (20%), en reeks stabiliteit (15%)"
+    "consistencyScoreTooltip": "Samengestelde score (0-100) gebaseerd op posting frequentie consistentie, tijd patroon regelmaat, dagelijkse activiteit ratio, en reeks stabiliteit (elk 25%)"
   },
   "ui": {
     "loading": "Laden...",
