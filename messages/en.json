@@ -189,9 +189,9 @@
     "avgConsistencyScore": "Avg. Consistency Score",
     "avgConsistencyScoreTooltip": "Calculated as the average of all consistency scores from platforms with available data",
     "followersGrowthForecast": "Your IG followers growth forecast",
-    "currentTrendVsCustomers": "Current trend vs. our avg. customers growth",
+    "currentTrendVsCustomers": "Current trend vs. our avg. clients growth",
     "growth": "Growth",
-    "growthForecast": "Growth Forecast",
+    "growthForecast": "Avg. Client Growth",
     "forecastTooltip": "Current trend uses 2% monthly compound growth (~12.6% over 6 months)."
   },
   "youtube": {

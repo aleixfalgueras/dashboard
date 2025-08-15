@@ -227,7 +227,7 @@ export function GeneralSection({ metrics, datasourcesData }: GeneralSectionProps
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-0.5 bg-accent" style={{ backgroundImage: 'repeating-linear-gradient(to right, hsl(var(--accent)) 0, hsl(var(--accent)) 3px, transparent 3px, transparent 6px)' }}></div>
-            <span>66% {t('growthForecast')}</span>
+            <span>{t('growthForecast')}</span>
           </div>
         </div>
 
