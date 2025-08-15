@@ -210,7 +210,7 @@ export class DashboardService {
     // TikTok followers and posts (all are videos)
     if (datasourcesData.tiktok) {
       const { profile, consistencyMetrics } = datasourcesData.tiktok
-      totalFollowers += profile.following || 0
+      totalFollowers += profile.fans || 0
 
       // Add consistency score
       if (consistencyMetrics && consistencyMetrics.consistencyScore !== undefined) {
