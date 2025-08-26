@@ -185,6 +185,14 @@ export class DashboardService {
     let totalConsistencyScore = 0
     let consistencyDatasourcesCount = 0
 
+    // Platform-specific tracking for debug logs
+    let instagramViews = 0
+    let instagramVideoCount = 0
+    let tiktokViews = 0
+    let tiktokVideoCount = 0
+    let youtubeViews = 0
+    let youtubeVideoCount = 0
+
     // Instagram followers and video posts
     if (datasourcesData.instagram) {
       const { profile, consistencyMetrics } = datasourcesData.instagram
@@ -199,12 +207,18 @@ export class DashboardService {
       // Only count video posts for views and engagement
       const videoPosts = profile.posts.filter(post => post.type === "Video")
       videoPosts.forEach(post => {
-        if (post.videoPlayCount && post.videoPlayCount > 0) {
+        totalVideoCount++
+        instagramVideoCount++
+        if (post.videoPlayCount !== null && post.videoPlayCount !== undefined) {
           totalViews += post.videoPlayCount
-          totalVideoCount++
+          instagramViews += post.videoPlayCount
           totalEngagement += (post.likesCount || 0) + (post.commentsCount || 0)
         }
       })
+      
+      // Debug log for Instagram
+      const instagramAvgViews = instagramVideoCount > 0 ? Math.round(instagramViews / instagramVideoCount) : 0
+      logger.info(`[DEBUG] Instagram: ${instagramVideoCount} videos, ${instagramViews.toLocaleString()} total views, ${instagramAvgViews.toLocaleString()} avg views`)
     }
 
     // TikTok followers and posts (all are videos)
@@ -219,12 +233,18 @@ export class DashboardService {
       }
 
       profile.posts.forEach(post => {
-        if (post.playCount && post.playCount > 0) {
+        totalVideoCount++
+        tiktokVideoCount++
+        if (post.playCount !== null && post.playCount !== undefined) {
           totalViews += post.playCount
-          totalVideoCount++
+          tiktokViews += post.playCount
           totalEngagement += (post.diggCount || 0) + (post.commentCount || 0) + (post.shareCount || 0)
         }
       })
+      
+      // Debug log for TikTok
+      const tiktokAvgViews = tiktokVideoCount > 0 ? Math.round(tiktokViews / tiktokVideoCount) : 0
+      logger.info(`[DEBUG] TikTok: ${tiktokVideoCount} videos, ${tiktokViews.toLocaleString()} total views, ${tiktokAvgViews.toLocaleString()} avg views`)
     }
 
     // LinkedIn followers and posts
@@ -250,17 +270,26 @@ export class DashboardService {
       }
 
       profile.videos.forEach(video => {
-        if (video.viewCount && video.viewCount > 0) {
+        totalVideoCount++
+        youtubeVideoCount++
+        if (video.viewCount !== null && video.viewCount !== undefined) {
           totalViews += video.viewCount
-          totalVideoCount++
+          youtubeViews += video.viewCount
           totalEngagement += (video.likes || 0) + (video.commentsCount || 0)
         }
       })
+      
+      // Debug log for YouTube
+      const youtubeAvgViews = youtubeVideoCount > 0 ? Math.round(youtubeViews / youtubeVideoCount) : 0
+      logger.info(`[DEBUG] YouTube: ${youtubeVideoCount} videos, ${youtubeViews.toLocaleString()} total views, ${youtubeAvgViews.toLocaleString()} avg views`)
     }
 
     const avgViews = totalVideoCount > 0 ? Math.round(totalViews / totalVideoCount) : 0
     const globalAvgEngagement = totalViews > 0 ? Number((totalEngagement / totalViews * 100).toFixed(2)) : 0
     const avgConsistencyScore = consistencyDatasourcesCount > 0 ? Math.round(totalConsistencyScore / consistencyDatasourcesCount) : 0
+
+    // Final debug log with overall calculation
+    logger.info(`[DEBUG] Overall Avg Views: ${totalVideoCount} total videos, ${totalViews.toLocaleString()} total views, ${avgViews.toLocaleString()} final avg views`)
 
     return {
       totalFollowers,
